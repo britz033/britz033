@@ -51,6 +51,9 @@ public class MainActivity extends ActionBarActivity implements TabListener,OnBus
 	}
 
 	private ViewPager vp;
+	private String station_number;
+	private String station_name;
+	private LatLng latlng;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -131,18 +134,20 @@ public class MainActivity extends ActionBarActivity implements TabListener,OnBus
 	@Override
 	public void OnBusStationInfo(String station_number, String station_name,
 			LatLng latLng) {
-		vp.setCurrentItem(MyTabs.GMAP.getValue(), true);
-		Log.d("onlocationinfo", station_number + "," + station_name + ","
-				+ latLng.toString());
-		((GMapFragment) flist.get(2)).setGMap(station_number, station_name,
-				latLng);
-		vp.requestTransparentRegion(vp);
+		
 		
 		SharedPreferences setting = getSharedPreferences(PREF_NAME, 0);
 		SharedPreferences.Editor editor = setting.edit();
 		
 		editor.putString("station_number", station_number);
+		editor.putString("station_name", station_name);
+		editor.putString("station_latitude", String.valueOf(latLng.latitude));
+		editor.putString("station_longitude", String.valueOf(latLng.longitude));
 		editor.commit();
+		
+		this.station_number = station_number;
+		this.station_name = station_name;
+		this.latlng = latlng;
 	}
 
 	@Override
@@ -171,6 +176,20 @@ public class MainActivity extends ActionBarActivity implements TabListener,OnBus
 	@Override
 	public void onTabUnselected(Tab arg0, FragmentTransaction arg1) {
 
+	}
+
+	@Override
+	public void OnBusStationInfo(String station_number, String station_name) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void OnBtnClick() {
+		vp.setCurrentItem(MyTabs.GMAP.getValue(), true);
+		((GMapFragment) flist.get(2)).setGMap(station_number, station_name,
+				latlng);
+		vp.requestTransparentRegion(vp);
 	}
 
 }

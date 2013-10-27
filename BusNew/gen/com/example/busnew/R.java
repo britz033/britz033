@@ -1108,8 +1108,8 @@ containing a value of this type.
         public static final int abc_textfield_searchview_holo_light=0x7f020054;
         public static final int abc_textfield_searchview_right_holo_dark=0x7f020055;
         public static final int abc_textfield_searchview_right_holo_light=0x7f020056;
-        public static final int back02=0x7f020057;
-        public static final int background01=0x7f020058;
+        public static final int back01=0x7f020057;
+        public static final int back02=0x7f020058;
         public static final int busicon=0x7f020059;
         public static final int button_selector=0x7f02005a;
         public static final int button_set=0x7f02005b;
@@ -1166,11 +1166,12 @@ containing a value of this type.
         public static final int action_mode_bar=0x7f070032;
         public static final int action_mode_bar_stub=0x7f070031;
         public static final int action_mode_close_button=0x7f070025;
-        public static final int action_settings=0x7f070050;
+        public static final int action_settings=0x7f070051;
         public static final int activity_chooser_view_content=0x7f070026;
         public static final int always=0x7f07000f;
         public static final int beginning=0x7f070014;
-        public static final int busNum=0x7f07004c;
+        public static final int btn_gomap=0x7f07004b;
+        public static final int busNum=0x7f07004d;
         public static final int checkbox=0x7f07002e;
         public static final int collapseActionView=0x7f070011;
         public static final int default_activity_button=0x7f070029;
@@ -1199,7 +1200,7 @@ containing a value of this type.
         public static final int progress_circular=0x7f070037;
         public static final int progress_horizontal=0x7f070038;
         public static final int radio=0x7f070030;
-        public static final int reflesh=0x7f07004f;
+        public static final int reflesh=0x7f070050;
         public static final int right_container=0x7f070035;
         public static final int right_icon=0x7f070036;
         public static final int satellite=0x7f070002;
@@ -1218,13 +1219,13 @@ containing a value of this type.
         public static final int showHome=0x7f070008;
         public static final int showTitle=0x7f07000a;
         public static final int split_action_bar=0x7f07001f;
-        public static final int station=0x7f07004b;
+        public static final int station=0x7f07004c;
         public static final int submit_area=0x7f070042;
         public static final int tabMode=0x7f070006;
         public static final int terrain=0x7f070003;
         public static final int text_busdisplay=0x7f070047;
         public static final int text_label_sub1fregment=0x7f070048;
-        public static final int time=0x7f07004d;
+        public static final int time=0x7f07004e;
         public static final int title=0x7f07002c;
         public static final int title_container=0x7f070033;
         public static final int top_action_bar=0x7f070021;
@@ -1232,7 +1233,7 @@ containing a value of this type.
         public static final int useLogo=0x7f070007;
         public static final int viewpager_favorite=0x7f070046;
         public static final int viewpager_main=0x7f070045;
-        public static final int where=0x7f07004e;
+        public static final int where=0x7f07004f;
         public static final int withText=0x7f070010;
     }
     public static final class integer {

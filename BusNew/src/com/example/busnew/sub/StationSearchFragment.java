@@ -34,6 +34,8 @@ public class StationSearchFragment extends ListFragment implements LoaderCallbac
 	
 	public interface OnBusStationInfoListener{
 		public void OnBusStationInfo(String station_number, String station_name, LatLng latLng);
+		public void OnBusStationInfo(String station_number, String station_name);
+		public void OnBtnClick();
 	}
 	
 	@Override
@@ -88,7 +90,10 @@ public class StationSearchFragment extends ListFragment implements LoaderCallbac
 //		builder.create().show();
 		
 		OnBusStationInfoListener saver = (OnBusStationInfoListener) context;
+		OnBusStationInfoListener favoriteFragment = (OnBusStationInfoListener) context;
+		
 		saver.OnBusStationInfo(station_number, station_name, new LatLng(station_latitude, station_longitude));
+		favoriteFragment.OnBusStationInfo(station_number, station_name);
 	}
 	
 	class MyWatcher implements TextWatcher{
@@ -156,6 +161,10 @@ public class StationSearchFragment extends ListFragment implements LoaderCallbac
 		}
 			
 		return false;
+	}
+	
+	public void btnOnClick(View view){
+		
 	}
 
 }

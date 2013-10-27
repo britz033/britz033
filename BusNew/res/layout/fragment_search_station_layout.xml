@@ -3,6 +3,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical" >
+    <LinearLayout 
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
     <EditText 
         android:id="@+id/edit_search_sub2fragment"
         android:layout_width="match_parent"
@@ -10,6 +14,13 @@
         android:textSize="20dp"
         android:hint="역 이름을 적으세요"
         />
+    <Button 
+        android:id="@+id/btn_gomap"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+		android:onClick="btnOnclick"        
+        />
+    </LinearLayout>
     <ListView
         android:id="@id/android:list"
         android:layout_width="match_parent"

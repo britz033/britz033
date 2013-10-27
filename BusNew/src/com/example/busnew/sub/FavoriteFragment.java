@@ -96,8 +96,7 @@ public class FavoriteFragment extends Fragment implements OnBusStationInfoListen
 	
 
 	@Override
-	public void OnBusStationInfo(String station_number, String station_name,
-			LatLng latLng) {
+	public void OnBusStationInfo(String station_number, String station_name) {
 		connectAndParseAndShow(station_number);
 	}
 	
@@ -137,5 +136,18 @@ public class FavoriteFragment extends Fragment implements OnBusStationInfoListen
 		} else {
 			Toast.makeText(context, "네트워크에 연결되어 있지 않습니다", Toast.LENGTH_SHORT).show();
 		}
+	}
+
+	@Override
+	public void OnBusStationInfo(String station_number, String station_name,
+			LatLng latLng) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void OnBtnClick() {
+		// TODO Auto-generated method stub
+		
 	}
 }
