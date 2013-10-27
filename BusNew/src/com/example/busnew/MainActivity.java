@@ -2,6 +2,7 @@ package com.example.busnew;
 
 import java.util.ArrayList;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -13,8 +14,10 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBar.Tab;
 import android.support.v7.app.ActionBar.TabListener;
 import android.support.v7.app.ActionBarActivity;
+import android.util.AttributeSet;
 import android.util.Log;
 import android.view.Menu;
+import android.view.View;
 
 import com.example.busnew.sub.FavoriteFragment;
 import com.example.busnew.sub.GMapFragment;
@@ -25,6 +28,7 @@ import com.google.android.gms.maps.model.LatLng;
 public class MainActivity extends ActionBarActivity implements TabListener,OnLocationInfoListener{
 
 	private ArrayList<Fragment> flist;
+	public static final String PREF_NAME = "save_station_num";
 
 	public enum MyTabs {
 		FAVORITE(0, "즐겨찾기"), STATION_LISTVIEW(1, "정류소"), GMAP(2, "맵");
@@ -63,7 +67,7 @@ public class MainActivity extends ActionBarActivity implements TabListener,OnLoc
 	 */
 
 	private void viewPagerSetting() {
-		vp = (ViewPager) findViewById(R.id.viewpager_main);
+		vp = (MainViewPager) findViewById(R.id.viewpager_main);
 		FragmentManager fm = getSupportFragmentManager();
 		flist = new ArrayList<Fragment>();
 
@@ -89,14 +93,7 @@ public class MainActivity extends ActionBarActivity implements TabListener,OnLoc
 
 			@Override
 			public void onPageSelected(int position) {
-				// PageIndex[] index = PageIndex.values();
-				// View view = findViewById(R.id.map);
-				// switch(index[position]){
-				// case MAP : view.setVisibility(View.VISIBLE);
-				// break;
-				// case LISTVIEW : view.setVisibility(View.INVISIBLE);
-				// break;
-				// }
+				getSupportActionBar().setSelectedNavigationItem(position);
 			}
 
 			@Override
@@ -169,4 +166,17 @@ public class MainActivity extends ActionBarActivity implements TabListener,OnLoc
 
 	}
 
+}
+
+class MainViewPager extends ViewPager{
+
+	public MainViewPager(Context context, AttributeSet attrs) {
+		super(context, attrs);
+	}
+	
+	@Override
+	protected boolean canScroll(View view, boolean checkV, int dx,
+			int x, int y) {
+		return true;
+	}
 }

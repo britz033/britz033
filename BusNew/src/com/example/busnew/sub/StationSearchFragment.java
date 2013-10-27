@@ -56,7 +56,7 @@ public class StationSearchFragment extends ListFragment implements LoaderCallbac
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 		
-		String[] from = {"station_number","station_name"};
+		String[] from = {"station_name","station_number"};
 		int[] to = {android.R.id.text1, android.R.id.text2};
 		
 		madapter = new SimpleCursorAdapter(context, android.R.layout.simple_expandable_list_item_2, null, from, to, 0);
