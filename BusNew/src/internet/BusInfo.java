@@ -11,7 +11,8 @@ import android.text.style.ForegroundColorSpan;
  * 도착까지 가까운지 여부, 번호, 시간 , 현재장소
  */
 public class BusInfo {
-	private static String station;
+//	private static String station;
+    private static String station;
 	private boolean soon;
 	private String busNum;
 	private String time;
@@ -22,6 +23,7 @@ public class BusInfo {
 		busNum="버스번호";
 		time="버스남은시간";
 		current="버스현재장소";
+		station="버스역";
 	}
 	
 	

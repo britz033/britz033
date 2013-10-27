@@ -3,7 +3,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical" 
-    android:background="@drawable/back01"
     >
     
     <android.support.v4.view.ViewPager
@@ -17,7 +16,7 @@
         android:layout_margin="10dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/abc_ab_bottom_solid_dark_holo"
+        android:text="버스정보"
         />
     
 

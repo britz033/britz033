@@ -19,6 +19,7 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
+import android.widget.Toast;
 
 import com.example.busnew.sub.FavoriteFragment;
 import com.example.busnew.sub.GMapFragment;
@@ -26,7 +27,8 @@ import com.example.busnew.sub.StationSearchFragment;
 import com.example.busnew.sub.StationSearchFragment.OnBusStationInfoListener;
 import com.google.android.gms.maps.model.LatLng;
 
-public class MainActivity extends ActionBarActivity implements TabListener,OnBusStationInfoListener{
+public class MainActivity extends ActionBarActivity implements TabListener,
+		OnBusStationInfoListener {
 
 	private ArrayList<Fragment> flist;
 	public static final String PREF_NAME = "save_station_num";
@@ -134,20 +136,29 @@ public class MainActivity extends ActionBarActivity implements TabListener,OnBus
 	@Override
 	public void OnBusStationInfo(String station_number, String station_name,
 			LatLng latLng) {
-		
-		
+
 		SharedPreferences setting = getSharedPreferences(PREF_NAME, 0);
 		SharedPreferences.Editor editor = setting.edit();
-		
+
 		editor.putString("station_number", station_number);
 		editor.putString("station_name", station_name);
 		editor.putString("station_latitude", String.valueOf(latLng.latitude));
 		editor.putString("station_longitude", String.valueOf(latLng.longitude));
 		editor.commit();
-		
+
 		this.station_number = station_number;
 		this.station_name = station_name;
-		this.latlng = latlng;
+		this.latlng = latLng;
+		
+		Toast.makeText(this, latLng.toString() +" 저장되었습니다", 0).show();
+		
+//		vp.setCurrentItem(MyTabs.GMAP.getValue(), true);
+//		((GMapFragment) flist.get(2)).setGMap(station_number, station_name,
+//				latlng);
+//		vp.requestTransparentRegion(vp);
+		
+
+		
 	}
 
 	@Override
@@ -181,11 +192,11 @@ public class MainActivity extends ActionBarActivity implements TabListener,OnBus
 	@Override
 	public void OnBusStationInfo(String station_number, String station_name) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
-	@Override
-	public void OnBtnClick() {
+	public void btnOnclick(View view) {
+		Toast.makeText(this, latlng.toString(), 0).show();
 		vp.setCurrentItem(MyTabs.GMAP.getValue(), true);
 		((GMapFragment) flist.get(2)).setGMap(station_number, station_name,
 				latlng);
@@ -194,15 +205,16 @@ public class MainActivity extends ActionBarActivity implements TabListener,OnBus
 
 }
 
-class MainViewPager extends ViewPager{
+class MainViewPager extends ViewPager {
 
 	public MainViewPager(Context context, AttributeSet attrs) {
 		super(context, attrs);
 	}
-	
+
 	@Override
-	protected boolean canScroll(View view, boolean checkV, int dx,
-			int x, int y) {
-		return true;
+	protected boolean canScroll(View view, boolean checkV, int dx, int x, int y) {
+		if(view instanceof ViewPager)
+			return true;
+		return false;
 	}
 }

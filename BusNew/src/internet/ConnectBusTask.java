@@ -64,6 +64,7 @@ public class ConnectBusTask extends AsyncTask<String, Integer, ArrayList<BusInfo
 	protected ArrayList<BusInfo> doInBackground(String... url) {
 		try {
 			urlConnect(url[0]);
+			Log.d("url",url[0]);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

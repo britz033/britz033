@@ -7,11 +7,13 @@ import java.util.ArrayList;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.text.SpannableStringBuilder;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,11 +21,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.busnew.MainActivity;
 import com.example.busnew.R;
-import com.example.busnew.sub.StationSearchFragment.OnBusStationInfoListener;
-import com.google.android.gms.maps.model.LatLng;
 
-public class FavoriteFragment extends Fragment implements OnBusStationInfoListener{
+public class FavoriteFragment extends Fragment{
 
 	public static final String BUS_URL = "http://businfo.daegu.go.kr/ba/arrbus/arrbus.do?act=findByBusStopNo&bsNm=";
 	Context context;
@@ -42,13 +43,14 @@ public class FavoriteFragment extends Fragment implements OnBusStationInfoListen
 		viewPagerSetting(view);
 		
 		tv = (TextView) view.findViewById(R.id.text_busdisplay);
+		
 		return view;
 	}
 	
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
-		
+		connectAndParseAndShow();
 		
 	}
 	
@@ -94,17 +96,13 @@ public class FavoriteFragment extends Fragment implements OnBusStationInfoListen
 		pager.setPageMargin(0);
 	}
 	
-
-	@Override
-	public void OnBusStationInfo(String station_number, String station_name) {
-		connectAndParseAndShow(station_number);
-	}
-	
 	// 버스전광판 웹사이트 연결, 파싱, 각각의 버스정보를 배열로 리턴
-	private void connectAndParseAndShow(String station_number) {
+	public void connectAndParseAndShow() {
+		
+		SharedPreferences setting = context.getSharedPreferences(MainActivity.PREF_NAME, 0);
+		String station_number = setting.getString("station_number", "error");
 		
 		ConnectBusTask asyncBus = new ConnectBusTask();
-		
 
 		if (asyncBus.isNetworkOn(getActivity())) {
 			if (station_number != null) {
@@ -120,12 +118,12 @@ public class FavoriteFragment extends Fragment implements OnBusStationInfoListen
 				if (busInfo != null) {
 
 					SpannableStringBuilder ssb = new SpannableStringBuilder();
+//					Log.d("버스역",BusInfo.getStation());
 
-					ssb.append("버스정류소 : ").append(BusInfo.getStation()).append("\n");
+//					ssb.append("버스정류소 : ").append(BusInfo.getStation()).append("\n");
 					for (BusInfo bus : busInfo) {
 						ssb.append(bus.getInfo());
 					}
-
 					tv.setText(ssb);
 				} else {
 					tv.setText("버스운행시간이 아니거나 홈페이지를 읽어오는데 문제가 발생하였습니다");
@@ -138,16 +136,4 @@ public class FavoriteFragment extends Fragment implements OnBusStationInfoListen
 		}
 	}
 
-	@Override
-	public void OnBusStationInfo(String station_number, String station_name,
-			LatLng latLng) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void OnBtnClick() {
-		// TODO Auto-generated method stub
-		
-	}
 }
