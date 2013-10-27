@@ -3,6 +3,7 @@ package com.example.busnew;
 import java.util.ArrayList;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -22,10 +23,10 @@ import android.view.View;
 import com.example.busnew.sub.FavoriteFragment;
 import com.example.busnew.sub.GMapFragment;
 import com.example.busnew.sub.StationSearchFragment;
-import com.example.busnew.sub.StationSearchFragment.OnLocationInfoListener;
+import com.example.busnew.sub.StationSearchFragment.OnBusStationInfoListener;
 import com.google.android.gms.maps.model.LatLng;
 
-public class MainActivity extends ActionBarActivity implements TabListener,OnLocationInfoListener{
+public class MainActivity extends ActionBarActivity implements TabListener,OnBusStationInfoListener{
 
 	private ArrayList<Fragment> flist;
 	public static final String PREF_NAME = "save_station_num";
@@ -128,7 +129,7 @@ public class MainActivity extends ActionBarActivity implements TabListener,OnLoc
 	}
 
 	@Override
-	public void OnLocationInfo(String station_number, String station_name,
+	public void OnBusStationInfo(String station_number, String station_name,
 			LatLng latLng) {
 		vp.setCurrentItem(MyTabs.GMAP.getValue(), true);
 		Log.d("onlocationinfo", station_number + "," + station_name + ","
@@ -136,6 +137,12 @@ public class MainActivity extends ActionBarActivity implements TabListener,OnLoc
 		((GMapFragment) flist.get(2)).setGMap(station_number, station_name,
 				latLng);
 		vp.requestTransparentRegion(vp);
+		
+		SharedPreferences setting = getSharedPreferences(PREF_NAME, 0);
+		SharedPreferences.Editor editor = setting.edit();
+		
+		editor.putString("station_number", station_number);
+		editor.commit();
 	}
 
 	@Override

@@ -32,8 +32,8 @@ public class StationSearchFragment extends ListFragment implements LoaderCallbac
 	private EditText et;
 	private Context context;
 	
-	public interface OnLocationInfoListener{
-		public void OnLocationInfo(String station_number, String station_name, LatLng latLng);
+	public interface OnBusStationInfoListener{
+		public void OnBusStationInfo(String station_number, String station_name, LatLng latLng);
 	}
 	
 	@Override
@@ -87,8 +87,8 @@ public class StationSearchFragment extends ListFragment implements LoaderCallbac
 //		builder.setView(iv);
 //		builder.create().show();
 		
-		OnLocationInfoListener saver = (OnLocationInfoListener) context;
-		saver.OnLocationInfo(station_number, station_name, new LatLng(station_latitude, station_longitude));
+		OnBusStationInfoListener saver = (OnBusStationInfoListener) context;
+		saver.OnBusStationInfo(station_number, station_name, new LatLng(station_latitude, station_longitude));
 	}
 	
 	class MyWatcher implements TextWatcher{
