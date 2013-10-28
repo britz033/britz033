@@ -16,11 +16,12 @@ public class BackHttpConnection {
 	
 	private InputStream is = null;
 
-	public BackHttpConnection(Context context, String url) {
+	public BackHttpConnection(Context context, String url) throws Exception{
 		// 기기의 인터넷사용여부 확인후 연결
-		if (!isNetworkOn(context)) {
+		if (isNetworkOn(context)) {
 			urlConnect(url);
-		}
+		} else 
+			throw new Exception("인터넷에 연결되지 않은 상태입니다");
 
 	}
 

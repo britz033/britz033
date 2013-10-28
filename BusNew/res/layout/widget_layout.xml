@@ -4,15 +4,15 @@
     android:layout_height="match_parent"
      >
     <TextView 
-        android:id="@+id/station"
+        android:id="@+id/widget_station"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="station"
         android:textSize="10sp"
         />
     <TextView 
-        android:layout_below="@+id/station"
-        android:id="@+id/busNum"
+        android:layout_below="@+id/widget_station"
+        android:id="@+id/widget_busNum"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="num"
@@ -20,9 +20,9 @@
         android:textSize="25sp"
         />
     <TextView 
-        android:layout_alignBaseline="@+id/busNum"
-        android:layout_toRightOf="@+id/busNum"
-        android:id="@+id/time"
+        android:layout_alignBaseline="@+id/widget_busNum"
+        android:layout_toRightOf="@+id/widget_busNum"
+        android:id="@+id/widget_time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="time"
@@ -30,9 +30,9 @@
         android:layout_marginRight="10dp"
         />
     <TextView 
-        android:layout_alignBaseline="@+id/busNum"
-        android:layout_toRightOf="@+id/time"
-        android:id="@+id/where"
+        android:layout_alignBaseline="@+id/widget_busNum"
+        android:layout_toRightOf="@+id/widget_time"
+        android:id="@+id/widget_where"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="where"
@@ -42,7 +42,7 @@
     <ImageButton 
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
-        android:id="@+id/reflesh"
+        android:id="@+id/widget_reflesh"
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:src="@drawable/button_selector"

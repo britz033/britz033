@@ -54,8 +54,8 @@ public class MainActivity extends ActionBarActivity implements TabListener,
 	}
 
 	private ViewPager vp;
-	private String station_number;
-	private String station_name;
+	private String stationNumber;
+	private String stationName;
 	private LatLng latlng;
 
 	@Override
@@ -147,8 +147,8 @@ public class MainActivity extends ActionBarActivity implements TabListener,
 		editor.putString("station_longitude", String.valueOf(latLng.longitude));
 		editor.commit();
 
-		this.station_number = station_number;
-		this.station_name = station_name;
+		this.stationNumber = station_number;
+		this.stationName = station_name;
 		this.latlng = latLng;
 		
 		Toast.makeText(this, latLng.toString() +" 저장되었습니다", 0).show();
@@ -199,7 +199,7 @@ public class MainActivity extends ActionBarActivity implements TabListener,
 	public void btnOnclick(View view) {
 		Toast.makeText(this, latlng.toString(), 0).show();
 		vp.setCurrentItem(MyTabs.GMAP.getValue(), true);
-		((GMapFragment) flist.get(2)).setGMap(station_number, station_name,
+		((GMapFragment) flist.get(2)).setGMap(stationNumber, stationName,
 				latlng);
 		vp.requestTransparentRegion(vp);
 	}
@@ -210,14 +210,20 @@ public class MainActivity extends ActionBarActivity implements TabListener,
 
 class MainViewPager extends ViewPager {
 
+	public MainViewPager(Context context) {
+		super(context);
+	}
 	public MainViewPager(Context context, AttributeSet attrs) {
 		super(context, attrs);
 	}
 
 	@Override
-	protected boolean canScroll(View view, boolean checkV, int dx, int x, int y) {
-		if(view instanceof ViewPager)
+	protected boolean canScroll(View view, boolean checkV, int arg2, int arg3,
+			int arg4) {
+		if(view != this && view instanceof ViewPager){
 			return true;
-		return false;
+		}
+		
+		return super.canScroll(view, checkV, arg2, arg3, arg4);
 	}
 }

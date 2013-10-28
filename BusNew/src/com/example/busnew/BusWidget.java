@@ -1,7 +1,8 @@
 package com.example.busnew;
 
 import internet.BusInfo;
-import internet.ConnectBusTask;
+import internet.BusInfoDownloaderTask;
+import internet.ResponseTask;
 
 import java.util.ArrayList;
 
@@ -15,82 +16,59 @@ import android.content.SharedPreferences;
 import android.util.Log;
 import android.widget.RemoteViews;
 
-public class BusWidget extends AppWidgetProvider {
+public class BusWidget extends AppWidgetProvider implements ResponseTask{
 
-	public static final String BUS_URL = "http://businfo.daegu.go.kr/ba/arrbus/arrbus.do?act=arrbus&winc_id=";
+	private Context context;
+	private AppWidgetManager appw;
+	private int[] ids;
 
 	public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
 		super.onUpdate(context, appWidgetManager, appWidgetIds);
 
 		SharedPreferences setting = context.getSharedPreferences(MainActivity.PREF_NAME, 0);
-		String number = setting.getString("station_number", "error");
+		String stationNumber = setting.getString("station_number", "error");
 		
-		Log.d("number", number);
-		ConnectBusTask asyncBus = new ConnectBusTask();
-		RemoteViews rv = new RemoteViews(context.getPackageName(), R.layout.widget_layout);
+		Log.d("number", stationNumber);
+		BusInfoDownloaderTask busInfoTask = new BusInfoDownloaderTask(context, stationNumber); // 정보얻기 위한 task 실행
+		// 테스크에서 소환한 인터페이스에 본클래스를 등록시켜서 저쪽이 이쪽을 호출 가능하도록 함.. 아래 onTaskFinish 가 그거
+		busInfoTask.proxy = this;
+		busInfoTask.execute();
 		
-		if (asyncBus.isNetworkOn(context) && !number.equals("error")) {
-			asyncBus.execute(BUS_URL + number);
-			ArrayList<BusInfo> busInfo = null;
-			try {
-				busInfo = asyncBus.get();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-
-			// 전 위젯을 강제로 업데이트
-			// ComponentName thisWidget = new ComponentName(context,
-			// BusWidget.class);
-			// int[] allWidgetIds =
-			// appWidgetManager.getAppWidgetIds(thisWidget);
-
-			// 업데이트할 필요가 있는 위젯만 업데이트
-			// onUpdate 의 appWidgetIds 는 업데이트 할 필요가 있는 위젯의 id만 가져옴
-			// 전체가 될 수도 있고 1개가 될 수도 있음.
-			// 그리고 처음 배치시에는 마지막으로 배치시키는 위젯 한개의 id만 가져옴. (나머진 방치)
-
-			// for (int widgetId : appWidgetIds) {
-
-			// Log.d("====widgetId===",""+widgetId);
-
-			if (busInfo != null) {
-				// 일단 첫번째 버스만 출력, 이후 원하는 버스번호만 골라서 출력하게 할거임.
-
-				BusInfo bus = busInfo.get(busInfo.size() - 1);
-
-				rv.setTextViewText(R.id.station, BusInfo.getStation());
-				rv.setTextViewText(R.id.busNum, bus.getBusNum());
-				rv.setTextViewText(R.id.time, bus.getTime());
-				rv.setTextViewText(R.id.where, bus.getCurrent());
-			} else {
-				rv.setTextViewText(R.id.busNum, "버스운영시간이 아니거나 홈페이지에 장애가 발생하였습니다");
-			}
-
-			// appWidgetManager.updateAppWidget(widgetId, rv);
-
-			// }
-
-			// appWidgetManager.updateAppWidget(appWidgetIds, rv);
-
-			
-		} else {
-			rv.setTextViewText(R.id.busNum, "인터넷 연결이 되어 있지 않습니다");
-		}
+		// 이후의 처리문은 혹시 싱크가 안맞을 것을 대비해서 onTaskfinish가 호출되고 난뒤부터 처리되게 함.. 그 함수에 넣는 다는 소리
+		// 그걸 위해서 일단 변수들을 다 옮김
+		this.context = context;
+		appw = appWidgetManager;
+		ids = appWidgetIds;
 		
-		Intent refleshIntent = new Intent(context, BusWidget.class);
-		refleshIntent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
-		refleshIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, appWidgetIds);
-		PendingIntent pending = PendingIntent.getBroadcast(context, 0, refleshIntent,
-				PendingIntent.FLAG_UPDATE_CURRENT);
-
-		rv.setOnClickPendingIntent(R.id.reflesh, pending);
-		
-		// 그냥 componentName 쓰면 위의 for문따윈 없어도 모조리 업데이트
-		appWidgetManager.updateAppWidget(new ComponentName(context, BusWidget.class), rv);
 	}
 
 	@Override
 	public void onReceive(Context context, Intent intent) {
 		super.onReceive(context, intent);
+	}
+
+	// 여기가 주력, 결과값과 함께 혹시나의 에러값
+	@Override
+	public void onTaskFinish(ArrayList<BusInfo> buslist, String error) {
+		RemoteViews rv = new RemoteViews(context.getPackageName(), R.layout.widget_layout);
+		if(error == null){
+			
+			// 일단 0, 후에 아예 즐겨찾기된것만 되게 바꿀거임
+			BusInfo bus = buslist.get(0);
+			rv.setTextViewText(R.id.widget_busNum, bus.getBusNum());
+			rv.setTextViewText(R.id.widget_time, bus.getTime());
+			rv.setTextViewText(R.id.widget_where, bus.getCurrent());
+			rv.setTextViewText(R.id.widget_station, bus.getStation());
+			
+			Intent intent = new Intent(context, BusWidget.class);
+			intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
+			PendingIntent pd = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+			rv.setOnClickPendingIntent(R.id.widget_reflesh, pd);
+			
+		} else {
+			rv.setTextViewText(R.id.widget_busNum, error);
+		}
+		
+		appw.updateAppWidget(new ComponentName(context, BusWidget.class), rv);
 	}
 }

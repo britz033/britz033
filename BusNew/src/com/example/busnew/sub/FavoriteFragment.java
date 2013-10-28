@@ -1,7 +1,7 @@
 package com.example.busnew.sub;
 
 import internet.BusInfo;
-import internet.ConnectBusTask;
+import internet.BusInfoDownloaderTask;
 import internet.ResponseTask;
 
 import java.util.ArrayList;
@@ -14,20 +14,17 @@ import android.support.v4.app.Fragment;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.text.SpannableStringBuilder;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.busnew.MainActivity;
 import com.example.busnew.R;
 
 public class FavoriteFragment extends Fragment implements ResponseTask{
 
-	public static final String BUS_STATION_SEARCH_URL = "http://businfo.daegu.go.kr/ba/arrbus/arrbus.do?act=findByBusStopNo&bsNm=";
 	Context context;
 	TextView tv;
 	
@@ -51,8 +48,16 @@ public class FavoriteFragment extends Fragment implements ResponseTask{
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
-		connectAndParseAndShow();
+		SharedPreferences sp = context.getSharedPreferences(MainActivity.PREF_NAME, 0);
+		String stationNum = sp.getString("station_bus", "xxx");
+		if(stationNum.equals("xxx")){
+			
+		}
 		
+		BusInfoDownloaderTask busInfoTask = new BusInfoDownloaderTask(context, stationNum);
+		busInfoTask.execute();
+		
+		busInfoTask.proxy = this;
 	}
 	
 	
@@ -99,49 +104,20 @@ public class FavoriteFragment extends Fragment implements ResponseTask{
 
 	// 인터넷에서 버스정보 가져오기 작업이 끝났을대 호출되는 인터페이스
 	@Override
-	public void onTaskFinish(ArrayList<BusInfo> list) {
-		
-	}
-	// 버스전광판 웹사이트 연결, 파싱, 각각의 버스정보를 배열로 리턴
-	public void connectAndParseAndShow() {
-		
-		SharedPreferences setting = context.getSharedPreferences(MainActivity.PREF_NAME, 0);
-		String station_number = setting.getString("station_number", "error");
-		
-		BusInfoDownloaderTask asyncBus = new BusInfoDownloaderTask(context,BUS_STATION_SEARCH_URL);
+	public void onTaskFinish(ArrayList<BusInfo> list, String error) {
+		SpannableStringBuilder ssb = new SpannableStringBuilder();
 
-		if (asyncBus.isNetworkOn(getActivity())) {
-			if (station_number != null) {
-				asyncBus.execute(BUS_URL + station_number);
-				ArrayList<BusInfo> busInfo = null;
-				try {
-					busInfo = asyncBus.get();
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-
-				// ArrayList<BusInfo> busInfo 정보를 뿌림
-				if (busInfo != null) {
-
-					SpannableStringBuilder ssb = new SpannableStringBuilder();
-//					Log.d("버스역",BusInfo.getStation());
-
-//					ssb.append("버스정류소 : ").append(BusInfo.getStation()).append("\n");
-					for (BusInfo bus : busInfo) {
-						ssb.append(bus.getInfo());
-					}
-					tv.setText(ssb);
-				} else {
-					tv.setText("버스운행시간이 아니거나 홈페이지를 읽어오는데 문제가 발생하였습니다");
-				}
-			} else {
-				Toast.makeText(context, "정류소를 선택해주세요", Toast.LENGTH_SHORT).show();
-			}
+		if(error == null && list !=null){
+			ssb.append("버스정류소 : ").append(list.get(0).getStation())
+					.append("\n");
+		for (BusInfo bus : list) {
+			ssb.append(bus.getSpannableStringBusInfo());
+		}
+		tv.setText(ssb);
 		} else {
-			Toast.makeText(context, "네트워크에 연결되어 있지 않습니다", Toast.LENGTH_SHORT).show();
+			tv.setText(error);
 		}
 	}
-
 	
 
 }

@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import org.xmlpull.v1.XmlPullParser;
 
 import android.util.Log;
+import android.widget.Toast;
 
 /*
  * <div class="arrlist">
@@ -57,8 +58,9 @@ public class BusStationParsing {
 						} else if (attr.equals("nm")) {
 							bus.setSoon(false);
 						} else {
+							Log.d("dddddddddd","ddddddddddddd");
 							busInfoArray = null;
-							return;
+							throw new Exception("버스운행시간이 아니거나 홈페이지에 장애가 있습니다");
 						}
 
 						nextCount(parser, 3);
