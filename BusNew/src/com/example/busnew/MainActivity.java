@@ -1,5 +1,8 @@
 package com.example.busnew;
 
+import internet.BusInfo;
+import internet.ResponseTask;
+
 import java.util.ArrayList;
 
 import android.content.Context;
@@ -28,7 +31,7 @@ import com.example.busnew.sub.StationSearchFragment.OnBusStationInfoListener;
 import com.google.android.gms.maps.model.LatLng;
 
 public class MainActivity extends ActionBarActivity implements TabListener,
-		OnBusStationInfoListener {
+		OnBusStationInfoListener, ResponseTask {
 
 	private ArrayList<Fragment> flist;
 	public static final String PREF_NAME = "save_station_num";
@@ -201,6 +204,11 @@ public class MainActivity extends ActionBarActivity implements TabListener,
 		((GMapFragment) flist.get(2)).setGMap(station_number, station_name,
 				latlng);
 		vp.requestTransparentRegion(vp);
+	}
+
+	@Override
+	public void onTaskFinish(ArrayList<BusInfo> list) {
+		// 태스크 완료 결과를 버스정보 프래그먼트로 보낸다. 
 	}
 
 }

@@ -26,7 +26,7 @@ import com.example.busnew.R;
 
 public class FavoriteFragment extends Fragment{
 
-	public static final String BUS_URL = "http://businfo.daegu.go.kr/ba/arrbus/arrbus.do?act=findByBusStopNo&bsNm=";
+	public static final String BUS_STATION_SEARCH_URL = "http://businfo.daegu.go.kr/ba/arrbus/arrbus.do?act=findByBusStopNo&bsNm=";
 	Context context;
 	TextView tv;
 	
@@ -102,7 +102,7 @@ public class FavoriteFragment extends Fragment{
 		SharedPreferences setting = context.getSharedPreferences(MainActivity.PREF_NAME, 0);
 		String station_number = setting.getString("station_number", "error");
 		
-		ConnectBusTask asyncBus = new ConnectBusTask();
+		BusInfoDownloaderTask asyncBus = new BusInfoDownloaderTask(context,BUS_STATION_SEARCH_URL);
 
 		if (asyncBus.isNetworkOn(getActivity())) {
 			if (station_number != null) {
