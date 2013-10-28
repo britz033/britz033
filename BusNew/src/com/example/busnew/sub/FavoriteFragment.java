@@ -2,6 +2,7 @@ package com.example.busnew.sub;
 
 import internet.BusInfo;
 import internet.ConnectBusTask;
+import internet.ResponseTask;
 
 import java.util.ArrayList;
 
@@ -24,7 +25,7 @@ import android.widget.Toast;
 import com.example.busnew.MainActivity;
 import com.example.busnew.R;
 
-public class FavoriteFragment extends Fragment{
+public class FavoriteFragment extends Fragment implements ResponseTask{
 
 	public static final String BUS_STATION_SEARCH_URL = "http://businfo.daegu.go.kr/ba/arrbus/arrbus.do?act=findByBusStopNo&bsNm=";
 	Context context;
@@ -95,7 +96,12 @@ public class FavoriteFragment extends Fragment{
 		pager.setClipChildren(false);
 		pager.setPageMargin(0);
 	}
-	
+
+	// 인터넷에서 버스정보 가져오기 작업이 끝났을대 호출되는 인터페이스
+	@Override
+	public void onTaskFinish(ArrayList<BusInfo> list) {
+		
+	}
 	// 버스전광판 웹사이트 연결, 파싱, 각각의 버스정보를 배열로 리턴
 	public void connectAndParseAndShow() {
 		
@@ -135,5 +141,7 @@ public class FavoriteFragment extends Fragment{
 			Toast.makeText(context, "네트워크에 연결되어 있지 않습니다", Toast.LENGTH_SHORT).show();
 		}
 	}
+
+	
 
 }

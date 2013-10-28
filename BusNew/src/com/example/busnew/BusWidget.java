@@ -38,8 +38,6 @@ public class BusWidget extends AppWidgetProvider {
 				e.printStackTrace();
 			}
 
-			
-
 			// 전 위젯을 강제로 업데이트
 			// ComponentName thisWidget = new ComponentName(context,
 			// BusWidget.class);

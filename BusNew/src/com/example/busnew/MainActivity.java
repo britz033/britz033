@@ -1,8 +1,5 @@
 package com.example.busnew;
 
-import internet.BusInfo;
-import internet.ResponseTask;
-
 import java.util.ArrayList;
 
 import android.content.Context;
@@ -31,10 +28,11 @@ import com.example.busnew.sub.StationSearchFragment.OnBusStationInfoListener;
 import com.google.android.gms.maps.model.LatLng;
 
 public class MainActivity extends ActionBarActivity implements TabListener,
-		OnBusStationInfoListener, ResponseTask {
+		OnBusStationInfoListener {
 
-	private ArrayList<Fragment> flist;
-	public static final String PREF_NAME = "save_station_num";
+	
+	private ArrayList<Fragment> flist; 			// 액티비티가 관리하는 애들
+	public static final String PREF_NAME = "save_station_num";	// SharedPreferance 키값
 
 	public enum MyTabs {
 		FAVORITE(0, "즐겨찾기"), STATION_LISTVIEW(1, "정류소"), GMAP(2, "맵");
@@ -206,10 +204,7 @@ public class MainActivity extends ActionBarActivity implements TabListener,
 		vp.requestTransparentRegion(vp);
 	}
 
-	@Override
-	public void onTaskFinish(ArrayList<BusInfo> list) {
-		// 태스크 완료 결과를 버스정보 프래그먼트로 보낸다. 
-	}
+	
 
 }
 
