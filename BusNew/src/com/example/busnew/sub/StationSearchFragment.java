@@ -32,10 +32,10 @@ public class StationSearchFragment extends ListFragment implements LoaderCallbac
 	private EditText et;
 	private Context context;
 	
-	public interface OnBusStationInfoListener{
-		public void OnBusStationInfo(String station_number, String station_name, LatLng latLng);
-		public void OnBusStationInfo(String station_number, String station_name);
-	}
+//	public interface OnBusStationInfoListener{
+//		public void OnBusStationInfo(String station_number, String station_name, LatLng latLng);
+//		public void OnBusStationInfo(String station_number, String station_name);
+//	}
 	
 	@Override
 	public void onAttach(Activity activity) {
@@ -58,14 +58,13 @@ public class StationSearchFragment extends ListFragment implements LoaderCallbac
 		super.onActivityCreated(savedInstanceState);
 		
 		//station_bus_favorit 도 있음
-		String[] from = {"station_name","station_number"};
-		int[] to = {R.id.item_station_name, R.id.item_station_number};
+		String[] from = {"station_number","station_name"};
+		int[] to = {R.id.item_station_number, R.id.item_station_name};
 //		String[] from = {"station_name","station_number", "station_favorite"};
 //		int[] to = {R.id.item_station_name, R.id.item_station_number, R.id.item_favorite_check};
 		
 		madapter = new SimpleCursorAdapter(context, R.layout.list_item_layout, null, from, to, 0);
 		setListAdapter(madapter);
-		
 		getLoaderManager().initLoader(0, null, this);
 	}
 	
@@ -126,7 +125,7 @@ public class StationSearchFragment extends ListFragment implements LoaderCallbac
 		Uri baseUri = MyContentProvider.CONTENT_URI;
 		
 		// _id 안넣으면 에러 슈바
-		String[] projection = {"_id","station_number","station_name","station_latitude","station_longitude", "station_favorite"};
+		String[] projection = {"_id","station_number","station_name","station_latitude","station_longitude"};
 		String selection = null;
 		if(args != null){
 				selection = "station_name like '%" + args.getString("key") +"%'";

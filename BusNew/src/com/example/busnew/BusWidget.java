@@ -15,6 +15,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.util.Log;
 import android.widget.RemoteViews;
+import android.widget.Toast;
 
 public class BusWidget extends AppWidgetProvider implements ResponseTask{
 
@@ -25,6 +26,8 @@ public class BusWidget extends AppWidgetProvider implements ResponseTask{
 	public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
 		super.onUpdate(context, appWidgetManager, appWidgetIds);
 
+		Toast.makeText(context, "위젯이 업데이트 되었습니다", 0).show();
+		
 		SharedPreferences setting = context.getSharedPreferences(MainActivity.PREF_NAME, 0);
 		String stationNumber = setting.getString("station_number", "error");
 		
@@ -42,10 +45,6 @@ public class BusWidget extends AppWidgetProvider implements ResponseTask{
 		
 	}
 
-	@Override
-	public void onReceive(Context context, Intent intent) {
-		super.onReceive(context, intent);
-	}
 
 	// 여기가 주력, 결과값과 함께 혹시나의 에러값
 	@Override
@@ -62,7 +61,8 @@ public class BusWidget extends AppWidgetProvider implements ResponseTask{
 			
 			Intent intent = new Intent(context, BusWidget.class);
 			intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
-			PendingIntent pd = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+			intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids);
+			PendingIntent pd = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 			rv.setOnClickPendingIntent(R.id.widget_reflesh, pd);
 			
 		} else if(error != null){

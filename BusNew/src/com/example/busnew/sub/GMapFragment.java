@@ -27,13 +27,16 @@ import com.example.busnew.R;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-public class GMapFragment extends Fragment implements CallFragmentMethod,LoaderCallbacks<Cursor> {
+public class GMapFragment extends Fragment implements CallFragmentMethod,
+		LoaderCallbacks<Cursor>, OnMarkerClickListener {
 
 	private SupportMapFragment mapFragment;
 	private Context context;
@@ -97,7 +100,7 @@ public class GMapFragment extends Fragment implements CallFragmentMethod,LoaderC
 
 	}
 
-	// 생성될때가 아니라 자신이 선택될때 불려진다. 
+	// 생성될때가 아니라 자신이 선택될때 불려진다.
 	// 인터페이스로 메인 ViewPager의 OnPageChangeListener 에서 호출한다.
 	@Override
 	public void OnCalled() {
@@ -115,9 +118,9 @@ public class GMapFragment extends Fragment implements CallFragmentMethod,LoaderC
 					wait.dismiss();
 					myLatLng = new LatLng(location.getLatitude(),
 							location.getLongitude());
-					map.animateCamera(CameraUpdateFactory.newLatLngZoom(myLatLng,
-							17));
-					
+					map.animateCamera(CameraUpdateFactory.newLatLngZoom(
+							myLatLng, 17));
+
 					getLoaderManager().initLoader(0, null, GMapFragment.this);
 				}
 			}
@@ -128,43 +131,55 @@ public class GMapFragment extends Fragment implements CallFragmentMethod,LoaderC
 
 	@Override
 	public Loader<Cursor> onCreateLoader(int id, Bundle arg1) {
-		Log.d("onCreateLoader","called");
-		
+		Log.d("onCreateLoader", "called");
+
 		Uri uri = MyContentProvider.CONTENT_URI;
-		
-		final double bound = 0.005; 
+
+		final double bound = 0.005;
 		double maxlat = myLatLng.latitude + bound;
 		double minlat = myLatLng.latitude - bound;
 		double maxlnt = myLatLng.longitude + bound;
 		double minlnt = myLatLng.longitude - bound;
-		
-		String[] projection = {"_id","station_number","station_name", "station_latitude", "station_longitude"};
-		String selection = "(station_latitude BETWEEN " + minlat + " AND " + maxlat +
-				") AND (station_longitude BETWEEN " + minlnt + " AND " + maxlnt +")";
-		
+
+		String[] projection = { "_id", "station_number", "station_name",
+				"station_latitude", "station_longitude" };
+		String selection = "(station_latitude BETWEEN " + minlat + " AND "
+				+ maxlat + ") AND (station_longitude BETWEEN " + minlnt
+				+ " AND " + maxlnt + ")";
+
 		return new CursorLoader(context, uri, projection, selection, null, null);
 	}
 
 	@Override
 	public void onLoadFinished(Loader<Cursor> loader, Cursor c) {
-		Log.d("onLoadFininshed","called");
-		
+		Log.d("onLoadFininshed", "called");
+
 		// 기존의 cursor를 그대로 불러오기 때문에 시작시 반드시 커서위치를 처음으로 되돌려줘야함
 		c.moveToFirst();
 		Log.d("counter", String.valueOf(c.getCount()));
-		for(int i=0; i<c.getCount(); i++){
-			String station_number = c.getString(1); 
-			String station_name = c.getString(2); 
-			double station_latitude = c.getDouble(3); 
-			double station_longitude = c.getDouble(4); 
-			LatLng boundLatLng = new LatLng(station_latitude, station_longitude); 
+		for (int i = 0; i < c.getCount(); i++) {
+			String station_number = c.getString(1);
+			String station_name = c.getString(2);
+			double station_latitude = c.getDouble(3);
+			double station_longitude = c.getDouble(4);
+			LatLng boundLatLng = new LatLng(station_latitude, station_longitude);
 			c.moveToNext();
-			map.addMarker(new MarkerOptions().title(station_name).snippet(station_number).position(boundLatLng));
+			map.addMarker(new MarkerOptions().title(station_name)
+					.snippet(station_number).position(boundLatLng));
+			map.setOnMarkerClickListener(this);
 		}
 	}
 
 	@Override
 	public void onLoaderReset(Loader<Cursor> loader) {
-		Log.d("loaderReset","called");
+		Log.d("loaderReset", "called");
+	}
+
+	@Override
+	public boolean onMarkerClick(Marker marker) {
+		OnBusStationInfoListener saver = (OnBusStationInfoListener) context;
+		saver.OnBusStationInfo(marker.getSnippet(), marker.getTitle(), new LatLng(
+				0, 0));
+		return false;
 	}
 }

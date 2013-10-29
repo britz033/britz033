@@ -21,11 +21,8 @@ import android.view.Menu;
 import android.view.View;
 import android.widget.Toast;
 
-import com.example.busnew.sub.BusNumberSearchFragment;
-import com.example.busnew.sub.FavoriteFragment;
 import com.example.busnew.sub.GMapFragment;
-import com.example.busnew.sub.StationSearchFragment;
-import com.example.busnew.sub.StationSearchFragment.OnBusStationInfoListener;
+import com.example.busnew.sub.OnBusStationInfoListener;
 import com.google.android.gms.maps.model.LatLng;
 
 public class MainActivity extends ActionBarActivity implements TabListener,
@@ -43,7 +40,7 @@ public class MainActivity extends ActionBarActivity implements TabListener,
 		STATION_LISTVIEW(1, "정류소", "com.example.busnew.sub.StationSearchFragment"), 
 		BUS_LISTVIEW(2, "버스", "com.example.busnew.sub.BusNumberSearchFragment"), 
 		GMAP(3, "주변맵", "com.example.busnew.sub.GMapFragment"),
-		DUMMY(4, "더미", "com.example.busnew.sub.BusNumberSearchFragment");
+		DUMMY(4, "설정", "com.example.busnew.sub.BusNumberSearchFragment");
 		private final String name;
 		private final String fragmentName;
 		private final int num;
@@ -205,7 +202,7 @@ public class MainActivity extends ActionBarActivity implements TabListener,
 	// gmap 탭 호출
 	public void btnOnclick(View view) {
 		int index = MyTabs.GMAP.getValue();		// gmap탭의 번호를 가져온다
-		Toast.makeText(this, latlng.toString(), 0).show();
+//		Toast.makeText(this, latlng.toString(), 0).show();
 		vp.setCurrentItem(index, true);
 		((GMapFragment) flist.get(index)).setGMap(stationNumber, stationName,
 				latlng);
