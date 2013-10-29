@@ -31,6 +31,9 @@ import com.google.android.gms.maps.model.LatLng;
 public class MainActivity extends ActionBarActivity implements TabListener,
 		OnBusStationInfoListener {
 
+	public interface CallFragmentMethod{
+		public void OnCalled();
+	}
 	
 	private ArrayList<Fragment> flist; 			// 액티비티가 관리하는 애들
 	public static final String PREF_NAME = "save_station_num";	// SharedPreferance 키값
@@ -112,7 +115,7 @@ public class MainActivity extends ActionBarActivity implements TabListener,
 				return flist.get(position);
 			}
 		});
-
+		
 		vp.requestTransparentRegion(vp);
 
 		vp.setOnPageChangeListener(new OnPageChangeListener() {
@@ -120,6 +123,10 @@ public class MainActivity extends ActionBarActivity implements TabListener,
 			@Override
 			public void onPageSelected(int position) {
 				getSupportActionBar().setSelectedNavigationItem(position);
+				if(MyTabs.GMAP.getValue() == position){
+					CallFragmentMethod call = (CallFragmentMethod)flist.get(position);
+					call.OnCalled();
+				}
 			}
 
 			@Override

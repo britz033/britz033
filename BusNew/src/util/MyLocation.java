@@ -8,6 +8,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 
 public class MyLocation {
@@ -16,9 +17,12 @@ public class MyLocation {
     LocationResult locationResult;
     boolean gps_enabled=false;
     boolean network_enabled=false;
+    Location last;
+    Handler handler;
 
-    public boolean getLocation(Context context, LocationResult result)
+    public boolean getLocation(Context context, LocationResult result,Handler handler)
     {
+    	this.handler = handler;
         //I use LocationResult callback class to pass location value from MyLocation to user code.
         locationResult=result;
         if(lm==null)
@@ -38,7 +42,7 @@ public class MyLocation {
             lm.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListenerNetwork);
         
         timer1=new Timer();
-        timer1.schedule(new GetLastLocation(), 20000);
+        timer1.schedule(new GetLastLocation(), 5000);
         return true;
     }
 
@@ -74,30 +78,37 @@ public class MyLocation {
              lm.removeUpdates(locationListenerGps);
              lm.removeUpdates(locationListenerNetwork);
 
-             Location net_loc=null, gps_loc=null;
-             if(gps_enabled)
-                 gps_loc=lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-             if(network_enabled)
-                 net_loc=lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+             handler.post(new Runnable() {
+				
+				@Override
+				public void run() {
+					Location net_loc=null, gps_loc=null;
+		             if(gps_enabled)
+		                 gps_loc=lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+		             if(network_enabled)
+		                 net_loc=lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
 
-             //if there are both values use the latest one
-             if(gps_loc!=null && net_loc!=null){
-                 if(gps_loc.getTime()>net_loc.getTime())
-                     locationResult.gotLocation(gps_loc);
-                 else
-                     locationResult.gotLocation(net_loc);
-                 return;
-             }
+		             //if there are both values use the latest one
+		             if(gps_loc!=null && net_loc!=null){
+		                 if(gps_loc.getTime()>net_loc.getTime())
+		                     locationResult.gotLocation(gps_loc);
+		                 else
+		                     locationResult.gotLocation(net_loc);
+		                 return;
+		             }
 
-             if(gps_loc!=null){
-                 locationResult.gotLocation(gps_loc);
-                 return;
-             }
-             if(net_loc!=null){
-                 locationResult.gotLocation(net_loc);
-                 return;
-             }
-             locationResult.gotLocation(null);
+		             if(gps_loc!=null){
+		                 locationResult.gotLocation(gps_loc);
+		                 return;
+		             }
+		             if(net_loc!=null){
+		                 locationResult.gotLocation(net_loc);
+		                 return;
+		             }
+		             locationResult.gotLocation(null);
+				}
+			});
+             
         }
     }
 

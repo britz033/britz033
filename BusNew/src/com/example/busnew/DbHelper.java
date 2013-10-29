@@ -7,9 +7,12 @@ import java.io.InputStream;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.os.Bundle;
+import android.support.v4.app.LoaderManager.LoaderCallbacks;
+import android.support.v4.content.Loader;
 import android.util.Log;
 
-class DbHelper extends SQLiteOpenHelper {
+class DbHelper extends SQLiteOpenHelper{
 
 	public static final String DB_NAME = "StationDB";
 	Context mcontext;
@@ -65,4 +68,5 @@ class DbHelper extends SQLiteOpenHelper {
 		}
 		Log.d("copyDB", "complete");
 	}
+
 }
