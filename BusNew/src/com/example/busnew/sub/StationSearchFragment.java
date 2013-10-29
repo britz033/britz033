@@ -126,7 +126,7 @@ public class StationSearchFragment extends ListFragment implements LoaderCallbac
 		Uri baseUri = MyContentProvider.CONTENT_URI;
 		
 		// _id 안넣으면 에러 슈바
-		String[] projection = {"_id","station_number","station_name","station_latitude","station_longitude"};
+		String[] projection = {"_id","station_number","station_name","station_latitude","station_longitude", "station_favorite"};
 		String selection = null;
 		if(args != null){
 				selection = "station_name like '%" + args.getString("key") +"%'";
