@@ -138,7 +138,7 @@ public class GMapFragment extends Fragment implements CallFragmentMethod,LoaderC
 		double maxlnt = myLatLng.longitude + bound;
 		double minlnt = myLatLng.longitude - bound;
 		
-		String[] projection = {"_id","station_number","station_name", "station_latitude", "station_longitude"};
+		String[] projection = {"_id","station_number","station_name", "station_latitude", "station_longitude", "station_favorite"};
 		String selection = "(station_latitude BETWEEN " + minlat + " AND " + maxlat +
 				") AND (station_longitude BETWEEN " + minlnt + " AND " + maxlnt +")";
 		

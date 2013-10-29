@@ -57,10 +57,13 @@ public class StationSearchFragment extends ListFragment implements LoaderCallbac
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 		
+		//station_bus_favorit 도 있음
 		String[] from = {"station_name","station_number"};
-		int[] to = {android.R.id.text1, android.R.id.text2};
+		int[] to = {R.id.item_station_name, R.id.item_station_number};
+//		String[] from = {"station_name","station_number", "station_favorite"};
+//		int[] to = {R.id.item_station_name, R.id.item_station_number, R.id.item_favorite_check};
 		
-		madapter = new SimpleCursorAdapter(context, android.R.layout.simple_expandable_list_item_2, null, from, to, 0);
+		madapter = new SimpleCursorAdapter(context, R.layout.list_item_layout, null, from, to, 0);
 		setListAdapter(madapter);
 		
 		getLoaderManager().initLoader(0, null, this);
@@ -136,12 +139,6 @@ public class StationSearchFragment extends ListFragment implements LoaderCallbac
 	public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
 		madapter.swapCursor(cursor);
 		
-		// 에러남.. 커스텀 리스트뷰 레이아웃에는 안되나봄.. 
-//		if(isResumed()){
-//			setListShown(true);
-//		} else {
-//			setListShownNoAnimation(true);
-//		}
 	}
 
 	@Override
