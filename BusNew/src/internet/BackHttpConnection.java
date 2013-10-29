@@ -17,7 +17,8 @@ public class BackHttpConnection {
 	private InputStream is = null;
 
 	public BackHttpConnection(Context context, String url) throws Exception{
-		// 기기의 인터넷사용여부 확인후 연결
+		
+//		 기기의 인터넷사용여부 확인후 연결
 		if (isNetworkOn(context)) {
 			urlConnect(url);
 		} else 

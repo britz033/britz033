@@ -17,7 +17,6 @@ import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.Toast;
 
-
 /*
  * BackHttpConnection, BackXmlParser,BusStationParsing  클래스로
  * 각각 인터넷 연결, xml 파싱, 파싱된 데이터 처리를 담당한다. 
@@ -27,8 +26,7 @@ import android.widget.Toast;
  */
 public class BusInfoDownloaderTask extends
 		AsyncTask<String, Integer, ArrayList<BusInfo>> {
-	ArrayList<BusInfo> busInfoArray;
-	
+
 	public static final String BUS_URL = "http://businfo.daegu.go.kr/ba/arrbus/arrbus.do?act=arrbus&winc_id=";
 
 	private Context context;
@@ -36,37 +34,40 @@ public class BusInfoDownloaderTask extends
 	private ProgressDialog wait;
 	private String errorMessage = null;
 	public ResponseTask proxy = null;
-	
 
-	public BusInfoDownloaderTask(Context context, String station_number) {
+	public BusInfoDownloaderTask(Context context, String stationNumber) {
 		wait = ProgressDialog.show(context, null, "잠시만 기다려주세요", true);
 		this.context = context;
-		this.stationNumber = station_number;
+		this.stationNumber = stationNumber;
 	}
 
 	@Override
 	protected ArrayList<BusInfo> doInBackground(String... s) {
 		ArrayList<BusInfo> busInfoList = new ArrayList<BusInfo>();
 		
-		try{
-		InputStream is = new BackHttpConnection(context, BUS_URL + stationNumber).getInputStream();
-		XmlPullParser parser = new BackXmlParser(is, "euc-kr").getParser();
-		BusStationParsing parsingWork = new BusStationParsing(parser, busInfoList);
-		}catch(Exception e){
+		try {
+			Log.d("BUS_URL + stationNumber", BUS_URL + stationNumber);
+			InputStream is = new BackHttpConnection(context, BUS_URL
+					+ stationNumber).getInputStream();
+			XmlPullParser parser = new BackXmlParser(is, "euc-kr").getParser();
+			BusStationParsing parsingWork = new BusStationParsing(parser,
+					busInfoList);
+		} catch (Exception e) {
 			errorMessage = e.getMessage();
-			Toast.makeText(context, ""+errorMessage, 0).show();
 		}
-		return busInfoArray;
+		return busInfoList;
 	}
-	
+
 	@Override
 	protected void onPostExecute(ArrayList<BusInfo> result) {
 		super.onPostExecute(result);
-		
+
+		if(result == null){
+			Log.d("BusInfoDownLoaderTask.onPostExecute", "결과값이 null");
+		}
 		proxy.onTaskFinish(result, errorMessage);
 		wait.dismiss();
-		
-	}
 
+	}
 
 }

@@ -1,7 +1,5 @@
 package internet;
 
-import lombok.Getter;
-import lombok.Setter;
 import android.graphics.Color;
 import android.text.Spannable;
 import android.text.SpannableString;
@@ -12,7 +10,7 @@ import android.text.style.ForegroundColorSpan;
  * 각 버스들 정보
  * 도착까지 가까운지 여부, 번호, 시간 , 현재장소
  */
-public @Getter @Setter class BusInfo {
+public class BusInfo {
     private String station;
 	private boolean soon;
 	private String busNum;
@@ -41,5 +39,45 @@ public @Getter @Setter class BusInfo {
 	    spb.append("\n");
 	    
 		return spb;
+	}
+	
+	public String getStation() {
+		return station;
+	}
+
+	public void setStation(String station) {
+		this.station = station;
+	}
+
+	public boolean isSoon() {
+		return soon;
+	}
+
+	public void setSoon(boolean soon) {
+		this.soon = soon;
+	}
+
+	public String getBusNum() {
+		return busNum;
+	}
+
+	public void setBusNum(String busNum) {
+		this.busNum = busNum;
+	}
+
+	public String getTime() {
+		return time;
+	}
+
+	public void setTime(String time) {
+		this.time = time;
+	}
+
+	public String getCurrent() {
+		return current;
+	}
+
+	public void setCurrent(String current) {
+		this.current = current;
 	}
 }

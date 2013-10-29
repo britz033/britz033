@@ -21,6 +21,7 @@ import android.view.Menu;
 import android.view.View;
 import android.widget.Toast;
 
+import com.example.busnew.sub.BusNumberSearchFragment;
 import com.example.busnew.sub.FavoriteFragment;
 import com.example.busnew.sub.GMapFragment;
 import com.example.busnew.sub.StationSearchFragment;
@@ -35,13 +36,19 @@ public class MainActivity extends ActionBarActivity implements TabListener,
 	public static final String PREF_NAME = "save_station_num";	// SharedPreferance 키값
 
 	public enum MyTabs {
-		FAVORITE(0, "즐겨찾기"), STATION_LISTVIEW(1, "정류소"), GMAP(2, "맵");
+		FAVORITE(0, "즐겨찾기", "com.example.busnew.sub.FavoriteFragment"), 
+		STATION_LISTVIEW(1, "정류소", "com.example.busnew.sub.StationSearchFragment"), 
+		BUS_LISTVIEW(2, "버스", "com.example.busnew.sub.BusNumberSearchFragment"), 
+		GMAP(3, "주변맵", "com.example.busnew.sub.GMapFragment"),
+		DUMMY(4, "더미", "com.example.busnew.sub.BusNumberSearchFragment");
 		private final String name;
+		private final String fragmentName;
 		private final int num;
 
-		MyTabs(int num, String name) {
+		MyTabs(int num, String name, String fragmentName) {
 			this.num = num;
 			this.name = name;
+			this.fragmentName = fragmentName;
 		}
 
 		int getValue() {
@@ -50,6 +57,10 @@ public class MainActivity extends ActionBarActivity implements TabListener,
 
 		String getName() {
 			return name;
+		}
+		
+		String getFragmentName(){
+			return fragmentName;
 		}
 	}
 
@@ -77,10 +88,18 @@ public class MainActivity extends ActionBarActivity implements TabListener,
 		vp = (MainViewPager) findViewById(R.id.viewpager_main);
 		FragmentManager fm = getSupportFragmentManager();
 		flist = new ArrayList<Fragment>();
-
-		flist.add(new FavoriteFragment());
-		flist.add(new StationSearchFragment());
-		flist.add(new GMapFragment());
+		Fragment addFragment = null;
+		
+		MyTabs[] mytabs = MyTabs.values(); 
+		try {
+			for(MyTabs mytab : mytabs){
+				addFragment = (Fragment) Class.forName(mytab.getFragmentName()).newInstance();
+				flist.add(addFragment);
+			}
+		} catch (Exception e) {
+			Log.d("페이지뷰 동적 클래스 생성", "실패했습니다");
+			e.printStackTrace();
+		}
 
 		vp.setAdapter(new FragmentPagerAdapter(fm) {
 			@Override
@@ -152,14 +171,6 @@ public class MainActivity extends ActionBarActivity implements TabListener,
 		this.latlng = latLng;
 		
 		Toast.makeText(this, latLng.toString() +" 저장되었습니다", 0).show();
-		
-//		vp.setCurrentItem(MyTabs.GMAP.getValue(), true);
-//		((GMapFragment) flist.get(2)).setGMap(station_number, station_name,
-//				latlng);
-//		vp.requestTransparentRegion(vp);
-		
-
-		
 	}
 
 	@Override
@@ -169,20 +180,7 @@ public class MainActivity extends ActionBarActivity implements TabListener,
 
 	@Override
 	public void onTabSelected(Tab tab, FragmentTransaction ft) {
-		MyTabs[] mytabs = MyTabs.values();
-		switch (mytabs[tab.getPosition()]) {
-		case FAVORITE:
-			vp.setCurrentItem(MyTabs.FAVORITE.getValue(), true);
-			break;
-		case STATION_LISTVIEW:
-			vp.setCurrentItem(MyTabs.STATION_LISTVIEW.getValue(), true);
-			break;
-		case GMAP:
-			vp.setCurrentItem(MyTabs.GMAP.getValue(), true);
-			break;
-		default:
-			Log.d("onTabSelected", "error");
-		}
+		vp.setCurrentItem(tab.getPosition());
 	}
 
 	@Override
@@ -196,10 +194,13 @@ public class MainActivity extends ActionBarActivity implements TabListener,
 
 	}
 
+	//StationSearchFragment 의 버튼
+	// gmap 탭 호출
 	public void btnOnclick(View view) {
+		int index = MyTabs.GMAP.getValue();		// gmap탭의 번호를 가져온다
 		Toast.makeText(this, latlng.toString(), 0).show();
-		vp.setCurrentItem(MyTabs.GMAP.getValue(), true);
-		((GMapFragment) flist.get(2)).setGMap(stationNumber, stationName,
+		vp.setCurrentItem(index, true);
+		((GMapFragment) flist.get(index)).setGMap(stationNumber, stationName,
 				latlng);
 		vp.requestTransparentRegion(vp);
 	}
