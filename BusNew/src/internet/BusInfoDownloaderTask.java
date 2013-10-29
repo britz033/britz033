@@ -1,5 +1,6 @@
 package internet;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 
@@ -31,12 +32,10 @@ public class BusInfoDownloaderTask extends
 
 	private Context context;
 	private String stationNumber;
-	private ProgressDialog wait;
 	private String errorMessage = null;
 	public ResponseTask proxy = null;
 
 	public BusInfoDownloaderTask(Context context, String stationNumber) {
-		wait = ProgressDialog.show(context, null, "잠시만 기다려주세요", true);
 		this.context = context;
 		this.stationNumber = stationNumber;
 	}
@@ -45,15 +44,22 @@ public class BusInfoDownloaderTask extends
 	protected ArrayList<BusInfo> doInBackground(String... s) {
 		ArrayList<BusInfo> busInfoList = new ArrayList<BusInfo>();
 		
+		InputStream is = null;
 		try {
-			Log.d("BUS_URL + stationNumber", BUS_URL + stationNumber);
-			InputStream is = new BackHttpConnection(context, BUS_URL
+			is = new BackHttpConnection(context, BUS_URL
 					+ stationNumber).getInputStream();
 			XmlPullParser parser = new BackXmlParser(is, "euc-kr").getParser();
 			BusStationParsing parsingWork = new BusStationParsing(parser,
 					busInfoList);
 		} catch (Exception e) {
 			errorMessage = e.getMessage();
+		} finally {
+			try {
+				is.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		return busInfoList;
 	}
@@ -66,7 +72,7 @@ public class BusInfoDownloaderTask extends
 			Log.d("BusInfoDownLoaderTask.onPostExecute", "결과값이 null");
 		}
 		proxy.onTaskFinish(result, errorMessage);
-		wait.dismiss();
+//		wait.dismiss();
 
 	}
 

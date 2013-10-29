@@ -7,6 +7,7 @@ import internet.ResponseTask;
 import java.util.ArrayList;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -75,9 +76,14 @@ public class FavoriteFragment extends Fragment implements ResponseTask {
 
 		BusInfoDownloaderTask busInfoTask = new BusInfoDownloaderTask(context,
 				stationNum);
-		busInfoTask.execute();
-
 		busInfoTask.proxy = this;
+		
+		ProgressDialog wait = ProgressDialog.show(context, null, "잠시만 기다려주세요", true);
+		busInfoTask.execute();
+		wait.dismiss();
+
+		
+		
 	}
 
 	private void viewPagerSetting(View view) {

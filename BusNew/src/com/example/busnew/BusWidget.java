@@ -51,7 +51,7 @@ public class BusWidget extends AppWidgetProvider implements ResponseTask{
 	@Override
 	public void onTaskFinish(ArrayList<BusInfo> buslist, String error) {
 		RemoteViews rv = new RemoteViews(context.getPackageName(), R.layout.widget_layout);
-		if(error == null){
+		if(error == null && buslist != null){
 			
 			// 일단 0, 후에 아예 즐겨찾기된것만 되게 바꿀거임
 			BusInfo bus = buslist.get(0);
@@ -65,8 +65,10 @@ public class BusWidget extends AppWidgetProvider implements ResponseTask{
 			PendingIntent pd = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
 			rv.setOnClickPendingIntent(R.id.widget_reflesh, pd);
 			
-		} else {
+		} else if(error != null){
 			rv.setTextViewText(R.id.widget_busNum, error);
+		} else {
+			rv.setTextViewText(R.id.widget_busNum, "정류장이나 버스가 설정되어 있지 않습니다");
 		}
 		
 		appw.updateAppWidget(new ComponentName(context, BusWidget.class), rv);
