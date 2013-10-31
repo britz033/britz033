@@ -1,4 +1,4 @@
-package com.example.busnew.sub;
+package subfragment;
 
 import android.app.Activity;
 import android.content.Context;
@@ -22,9 +22,9 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ListView;
 
-import com.example.busnew.MyContentProvider;
-import com.example.busnew.R;
 import com.google.android.gms.maps.model.LatLng;
+import com.zoeas.qdeagubus.MyContentProvider;
+import com.zoeas.qdeagubus.R;
 
 public class StationSearchFragment extends ListFragment implements LoaderCallbacks<Cursor>,OnKeyListener{
 	
@@ -58,10 +58,10 @@ public class StationSearchFragment extends ListFragment implements LoaderCallbac
 		super.onActivityCreated(savedInstanceState);
 		
 		//station_bus_favorit 도 있음
-		String[] from = {"station_number","station_name"};
-		int[] to = {R.id.item_station_number, R.id.item_station_name};
-//		String[] from = {"station_name","station_number", "station_favorite"};
-//		int[] to = {R.id.item_station_name, R.id.item_station_number, R.id.item_favorite_check};
+//		String[] from = {"station_number","station_name"};
+//		int[] to = {R.id.item_station_number, R.id.item_station_name};
+		String[] from = {"station_name","station_number", "station_favorite"};
+		int[] to = {R.id.item_station_name, R.id.item_station_number, R.id.item_favorite_check};
 		
 		madapter = new SimpleCursorAdapter(context, R.layout.list_item_layout, null, from, to, 0);
 		setListAdapter(madapter);
@@ -125,7 +125,7 @@ public class StationSearchFragment extends ListFragment implements LoaderCallbac
 		Uri baseUri = MyContentProvider.CONTENT_URI;
 		
 		// _id 안넣으면 에러 슈바
-		String[] projection = {"_id","station_number","station_name","station_latitude","station_longitude"};
+		String[] projection = {"_id","station_number","station_name","station_latitude","station_longitude","station_favorite"};
 		String selection = null;
 		if(args != null){
 				selection = "station_name like '%" + args.getString("key") +"%'";

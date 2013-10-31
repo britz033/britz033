@@ -1,6 +1,9 @@
-package com.example.busnew;
+package com.zoeas.qdeagubus;
 
 import java.util.ArrayList;
+
+import subfragment.GMapFragment;
+import subfragment.OnBusStationInfoListener;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -21,8 +24,6 @@ import android.view.Menu;
 import android.view.View;
 import android.widget.Toast;
 
-import com.example.busnew.sub.GMapFragment;
-import com.example.busnew.sub.OnBusStationInfoListener;
 import com.google.android.gms.maps.model.LatLng;
 
 public class MainActivity extends ActionBarActivity implements TabListener,
@@ -36,11 +37,11 @@ public class MainActivity extends ActionBarActivity implements TabListener,
 	public static final String PREF_NAME = "save_station_num";	// SharedPreferance 키값
 
 	public enum MyTabs {
-		FAVORITE(0, "즐겨찾기", "com.example.busnew.sub.FavoriteFragment"), 
-		STATION_LISTVIEW(1, "정류소", "com.example.busnew.sub.StationSearchFragment"), 
-		BUS_LISTVIEW(2, "버스", "com.example.busnew.sub.BusNumberSearchFragment"), 
-		GMAP(3, "주변맵", "com.example.busnew.sub.GMapFragment"),
-		DUMMY(4, "설정", "com.example.busnew.sub.BusNumberSearchFragment");
+		FAVORITE(0, "즐겨찾기", "subfragment.FavoriteFragment"), 
+		STATION_LISTVIEW(1, "정류소", "subfragment.StationSearchFragment"), 
+		BUS_LISTVIEW(2, "버스", "subfragment.BusNumberSearchFragment"), 
+		GMAP(3, "주변맵", "subfragment.GMapFragment"),
+		DUMMY(4, "설정", "subfragment.BusNumberSearchFragment");
 		private final String name;
 		private final String fragmentName;
 		private final int num;

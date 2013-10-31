@@ -1,7 +1,7 @@
-package com.example.busnew.sub;
+package subfragment;
 
 import internet.BusInfo;
-import internet.BusInfoDownloaderTask;
+import internet.ConnectTask;
 import internet.ResponseTask;
 
 import java.util.ArrayList;
@@ -25,8 +25,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.busnew.MainActivity;
-import com.example.busnew.R;
+import com.zoeas.qdeagubus.MainActivity;
+import com.zoeas.qdeagubus.R;
 
 public class FavoriteFragment extends Fragment implements ResponseTask {
 
@@ -74,7 +74,7 @@ public class FavoriteFragment extends Fragment implements ResponseTask {
 		
 		Log.d("버스정류소 번호",String.valueOf(stationNum));
 
-		BusInfoDownloaderTask busInfoTask = new BusInfoDownloaderTask(context,
+		ConnectTask busInfoTask = new ConnectTask(context,
 				stationNum);
 		busInfoTask.proxy = this;
 		

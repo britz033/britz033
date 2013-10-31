@@ -1,4 +1,4 @@
-package com.example.busnew.sub;
+package subfragment;
 
 import util.MyLocation;
 import util.MyLocation.LocationResult;
@@ -21,9 +21,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.busnew.MainActivity.CallFragmentMethod;
-import com.example.busnew.MyContentProvider;
-import com.example.busnew.R;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -34,6 +31,9 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.zoeas.qdeagubus.MyContentProvider;
+import com.zoeas.qdeagubus.R;
+import com.zoeas.qdeagubus.MainActivity.CallFragmentMethod;
 
 public class GMapFragment extends Fragment implements CallFragmentMethod,
 		LoaderCallbacks<Cursor>, OnMarkerClickListener {

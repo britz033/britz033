@@ -1,6 +1,6 @@
-package com.example.busnew.sub;
+package subfragment;
 
-import com.example.busnew.R;
+import com.zoeas.qdeagubus.R;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;

@@ -10,7 +10,8 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 
-import com.example.busnew.sub.StationSearchFragment;
+import subfragment.StationSearchFragment;
+
 
 import android.content.Context;
 import android.net.ConnectivityManager;
@@ -57,6 +58,7 @@ public class BackHttpConnection {
 		} catch (Exception e) {
 			Log.d("http 연결", "실패했습니다");
 			e.printStackTrace();
+			throw new Exception("인터넷 연결이 되어 있지 않습니다");
 		}
 	}
 

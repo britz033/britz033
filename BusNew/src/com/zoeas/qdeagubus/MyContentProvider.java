@@ -1,4 +1,4 @@
-package com.example.busnew;
+package com.zoeas.qdeagubus;
 
 import android.content.ContentProvider;
 import android.content.ContentValues;
@@ -13,7 +13,7 @@ public class MyContentProvider extends ContentProvider{
 	
 	// db는 이미 openhelper에서 DB이름으로 열었으니 여기선 테이블 네임을 중심으로 하면됨.
 	public static final String TABLE_NAME = "stationInfo";
-	public static final Uri	CONTENT_URI = Uri.parse("content://com.example.providertest/stationInfo");
+	public static final Uri	CONTENT_URI = Uri.parse("content://com.zoeas.qdeagubus/stationInfo");
 	
 	public static final String CONTENT_TYPE = "vnd.android.curosr.dir/stationInfo";
 	public static final String CONTENT_ITEM_TYPE = "vnd.android.curosr.item/stationInfo";
@@ -23,8 +23,8 @@ public class MyContentProvider extends ContentProvider{
 	private static final UriMatcher matcher = new UriMatcher(UriMatcher.NO_MATCH);
 	static{
 		// 각각의 상수와 매치 station_collection = uri, gettype메소드에서 matcher 쉽게 할려고 정의
-		matcher.addURI("com.example.providertest", "stationInfo", STATION_COLLECTION);
-		matcher.addURI("com.example.providertest", "stationInfo/#", SINGLE_STATION);
+		matcher.addURI("com.zoeas.qdeagubus", "stationInfo", STATION_COLLECTION);
+		matcher.addURI("com.zoeas.qdeagubus", "stationInfo/#", SINGLE_STATION);
 	}
 	
 	SQLiteDatabase db;

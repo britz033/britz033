@@ -25,8 +25,7 @@ import android.widget.Toast;
  * 결과값과 에러메세지는 ResponseTask proxy.onFinishTask 인터페이스를 통해 
  * 테스크가 끝난후 전달되며 이때 에러메세지가 null 일 경우는 에러메세지 대신 일반적 데이터를 표시한다.
  */
-public class BusInfoDownloaderTask extends
-		AsyncTask<String, Integer, ArrayList<BusInfo>> {
+public class ConnectTask extends AsyncTask<String, Integer, ArrayList<BusInfo>> {
 
 	public static final String BUS_URL = "http://businfo.daegu.go.kr/ba/arrbus/arrbus.do?act=arrbus&winc_id=";
 
@@ -35,7 +34,7 @@ public class BusInfoDownloaderTask extends
 	private String errorMessage = null;
 	public ResponseTask proxy = null;
 
-	public BusInfoDownloaderTask(Context context, String stationNumber) {
+	public ConnectTask(Context context, String stationNumber) {
 		this.context = context;
 		this.stationNumber = stationNumber;
 	}
@@ -43,22 +42,24 @@ public class BusInfoDownloaderTask extends
 	@Override
 	protected ArrayList<BusInfo> doInBackground(String... s) {
 		ArrayList<BusInfo> busInfoList = new ArrayList<BusInfo>();
-		
+
 		InputStream is = null;
 		try {
-			is = new BackHttpConnection(context, BUS_URL
-					+ stationNumber).getInputStream();
+			is = new BackHttpConnection(context, BUS_URL + stationNumber)
+					.getInputStream();
 			XmlPullParser parser = new BackXmlParser(is, "euc-kr").getParser();
 			BusStationParsing parsingWork = new BusStationParsing(parser,
 					busInfoList);
 		} catch (Exception e) {
 			errorMessage = e.getMessage();
 		} finally {
-			try {
-				is.close();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			if (is != null) {
+				try {
+					is.close();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 		}
 		return busInfoList;
@@ -68,11 +69,11 @@ public class BusInfoDownloaderTask extends
 	protected void onPostExecute(ArrayList<BusInfo> result) {
 		super.onPostExecute(result);
 
-		if(result == null){
+		if (result == null) {
 			Log.d("BusInfoDownLoaderTask.onPostExecute", "결과값이 null");
 		}
 		proxy.onTaskFinish(result, errorMessage);
-//		wait.dismiss();
+		// wait.dismiss();
 
 	}
 
