@@ -1166,7 +1166,7 @@ containing a value of this type.
         public static final int action_mode_bar=0x7f070032;
         public static final int action_mode_bar_stub=0x7f070031;
         public static final int action_mode_close_button=0x7f070025;
-        public static final int action_settings=0x7f070055;
+        public static final int action_settings=0x7f070054;
         public static final int activity_chooser_view_content=0x7f070026;
         public static final int always=0x7f07000f;
         public static final int beginning=0x7f070014;
@@ -1189,7 +1189,6 @@ containing a value of this type.
         public static final int icon=0x7f07002b;
         public static final int ifRoom=0x7f07000e;
         public static final int image=0x7f070028;
-        public static final int item_favorite_check=0x7f07004f;
         public static final int item_station_name=0x7f07004d;
         public static final int item_station_number=0x7f07004e;
         public static final int left_icon=0x7f070034;
@@ -1233,11 +1232,11 @@ containing a value of this type.
         public static final int useLogo=0x7f070007;
         public static final int viewpager_favorite=0x7f070047;
         public static final int viewpager_main=0x7f070045;
-        public static final int widget_busNum=0x7f070051;
-        public static final int widget_reflesh=0x7f070054;
-        public static final int widget_station=0x7f070050;
-        public static final int widget_time=0x7f070052;
-        public static final int widget_where=0x7f070053;
+        public static final int widget_busNum=0x7f070050;
+        public static final int widget_reflesh=0x7f070053;
+        public static final int widget_station=0x7f07004f;
+        public static final int widget_time=0x7f070051;
+        public static final int widget_where=0x7f070052;
         public static final int withText=0x7f070010;
     }
     public static final class integer {
@@ -2937,7 +2936,7 @@ containing a value of this type.
          */
         public static final int[] MenuView = {
             0x010100ae, 0x0101012c, 0x0101012d, 0x0101012e,
-            0x0101012f, 0x01010130, 0x01010131, 0x0101041a
+            0x0101012f, 0x01010130, 0x01010131, 0x01010435
         };
         /**
           <p>

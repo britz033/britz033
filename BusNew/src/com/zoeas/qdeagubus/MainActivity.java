@@ -4,10 +4,9 @@ import java.util.ArrayList;
 
 import subfragment.GMapFragment;
 import subfragment.OnBusStationInfoListener;
-
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -18,7 +17,6 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBar.Tab;
 import android.support.v7.app.ActionBar.TabListener;
 import android.support.v7.app.ActionBarActivity;
-import android.util.AttributeSet;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
@@ -33,6 +31,7 @@ public class MainActivity extends ActionBarActivity implements TabListener,
 		public void OnCalled();
 	}
 	
+	private boolean mflag = false; // 뒤로가기 버튼 두번으로 종료 플레그 
 	private ArrayList<Fragment> flist; 			// 액티비티가 관리하는 애들
 	public static final String PREF_NAME = "save_station_num";	// SharedPreferance 키값
 
@@ -210,26 +209,27 @@ public class MainActivity extends ActionBarActivity implements TabListener,
 		vp.requestTransparentRegion(vp);
 	}
 
+	@Override
+	public void onBackPressed() {
+		if(!mflag){
+			Toast.makeText(this, "뒤로가기를 한번 더 누르시면 종료됩니다", Toast.LENGTH_LONG).show();
+			mflag = true;
+			
+			Handler handler = new Handler();
+			handler.postDelayed(new Runnable() {
+				
+				@Override
+				public void run() {
+					mflag = false;
+				}
+			}, 2000);
+			
+			
+		} else
+			super.onBackPressed();
+	}
 	
 
 }
 
-class MainViewPager extends ViewPager {
 
-	public MainViewPager(Context context) {
-		super(context);
-	}
-	public MainViewPager(Context context, AttributeSet attrs) {
-		super(context, attrs);
-	}
-
-	@Override
-	protected boolean canScroll(View view, boolean checkV, int arg2, int arg3,
-			int arg4) {
-		if(view != this && view instanceof ViewPager){
-			return true;
-		}
-		
-		return super.canScroll(view, checkV, arg2, arg3, arg4);
-	}
-}

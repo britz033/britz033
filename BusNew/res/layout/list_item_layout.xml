@@ -19,11 +19,21 @@
         android:textSize="7sp"
         />
     
-    <ToggleButton 
-        android:id="@+id/item_favorite_check"
+<!--     <ToggleButton -->
+<!--         android:id="@+id/item_favorite_check" -->
+<!--         android:layout_width="wrap_content" -->
+<!--         android:layout_height="wrap_content" -->
+<!--         android:layout_alignParentRight="true" -->
+<!--         android:background="@android:drawable/btn_star" -->
+<!--         android:focusable="false" -->
+<!--         android:textOff="" -->
+<!--         android:textOn="" /> -->
+    <ImageButton 
         android:layout_alignParentRight="true"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:src="@android:drawable/btn_star"
+        android:background="#00ffffff"
         android:focusable="false"
         />
 

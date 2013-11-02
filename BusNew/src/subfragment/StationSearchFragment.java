@@ -61,7 +61,7 @@ public class StationSearchFragment extends ListFragment implements LoaderCallbac
 //		String[] from = {"station_number","station_name"};
 //		int[] to = {R.id.item_station_number, R.id.item_station_name};
 		String[] from = {"station_name","station_number", "station_favorite"};
-		int[] to = {R.id.item_station_name, R.id.item_station_number, R.id.item_favorite_check};
+		int[] to = {R.id.item_station_name, R.id.item_station_number};
 		
 		madapter = new SimpleCursorAdapter(context, R.layout.list_item_layout, null, from, to, 0);
 		setListAdapter(madapter);
