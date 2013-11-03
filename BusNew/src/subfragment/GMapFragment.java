@@ -5,6 +5,8 @@ import util.MyLocation.LocationResult;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
 import android.database.Cursor;
 import android.location.Location;
 import android.net.Uri;
@@ -31,9 +33,9 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.zoeas.qdeagubus.MainActivity.CallFragmentMethod;
 import com.zoeas.qdeagubus.MyContentProvider;
 import com.zoeas.qdeagubus.R;
-import com.zoeas.qdeagubus.MainActivity.CallFragmentMethod;
 
 public class GMapFragment extends Fragment implements CallFragmentMethod,
 		LoaderCallbacks<Cursor>, OnMarkerClickListener {
@@ -72,15 +74,17 @@ public class GMapFragment extends Fragment implements CallFragmentMethod,
 			ft.replace(R.id.map, mapFragment);
 			ft.commit();
 		}
-	}
 
-	// 맵 설정시작
-	@Override
-	public void onResume() {
-		super.onResume();
+		if (map == null) {
+			new Handler().postDelayed(new Runnable() {
 
-		map = mapFragment.getMap();
-		map.setMyLocationEnabled(true);
+				@Override
+				public void run() {
+					map = mapFragment.getMap();
+					map.setMyLocationEnabled(true);
+				}
+			}, 3000);
+		}
 
 	}
 
@@ -100,13 +104,24 @@ public class GMapFragment extends Fragment implements CallFragmentMethod,
 
 	}
 
+	boolean cancle;
 	// 생성될때가 아니라 자신이 선택될때 불려진다.
 	// 인터페이스로 메인 ViewPager의 OnPageChangeListener 에서 호출한다.
 	@Override
 	public void OnCalled() {
-
-		final ProgressDialog wait = ProgressDialog.show(context, null,
-				"위치정보를 받아오는 중입니다. 잠시만 기다려주세요");
+		cancle = false; // 취소를 누르면 위치추적장소로 자동이동을 하지 않는다. 
+		
+		final ProgressDialog wait = new ProgressDialog(context); 
+		wait.setButton(DialogInterface.BUTTON_NEGATIVE,"취소", new OnClickListener() {
+			
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				cancle = true;
+				dialog.dismiss();
+			}
+		});
+		wait.setMessage("위치정보를 가져오고 있습니다");
+		wait.show();
 
 		// MyLocation 클래스 콜백 리스너. gps나 네트웤 위치 신호가 오기까지 기다리다가 onchange 리스너가 호출되면
 		// 그 결과값을 gotLocation 메소드로 리턴해준다.
@@ -114,7 +129,7 @@ public class GMapFragment extends Fragment implements CallFragmentMethod,
 			@Override
 			public void gotLocation(Location location) {
 
-				if (map != null && location != null) {
+				if (map != null && location != null && !cancle) {
 					wait.dismiss();
 					myLatLng = new LatLng(location.getLatitude(),
 							location.getLongitude());
@@ -177,9 +192,9 @@ public class GMapFragment extends Fragment implements CallFragmentMethod,
 
 	@Override
 	public boolean onMarkerClick(Marker marker) {
-		OnBusStationInfoListener saver = (OnBusStationInfoListener) context;
-		saver.OnBusStationInfo(marker.getSnippet(), marker.getTitle(), new LatLng(
-				0, 0));
+		OnSaveBusStationInfoListener saver = (OnSaveBusStationInfoListener) context;
+		saver.OnSaveBusStationInfo(marker.getSnippet(), marker.getTitle(),
+				new LatLng(0, 0));
 		return false;
 	}
 }

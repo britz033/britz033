@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.text.TextUtils;
+import android.util.Log;
 
 public class MyContentProvider extends ContentProvider{
 	
@@ -87,13 +88,12 @@ public class MyContentProvider extends ContentProvider{
 			String[] selectionArgs) {
 		
 		int rows = 0;
-		
 		if(matcher.match(uri) == STATION_COLLECTION){
 			rows = db.update("stationInfo", values, selection, selectionArgs);
 		} else if(matcher.match(uri) == SINGLE_STATION){
 			String id = uri.getLastPathSegment();
 			if(TextUtils.isEmpty(selection) == true){
-				rows = db.update("stationInfo", values, "_id=", null);
+				rows = db.update("stationInfo", values, "_id=" + id, null);
 			} else {
 				rows = db.update("stationInfo", values, selection + " AND" + "_id=" + id, selectionArgs);
 			}

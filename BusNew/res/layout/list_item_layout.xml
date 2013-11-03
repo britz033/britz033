@@ -1,40 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    android:layout_height="match_parent"
+    android:padding="10dp"
+    android:descendantFocusability="blocksDescendants"
+     >
     
     <TextView
-        android:id="@+id/item_station_name" 
+        android:id="@+id/text_station_item_name" 
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="default"
-        android:textSize="14sp"
+        android:textSize="22sp"
         />
     <TextView
-        android:id="@+id/item_station_number"
+        android:id="@+id/text_station_item_number"
         android:layout_below="@+id/item_station_name" 
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="default"
-        android:textSize="7sp"
+        android:textSize="10sp"
         />
-    
-<!--     <ToggleButton -->
-<!--         android:id="@+id/item_favorite_check" -->
-<!--         android:layout_width="wrap_content" -->
-<!--         android:layout_height="wrap_content" -->
-<!--         android:layout_alignParentRight="true" -->
-<!--         android:background="@android:drawable/btn_star" -->
-<!--         android:focusable="false" -->
-<!--         android:textOff="" -->
-<!--         android:textOn="" /> -->
     <ImageButton 
+        android:id="@+id/btn_station_item_favorite"
         android:layout_alignParentRight="true"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@android:drawable/btn_star"
+        android:src="@drawable/btn_station_list_item_off_selector"
         android:background="#00ffffff"
         android:focusable="false"
+        android:paddingRight="30dp"
         />
 
 </RelativeLayout>

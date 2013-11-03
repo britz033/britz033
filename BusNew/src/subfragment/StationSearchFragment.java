@@ -1,6 +1,9 @@
 package subfragment;
 
+import util.StationTableConstants;
 import android.app.Activity;
+import android.content.ContentUris;
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
@@ -9,6 +12,7 @@ import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v4.widget.CursorAdapter;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -20,7 +24,9 @@ import android.view.View.OnKeyListener;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.zoeas.qdeagubus.MyContentProvider;
@@ -28,7 +34,7 @@ import com.zoeas.qdeagubus.R;
 
 public class StationSearchFragment extends ListFragment implements LoaderCallbacks<Cursor>,OnKeyListener{
 	
-	private SimpleCursorAdapter madapter;
+	private MyCursorAdapter madapter;
 	private EditText et;
 	private Context context;
 	
@@ -57,13 +63,8 @@ public class StationSearchFragment extends ListFragment implements LoaderCallbac
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 		
-		//station_bus_favorit 도 있음
-//		String[] from = {"station_number","station_name"};
-//		int[] to = {R.id.item_station_number, R.id.item_station_name};
-		String[] from = {"station_name","station_number", "station_favorite"};
-		int[] to = {R.id.item_station_name, R.id.item_station_number};
-		
-		madapter = new SimpleCursorAdapter(context, R.layout.list_item_layout, null, from, to, 0);
+		//어뎁터 생성등록 커서는 없음.. 로더에서 추가
+		madapter = new MyCursorAdapter(context, null, 0);
 		setListAdapter(madapter);
 		getLoaderManager().initLoader(0, null, this);
 	}
@@ -74,26 +75,16 @@ public class StationSearchFragment extends ListFragment implements LoaderCallbac
 		Cursor c = madapter.getCursor();
 		c.moveToPosition(position);
 		
-		String station_number = c.getString(1); 
-		String station_name = c.getString(2); 
-		double station_latitude = c.getDouble(3); 
-		double station_longitude = c.getDouble(4); 
+		String station_number = c.getString(StationTableConstants.STATION_NUMBER); 
+		String station_name = c.getString(StationTableConstants.STATION_NAME); 
+		double station_latitude = c.getDouble(StationTableConstants.STATION_LATITUDE); 
+		double station_longitude = c.getDouble(StationTableConstants.STATION_LONGITUDE); 
 		
-//		int station_pic = context.getResources().getIdentifier("R.drawable.station_" + station_number, "drawble", context.getPackageName());
-//		if(station_pic == 0){
-//			station_pic = R.drawable.station_00001;
-//		}
-//		
-//		AlertDialog.Builder builder = new AlertDialog.Builder(context);
-//		ImageView iv = new ImageView(context);
-//		iv.setImageResource(station_pic);
-//		builder.setView(iv);
-//		builder.create().show();
-		
-		OnBusStationInfoListener saver = (OnBusStationInfoListener) context;
-		
-		saver.OnBusStationInfo(station_number, station_name, new LatLng(station_latitude, station_longitude));
+		OnSaveBusStationInfoListener saver = (OnSaveBusStationInfoListener) context;
+		saver.OnSaveBusStationInfo(station_number, station_name, new LatLng(station_latitude, station_longitude));
 	}
+	
+	
 	
 	class MyWatcher implements TextWatcher{
 
@@ -125,7 +116,7 @@ public class StationSearchFragment extends ListFragment implements LoaderCallbac
 		Uri baseUri = MyContentProvider.CONTENT_URI;
 		
 		// _id 안넣으면 에러 슈바
-		String[] projection = {"_id","station_number","station_name","station_latitude","station_longitude","station_favorite"};
+		String[] projection = {"_id","station_number","station_name","station_latitude","station_longitude","station_favorite_station"};
 		String selection = null;
 		if(args != null){
 				selection = "station_name like '%" + args.getString("key") +"%'";
@@ -136,6 +127,7 @@ public class StationSearchFragment extends ListFragment implements LoaderCallbac
 
 	@Override
 	public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
+		// 앞서 생성된 커서를 받아옴
 		madapter.swapCursor(cursor);
 		
 	}
@@ -154,10 +146,6 @@ public class StationSearchFragment extends ListFragment implements LoaderCallbac
 		}
 			
 		return false;
-	}
-	
-	public void btnOnclick(View view){
-		Log.d("dd","dd");
 	}
 
 }

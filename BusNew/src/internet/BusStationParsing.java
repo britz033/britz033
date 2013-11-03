@@ -49,7 +49,6 @@ public class BusStationParsing {
 			switch (status) {
 			case XmlPullParser.START_TAG:
 				tag = parser.getName();
-				Log.d("tagname", tag);
 				// li 태그에 있는 모든 버스 정보를 차례로 빼냄
 				if (tag.equals("li")) {
 
@@ -68,15 +67,12 @@ public class BusStationParsing {
 
 					nextCount(parser, 3);
 					bus.setBusNum(parser.getText());
-					Log.d("버스번호", parser.getText());
 
 					nextCount(parser, 4);
 					bus.setTime(parser.getText());
-					Log.d("버스시간", parser.getText());
 
 					nextCount(parser, 4);
 					bus.setCurrent(parser.getText());
-					Log.d("버스현재장소", parser.getText());
 
 					busInfoArray.add(bus);
 				} else if (tag.equals("p")) {
@@ -97,12 +93,10 @@ public class BusStationParsing {
 				break;
 			case XmlPullParser.END_TAG: // end_tag가 /ul 이면 while문 탈출
 				tag = parser.getName();
-				Log.d("end_tag", tag);
 				if (tag.equals("ul"))
 					end_flag = true;
 				break;
 			default:
-				Log.d("busParser() default", "text");
 				break;
 			}
 

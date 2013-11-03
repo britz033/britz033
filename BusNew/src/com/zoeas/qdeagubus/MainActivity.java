@@ -3,7 +3,7 @@ package com.zoeas.qdeagubus;
 import java.util.ArrayList;
 
 import subfragment.GMapFragment;
-import subfragment.OnBusStationInfoListener;
+import subfragment.OnSaveBusStationInfoListener;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
@@ -25,7 +25,7 @@ import android.widget.Toast;
 import com.google.android.gms.maps.model.LatLng;
 
 public class MainActivity extends ActionBarActivity implements TabListener,
-		OnBusStationInfoListener {
+		OnSaveBusStationInfoListener {
 
 	public interface CallFragmentMethod{
 		public void OnCalled();
@@ -158,7 +158,7 @@ public class MainActivity extends ActionBarActivity implements TabListener,
 	}
 
 	@Override
-	public void OnBusStationInfo(String station_number, String station_name,
+	public void OnSaveBusStationInfo(String station_number, String station_name,
 			LatLng latLng) {
 
 		SharedPreferences setting = getSharedPreferences(PREF_NAME, 0);
@@ -193,7 +193,7 @@ public class MainActivity extends ActionBarActivity implements TabListener,
 	}
 
 	@Override
-	public void OnBusStationInfo(String station_number, String station_name) {
+	public void OnSaveBusStationInfo(String station_number, String station_name) {
 		// TODO Auto-generated method stub
 
 	}
