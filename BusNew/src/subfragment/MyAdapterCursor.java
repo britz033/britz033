@@ -37,17 +37,27 @@ class MyCursorAdapter extends CursorAdapter {
 	final OnClickListener listener = new OnClickListener() {
 		@Override
 		public void onClick(View v) {
+			// 클릭된 아이템의 위치를 반환한다
 			int position = (Integer) v.getTag();
 			Cursor mcursor = MyCursorAdapter.this.getCursor();
+			
+			// 현재 뿌려진(존재하는.. 예를들어 검색해서 20개의 결과물이 나왔으면 20개만 있음) 커서의 위치로 이동한다.
 			mcursor.moveToPosition(position);
+			
+			// 그 위치의 아이템이 즐겨찿기가 되어 있는 여부를 저장한다
 			int favorite = mcursor
 					.getInt(StationTableConstants.STATION_FAVORITE_STATION);
+			int id = mcursor.getInt(StationTableConstants.STATION_ID);
+			
+			Log.d("이름",mcursor.getString(StationTableConstants.STATION_NAME));
+			Log.d("id",String.valueOf(mcursor.getInt(0)));
 
-			updateFavorite(favorite, position + 1);
+			updateFavorite(favorite, id);
 		}
 	};
 
-	private void updateFavorite(int favorite, int position) {
+	// 즐겨찾기 변경
+	private void updateFavorite(int favorite, int id) {
 		ContentValues value = new ContentValues();
 
 		if (favorite == 0) {
@@ -56,11 +66,9 @@ class MyCursorAdapter extends CursorAdapter {
 			value.put("station_favorite_station", String.valueOf(0));
 		}
 
-		Log.d("update comple", value.toString());
-		Log.d("update comple", String.valueOf(position));
-		
+		// 아이디 값을 기준으로 업데이트
 		Uri singleUri = ContentUris.withAppendedId(
-				MyContentProvider.CONTENT_URI, position);
+				MyContentProvider.CONTENT_URI, id);
 
 		mcontext.getContentResolver().update(singleUri, value, null, null);
 		
@@ -85,6 +93,7 @@ class MyCursorAdapter extends CursorAdapter {
 					.setImageResource(R.drawable.btn_station_list_item_on_selector);
 		}
 
+		// 현재 뿌려진 Cursor 상태에서 몇번째 위치인가를 반환한다. 
 		holder.ibFavorite.setTag(Integer.valueOf(cursor.getPosition()));
 	}
 

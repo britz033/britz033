@@ -1,6 +1,7 @@
 package util;
 
 public class StationTableConstants {
+	public static final int STATION_ID = 0;
 	public static final int STATION_NUMBER = 1;
 	public static final int STATION_NAME = 2;
 	public static final int STATION_LATITUDE = 3;
