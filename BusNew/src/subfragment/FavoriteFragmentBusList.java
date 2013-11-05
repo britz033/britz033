@@ -8,6 +8,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.text.SpannableStringBuilder;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +17,9 @@ import android.widget.TextView;
 
 import com.zoeas.qdeagubus.R;
 
+/*
+ * 즐겨찾기의 정류소별 전광판 정보를 리스트뷰로 뿌림
+ */
 public class FavoriteFragmentBusList extends ListFragment {
 	
 	Context context;
@@ -31,8 +35,11 @@ public class FavoriteFragmentBusList extends ListFragment {
 		
 		if(error == null)
 			setListAdapter(new BusListAdapter(list));
-		else 
+		else {
+			Log.d("에러메세지",error);
+			setListAdapter(null);
 			setEmptyText(error);
+		}
 	}
 
 	class BusListAdapter extends BaseAdapter {
@@ -76,9 +83,8 @@ public class FavoriteFragmentBusList extends ListFragment {
 			}
 			
 			SpannableStringBuilder ssb = new SpannableStringBuilder();
-			for (BusInfo bus : list) {
-				ssb.append(bus.getSpannableStringBusInfo());
-			}
+			
+			ssb.append(list.get(position).getSpannableStringBusInfo());
 			
 			holder.tv.setText(ssb);
 			

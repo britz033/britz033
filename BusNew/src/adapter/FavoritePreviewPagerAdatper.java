@@ -32,11 +32,10 @@ public class FavoritePreviewPagerAdatper extends PagerAdapter {
 
 	@Override
 	public Object instantiateItem(ViewGroup container, int position) {
+		cursor.moveToPosition(position);
 		TextView tv = new TextView(context);
 		tv.setText(cursor.getString(1));
 		container.addView(tv);
-		Log.d("moveToNext 전","ok");
-		cursor.moveToNext();
 		Log.d("moveToNext 후","ok");
 		return tv;
 	}

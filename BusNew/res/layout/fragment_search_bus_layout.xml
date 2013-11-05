@@ -6,7 +6,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="텅텅비었삼"
+        android:text="제작중....."
         android:textSize="50sp"
         android:layout_gravity="center"
         />

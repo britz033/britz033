@@ -7,7 +7,7 @@
         android:id="@+id/text_favorite_list_busitem_busnumber"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="12sp"
+        android:textSize="22sp"
         />
 
 </LinearLayout>

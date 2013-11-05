@@ -97,7 +97,6 @@ public class StationSearchFragment extends ListFragment implements LoaderCallbac
 			// 데이터베이스 검색 하여 리스트뷰 새로 뿌림
 			Bundle search = new Bundle();
 			search.putString("key", s.toString());
-			Log.d("검색어",s.toString());
 			getLoaderManager().restartLoader(0, search, StationSearchFragment.this);
 		}
 		
@@ -122,7 +121,6 @@ public class StationSearchFragment extends ListFragment implements LoaderCallbac
 	@Override
 	public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
 		// 앞서 생성된 커서를 받아옴
-		Log.d("검색테스트", "새로읽음");
 		madapter.swapCursor(cursor);
 		
 	}

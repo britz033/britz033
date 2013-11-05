@@ -59,6 +59,7 @@ public class FavoriteFragment extends Fragment implements ResponseTask {
 				viewPagerSetting(view);
 			}
 		});
+		
 		return view;
 	}
 
@@ -77,7 +78,7 @@ public class FavoriteFragment extends Fragment implements ResponseTask {
 		cursor = context.getContentResolver().query(uri, projection, selection, selectionArgs, null);
 		pager.setAdapter(new FavoritePreviewPagerAdatper(context, cursor));
 
-		pager.setOnPageChangeListener(new OnPageChangeListener() {
+		OnPageChangeListener onPageChangeListener = new OnPageChangeListener() {
 
 			@Override
 			public void onPageSelected(int position) {
@@ -99,11 +100,16 @@ public class FavoriteFragment extends Fragment implements ResponseTask {
 				// TODO Auto-generated method stub
 
 			}
-		});
-
+		};
+		
+		pager.setOnPageChangeListener(onPageChangeListener);
 		pager.setOffscreenPageLimit(6);
 		pager.setClipChildren(false);
 		pager.setPageMargin(0);
+		
+		onPageChangeListener.onPageSelected(0);
+		
+		showInfo(stationNum);
 	}
 
 	/*

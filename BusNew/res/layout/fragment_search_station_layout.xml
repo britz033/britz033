@@ -34,7 +34,7 @@
         android:id="@id/android:empty"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="텅텅비었삼"
+        android:text="정류소명을 정확히 입력해주세요"
         android:textSize="50sp"
         android:layout_gravity="center"
         />
