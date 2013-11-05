@@ -1,14 +1,15 @@
 package adapter;
 
+import java.util.ArrayList;
+
 import android.content.Context;
 import android.database.Cursor;
 import android.support.v4.view.PagerAdapter;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
+import android.widget.ImageView;
 
-import com.zoeas.qdeagubus.MyContentProvider;
+import com.zoeas.qdeagubus.R;
 
 /*
  * 프리뷰 미리보기 페이져 어뎁터
@@ -18,6 +19,7 @@ public class FavoritePreviewPagerAdatper extends PagerAdapter {
 	
 	private Context context;
 	private Cursor cursor;
+	private ArrayList<String> title;
 	
 	public FavoritePreviewPagerAdatper(Context context, Cursor c){
 		this.context = context;
@@ -33,21 +35,36 @@ public class FavoritePreviewPagerAdatper extends PagerAdapter {
 	@Override
 	public Object instantiateItem(ViewGroup container, int position) {
 		cursor.moveToPosition(position);
-		TextView tv = new TextView(context);
-		tv.setText(cursor.getString(1));
-		container.addView(tv);
-		Log.d("moveToNext 후","ok");
-		return tv;
+		
+		StringBuilder sb = new StringBuilder("station");
+		sb.append(cursor.getString(0));
+		
+		ImageView iv = new ImageView(context);
+		int id = context.getResources().getIdentifier(sb.toString(), "drawable", context.getPackageName());
+		if(id == 0)
+			id = R.drawable.station00352;
+		
+		iv.setImageResource(id);
+		container.addView(iv);
+		
+		return iv;
 	}
+	
 
 	@Override
 	public int getCount() {
 		return cursor.getCount();
 	}
+	
+	@Override
+	public CharSequence getPageTitle(int position) {
+		cursor.moveToPosition(position);
+		return cursor.getString(1);
+	}
 
 	@Override
 	public void destroyItem(ViewGroup container, int position, Object object) {
-		container.removeView((TextView) object);
+		container.removeView((ImageView) object);
 	}
 
 }

@@ -16,6 +16,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.PagerTitleStrip;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.util.Log;
@@ -67,14 +68,19 @@ public class FavoriteFragment extends Fragment implements ResponseTask {
 	// 즐겨찾기된 그림들을 DB에서 받아온다 그 정보는 어뎁터 내에 집어넣는다.
 
 	private void viewPagerSetting(View view) {
+		
+		float density = context.getResources().getDisplayMetrics().density;
+		int dip = (int)(density*30);
 		ViewPager pager = (ViewPager) view.findViewById(R.id.viewpager_favorite);
+		PagerTitleStrip titlepager = (PagerTitleStrip) view.findViewById(R.id.pager_title_strip);
+		titlepager.setTextSpacing(dip);
 
 		Uri uri = MyContentProvider.CONTENT_URI;
 		String[] projection = { MyContentProvider.STATION_NUMBER, MyContentProvider.STATION_NAME };
 		String selection = MyContentProvider.STATION_FAVORITE_STATION + "=?";
 		String[] selectionArgs = { "1" };
 
-		// 미리보기에 쓰일 쿼리를 가져온다
+		// 미리보기에 쓰일 쿼리를 가져온다 and 미리보기를 표시할 아탑터를 세팅한다
 		cursor = context.getContentResolver().query(uri, projection, selection, selectionArgs, null);
 		pager.setAdapter(new FavoritePreviewPagerAdatper(context, cursor));
 
@@ -103,7 +109,7 @@ public class FavoriteFragment extends Fragment implements ResponseTask {
 		};
 		
 		pager.setOnPageChangeListener(onPageChangeListener);
-		pager.setOffscreenPageLimit(6);
+		pager.setOffscreenPageLimit(5);
 		pager.setClipChildren(false);
 		pager.setPageMargin(0);
 		

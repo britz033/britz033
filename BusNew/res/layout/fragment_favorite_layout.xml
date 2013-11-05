@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical" 
@@ -15,13 +16,28 @@
         android:id="@+id/viewpager_favorite"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="35"
+        android:layout_weight="40"
+        >
+        <android.support.v4.view.PagerTitleStrip
+        android:id="@+id/pager_title_strip"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_gravity="bottom"
+        android:background="#33b5e5"
+        android:textColor="#fff"
+        android:paddingTop="4dp"
+        android:paddingBottom="4dp" 
+        android:text="버스정류소"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:fontFamily="sans-serif-condensed"
+        android:textStyle="bold"
         />
+    </android.support.v4.view.ViewPager>
 	<LinearLayout
 	    android:id="@+id/fragment_favorite_buslist"
 	    android:layout_width="match_parent"
 	    android:layout_height="0dp"
-	    android:layout_weight="65"
+	    android:layout_weight="45"
 	    android:orientation="vertical"
 	    />
     
