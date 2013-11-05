@@ -3,27 +3,25 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical" 
-    android:background="@drawable/back_favorite_main"
+    
     >
     <Button 
         android:id="@+id/btn_refrash_favorite"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="re"
+        android:text="refresh"
         />
     <android.support.v4.view.ViewPager
         android:id="@+id/viewpager_favorite"
         android:layout_width="match_parent"
         android:layout_height="220dp"
         />
-    
-    <TextView 
-        android:id="@+id/text_busdisplay"
-        android:layout_margin="10dp"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="버스정보"
-        />
+	<LinearLayout
+	    android:id="@+id/fragment_favorite_buslist"
+	    android:layout_width="match_parent"
+	    android:layout_height="match_parent"
+	    android:orientation="vertical"
+	    />
     
 
 </LinearLayout>

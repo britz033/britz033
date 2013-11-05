@@ -42,7 +42,6 @@ import android.view.ViewGroup;
 
 public class BusNumberSearchFragment extends Fragment{
 	
-	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {

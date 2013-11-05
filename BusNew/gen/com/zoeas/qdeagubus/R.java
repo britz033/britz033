@@ -1208,13 +1208,13 @@ containing a value of this type.
         public static final int action_mode_bar=0x7f070032;
         public static final int action_mode_bar_stub=0x7f070031;
         public static final int action_mode_close_button=0x7f070025;
-        public static final int action_settings=0x7f070056;
+        public static final int action_settings=0x7f070057;
         public static final int activity_chooser_view_content=0x7f070026;
         public static final int always=0x7f07000f;
         public static final int beginning=0x7f070014;
         public static final int btn_gomap=0x7f07004c;
         public static final int btn_refrash_favorite=0x7f070046;
-        public static final int btn_station_item_favorite=0x7f070050;
+        public static final int btn_station_item_favorite=0x7f070051;
         public static final int checkbox=0x7f07002e;
         public static final int collapseActionView=0x7f070011;
         public static final int default_activity_button=0x7f070029;
@@ -1226,13 +1226,14 @@ containing a value of this type.
         public static final int end=0x7f070016;
         public static final int expand_activities_button=0x7f070027;
         public static final int expanded_menu=0x7f07002d;
+        public static final int fragment_favorite_buslist=0x7f070048;
         public static final int home=0x7f070017;
         public static final int homeAsUp=0x7f070009;
         public static final int hybrid=0x7f070004;
         public static final int icon=0x7f07002b;
         public static final int ifRoom=0x7f07000e;
         public static final int image=0x7f070028;
-        public static final int item_station_name=0x7f07004f;
+        public static final int item_station_name=0x7f070050;
         public static final int left_icon=0x7f070034;
         public static final int listMode=0x7f070005;
         public static final int list_item=0x7f07002a;
@@ -1265,10 +1266,10 @@ containing a value of this type.
         public static final int submit_area=0x7f070042;
         public static final int tabMode=0x7f070006;
         public static final int terrain=0x7f070003;
-        public static final int text_busdisplay=0x7f070048;
+        public static final int text_favorite_list_busitem_busnumber=0x7f07004d;
         public static final int text_label_sub1fregment=0x7f070049;
-        public static final int text_station_item_name=0x7f07004d;
-        public static final int text_station_item_number=0x7f07004e;
+        public static final int text_station_item_name=0x7f07004e;
+        public static final int text_station_item_number=0x7f07004f;
         public static final int title=0x7f07002c;
         public static final int title_container=0x7f070033;
         public static final int top_action_bar=0x7f070021;
@@ -1276,11 +1277,11 @@ containing a value of this type.
         public static final int useLogo=0x7f070007;
         public static final int viewpager_favorite=0x7f070047;
         public static final int viewpager_main=0x7f070045;
-        public static final int widget_busNum=0x7f070052;
-        public static final int widget_reflesh=0x7f070055;
-        public static final int widget_station=0x7f070051;
-        public static final int widget_time=0x7f070053;
-        public static final int widget_where=0x7f070054;
+        public static final int widget_busNum=0x7f070053;
+        public static final int widget_reflesh=0x7f070056;
+        public static final int widget_station=0x7f070052;
+        public static final int widget_time=0x7f070054;
+        public static final int widget_where=0x7f070055;
         public static final int withText=0x7f070010;
     }
     public static final class integer {
@@ -1338,9 +1339,10 @@ containing a value of this type.
         public static final int fragment_gmap_layout=0x7f03001a;
         public static final int fragment_search_bus_layout=0x7f03001b;
         public static final int fragment_search_station_layout=0x7f03001c;
-        public static final int list_item_layout=0x7f03001d;
-        public static final int support_simple_spinner_dropdown_item=0x7f03001e;
-        public static final int widget_layout=0x7f03001f;
+        public static final int list_favorite_bus_item=0x7f03001d;
+        public static final int list_favorite_station_item=0x7f03001e;
+        public static final int support_simple_spinner_dropdown_item=0x7f03001f;
+        public static final int widget_layout=0x7f030020;
     }
     public static final class menu {
         public static final int main=0x7f0d0000;

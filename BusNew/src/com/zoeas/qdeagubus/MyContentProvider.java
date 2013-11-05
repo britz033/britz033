@@ -12,6 +12,24 @@ import android.util.Log;
 
 public class MyContentProvider extends ContentProvider{
 	
+	// 테이블의 모든 이름
+	
+	public static final String STATION_NUMBER = "station_number";
+	public static final String STATION_NAME = "station_name";
+	public static final String STATION_LATITUDE = "station_latitude";
+	public static final String STATION_LONGITUDE = "station_longitude";
+	public static final String STATION_FAVORITE_STATION = "station_favorite_station";
+	public static final String STATION_FAVORITE_BUS = "station_favorite_bus";
+	
+	// 이거 개실수. projection을 어떻게 구성하느냐에 따라 이 인덱스는 죄다 틀려질 수 있음. 일단은 놔둠
+	public static final int STATION_ID_INDEX = 0;
+	public static final int STATION_NUMBER_INDEX = 1;
+	public static final int STATION_NAME_INDEX = 2;
+	public static final int STATION_LATITUDE_INDEX = 3;
+	public static final int STATION_LONGITUDE_INDEX = 4;
+	public static final int STATION_FAVORITE_STATION_INDEX = 5;
+	public static final int STATION_FAVORITE_BUS_INDEX = 6;
+	
 	// db는 이미 openhelper에서 DB이름으로 열었으니 여기선 테이블 네임을 중심으로 하면됨.
 	public static final String TABLE_NAME = "stationInfo";
 	public static final Uri	CONTENT_URI = Uri.parse("content://com.zoeas.qdeagubus/stationInfo");
@@ -66,7 +84,7 @@ public class MyContentProvider extends ContentProvider{
 		SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
 		// 테이블을 설정한다. 리졸버도 그렇지만 테이블은 uri에 명시했으므로 실제 쿼리문에서는
 		// 테이블은 안들어간다. 고로 미리 설정해야된다. 
-		qb.setTables("stationInfo");
+		qb.setTables(TABLE_NAME);
 		// uri 문에서 content://com.example.providertest/stationInfo 여기까진 그대로고 
 		// 꽁무니에 붙어 나오는 /# 머시기가 있다면 그걸로 추가검색문을 만들어준다. 
 		// #는 그냥 뭔가 온다는 표시고 만약 /#/# 식으로 세분화된다면 그것도 알아서 만들어주거나 무시하면된다.

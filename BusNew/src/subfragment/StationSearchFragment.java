@@ -1,9 +1,7 @@
 package subfragment;
 
-import util.StationTableConstants;
+import adapter.StationSearchListCursorAdapter;
 import android.app.Activity;
-import android.content.ContentUris;
-import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
@@ -12,8 +10,6 @@ import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
-import android.support.v4.widget.CursorAdapter;
-import android.support.v4.widget.SimpleCursorAdapter;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -24,9 +20,7 @@ import android.view.View.OnKeyListener;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.zoeas.qdeagubus.MyContentProvider;
@@ -34,7 +28,7 @@ import com.zoeas.qdeagubus.R;
 
 public class StationSearchFragment extends ListFragment implements LoaderCallbacks<Cursor>,OnKeyListener{
 	
-	private MyCursorAdapter madapter;
+	private StationSearchListCursorAdapter madapter;
 	private EditText et;
 	private Context context;
 	
@@ -64,7 +58,7 @@ public class StationSearchFragment extends ListFragment implements LoaderCallbac
 		super.onActivityCreated(savedInstanceState);
 		
 		//어뎁터 생성등록 커서는 없음.. 로더에서 추가
-		madapter = new MyCursorAdapter(context, null, 0);
+		madapter = new StationSearchListCursorAdapter(context, null, 0);
 		setListAdapter(madapter);
 		getLoaderManager().initLoader(0, null, this);
 	}
@@ -75,10 +69,10 @@ public class StationSearchFragment extends ListFragment implements LoaderCallbac
 		Cursor c = madapter.getCursor();
 		c.moveToPosition(position);
 		
-		String station_number = c.getString(StationTableConstants.STATION_NUMBER); 
-		String station_name = c.getString(StationTableConstants.STATION_NAME); 
-		double station_latitude = c.getDouble(StationTableConstants.STATION_LATITUDE); 
-		double station_longitude = c.getDouble(StationTableConstants.STATION_LONGITUDE); 
+		String station_number = c.getString(MyContentProvider.STATION_NUMBER_INDEX); 
+		String station_name = c.getString(MyContentProvider.STATION_NAME_INDEX); 
+		double station_latitude = c.getDouble(MyContentProvider.STATION_LATITUDE_INDEX); 
+		double station_longitude = c.getDouble(MyContentProvider.STATION_LONGITUDE_INDEX); 
 		
 		OnSaveBusStationInfoListener saver = (OnSaveBusStationInfoListener) context;
 		saver.OnSaveBusStationInfo(station_number, station_name, new LatLng(station_latitude, station_longitude));

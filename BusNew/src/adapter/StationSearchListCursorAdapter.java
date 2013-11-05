@@ -1,6 +1,5 @@
-package subfragment;
+package adapter;
 
-import util.StationTableConstants;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
@@ -19,7 +18,7 @@ import com.zoeas.qdeagubus.MyContentProvider;
 import com.zoeas.qdeagubus.R;
 
 //리스트뷰에 들어갈 어뎁터
-class MyCursorAdapter extends CursorAdapter {
+public class StationSearchListCursorAdapter extends CursorAdapter {
 
 	Context mcontext;
 
@@ -29,7 +28,7 @@ class MyCursorAdapter extends CursorAdapter {
 		ImageButton ibFavorite;
 	}
 
-	public MyCursorAdapter(Context context, Cursor c, int flags) {
+	public StationSearchListCursorAdapter(Context context, Cursor c, int flags) {
 		super(context, c, flags);
 		mcontext = context;
 	}
@@ -39,17 +38,17 @@ class MyCursorAdapter extends CursorAdapter {
 		public void onClick(View v) {
 			// 클릭된 아이템의 위치를 반환한다
 			int position = (Integer) v.getTag();
-			Cursor mcursor = MyCursorAdapter.this.getCursor();
+			Cursor mcursor = StationSearchListCursorAdapter.this.getCursor();
 			
 			// 현재 뿌려진(존재하는.. 예를들어 검색해서 20개의 결과물이 나왔으면 20개만 있음) 커서의 위치로 이동한다.
 			mcursor.moveToPosition(position);
 			
 			// 그 위치의 아이템이 즐겨찿기가 되어 있는 여부를 저장한다
 			int favorite = mcursor
-					.getInt(StationTableConstants.STATION_FAVORITE_STATION);
-			int id = mcursor.getInt(StationTableConstants.STATION_ID);
+					.getInt(MyContentProvider.STATION_FAVORITE_STATION_INDEX);
+			int id = mcursor.getInt(MyContentProvider.STATION_ID_INDEX);
 			
-			Log.d("이름",mcursor.getString(StationTableConstants.STATION_NAME));
+			Log.d("이름",mcursor.getString(MyContentProvider.STATION_NAME_INDEX));
 			Log.d("id",String.valueOf(mcursor.getInt(0)));
 
 			updateFavorite(favorite, id);
@@ -81,11 +80,11 @@ class MyCursorAdapter extends CursorAdapter {
 
 		holder.ibFavorite.setOnClickListener(listener);
 		holder.tvNumber.setText(cursor
-				.getString(StationTableConstants.STATION_NUMBER));
+				.getString(MyContentProvider.STATION_NUMBER_INDEX));
 		holder.tvName.setText(cursor
-				.getString(StationTableConstants.STATION_NAME));
+				.getString(MyContentProvider.STATION_NAME_INDEX));
 
-		if (cursor.getInt(StationTableConstants.STATION_FAVORITE_STATION) == 0) {
+		if (cursor.getInt(MyContentProvider.STATION_FAVORITE_STATION_INDEX) == 0) {
 			holder.ibFavorite
 					.setImageResource(R.drawable.btn_station_list_item_off_selector);
 		} else {
@@ -100,7 +99,7 @@ class MyCursorAdapter extends CursorAdapter {
 	@Override
 	public View newView(Context context, Cursor cursor, ViewGroup parent) {
 		LayoutInflater inflater = LayoutInflater.from(context);
-		View view = inflater.inflate(R.layout.list_item_layout, null);
+		View view = inflater.inflate(R.layout.list_favorite_station_item, null);
 
 		ViewHolder holder = new ViewHolder();
 		holder.tvNumber = (TextView) view
