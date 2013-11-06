@@ -26,13 +26,10 @@ import com.google.android.gms.maps.model.LatLng;
 
 public class MainActivity extends ActionBarActivity implements TabListener,
 		OnSaveBusStationInfoListener {
-
-	public interface CallFragmentMethod{
-		public void OnCalled();
-	}
 	
 	private boolean mflag = false; // 뒤로가기 버튼 두번으로 종료 플레그 
 	private ArrayList<Fragment> flist; 			// 액티비티가 관리하는 애들
+	public interface CallFragmentMethod{public void OnCalled();}
 	public static final String PREF_NAME = "save_station_num";	// SharedPreferance 키값
 
 	public enum MyTabs {

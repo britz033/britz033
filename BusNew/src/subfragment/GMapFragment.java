@@ -10,6 +10,7 @@ import android.content.DialogInterface.OnClickListener;
 import android.database.Cursor;
 import android.location.Location;
 import android.net.Uri;
+import android.opengl.Visibility;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
@@ -22,6 +23,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -45,6 +47,7 @@ public class GMapFragment extends Fragment implements CallFragmentMethod,
 	private GoogleMap map;
 	private float density;
 	private LatLng myLatLng;
+	private TextView tv;
 
 	@Override
 	public void onAttach(Activity activity) {
@@ -56,6 +59,7 @@ public class GMapFragment extends Fragment implements CallFragmentMethod,
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		View view = inflater.inflate(R.layout.fragment_gmap_layout, null);
+		tv = (TextView) view.findViewById(R.id.text_map_loading);
 		return view;
 	}
 
@@ -113,15 +117,16 @@ public class GMapFragment extends Fragment implements CallFragmentMethod,
 		
 		final ProgressDialog wait = new ProgressDialog(context); 
 		wait.setButton(DialogInterface.BUTTON_NEGATIVE,"취소", new OnClickListener() {
-			
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 				cancle = true;
 				dialog.dismiss();
+				tv.setVisibility(View.INVISIBLE);
 			}
 		});
 		wait.setMessage("위치정보를 가져오고 있습니다");
 		wait.show();
+		tv.setVisibility(View.VISIBLE);
 
 		// MyLocation 클래스 콜백 리스너. gps나 네트웤 위치 신호가 오기까지 기다리다가 onchange 리스너가 호출되면
 		// 그 결과값을 gotLocation 메소드로 리턴해준다.
@@ -131,6 +136,7 @@ public class GMapFragment extends Fragment implements CallFragmentMethod,
 
 				if (map != null && location != null && !cancle) {
 					wait.dismiss();
+					tv.setVisibility(View.INVISIBLE);
 					myLatLng = new LatLng(location.getLatitude(),
 							location.getLongitude());
 					map.animateCamera(CameraUpdateFactory.newLatLngZoom(

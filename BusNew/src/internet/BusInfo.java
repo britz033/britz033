@@ -6,7 +6,9 @@ import android.os.Parcelable;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
+import android.text.style.AbsoluteSizeSpan;
 import android.text.style.ForegroundColorSpan;
+import android.text.style.StyleSpan;
 
 /*
  * 각 버스들 정보
@@ -39,8 +41,14 @@ public class BusInfo implements Parcelable {
 			sp.setSpan(new ForegroundColorSpan(Color.RED), 0, sp.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 			spb.append(sp).append(" ");
 		}
-		spb.append(busNum).append(" ");
-		spb.append(time).append(" ");
+		
+		//그냥 픽셀값이라 나중에 수정해야함
+		SpannableString num = new SpannableString(busNum);
+		num.setSpan(new AbsoluteSizeSpan(130), 0, num.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+		num.setSpan(new StyleSpan(android.graphics.Typeface.BOLD), 0, num.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+		
+		spb.append(num).append(" ").append("[");
+		spb.append(time).append("] ");
 		spb.append(current).append(" ");
 		spb.append("\n");
 
