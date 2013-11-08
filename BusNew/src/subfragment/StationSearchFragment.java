@@ -71,8 +71,8 @@ public class StationSearchFragment extends ListFragment implements LoaderCallbac
 		
 		String station_number = c.getString(MyContentProvider.STATION_NUMBER_INDEX); 
 		String station_name = c.getString(MyContentProvider.STATION_NAME_INDEX); 
-		double station_latitude = c.getDouble(MyContentProvider.STATION_LATITUDE_INDEX); 
 		double station_longitude = c.getDouble(MyContentProvider.STATION_LONGITUDE_INDEX); 
+		double station_latitude = c.getDouble(MyContentProvider.STATION_LATITUDE_INDEX); 
 		
 		OnSaveBusStationInfoListener saver = (OnSaveBusStationInfoListener) context;
 		saver.OnSaveBusStationInfo(station_number, station_name, new LatLng(station_latitude, station_longitude));
@@ -109,7 +109,7 @@ public class StationSearchFragment extends ListFragment implements LoaderCallbac
 		Uri baseUri = MyContentProvider.CONTENT_URI;
 		
 		// _id 안넣으면 에러 슈바
-		String[] projection = {"_id","station_number","station_name","station_latitude","station_longitude","station_favorite_station"};
+		String[] projection = {"_id","station_number","station_name","station_longitude","station_latitude","station_favorite"};
 		String selection = null;
 		if(args != null){
 				selection = "station_name like '%" + args.getString("key") +"%'";

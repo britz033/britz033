@@ -45,7 +45,7 @@ public class StationSearchListCursorAdapter extends CursorAdapter {
 			
 			// 그 위치의 아이템이 즐겨찿기가 되어 있는 여부를 저장한다
 			int favorite = mcursor
-					.getInt(MyContentProvider.STATION_FAVORITE_STATION_INDEX);
+					.getInt(MyContentProvider.STATION_FAVORITE_INDEX);
 			int id = mcursor.getInt(MyContentProvider.STATION_ID_INDEX);
 			
 			Log.d("이름",mcursor.getString(MyContentProvider.STATION_NAME_INDEX));
@@ -60,9 +60,9 @@ public class StationSearchListCursorAdapter extends CursorAdapter {
 		ContentValues value = new ContentValues();
 
 		if (favorite == 0) {
-			value.put("station_favorite_station", String.valueOf(1));
+			value.put("station_favorite", String.valueOf(1));
 		} else {
-			value.put("station_favorite_station", String.valueOf(0));
+			value.put("station_favorite", String.valueOf(0));
 		}
 
 		// 아이디 값을 기준으로 업데이트
@@ -84,7 +84,7 @@ public class StationSearchListCursorAdapter extends CursorAdapter {
 		holder.tvName.setText(cursor
 				.getString(MyContentProvider.STATION_NAME_INDEX));
 
-		if (cursor.getInt(MyContentProvider.STATION_FAVORITE_STATION_INDEX) == 0) {
+		if (cursor.getInt(MyContentProvider.STATION_FAVORITE_INDEX) == 0) {
 			holder.ibFavorite
 					.setImageResource(R.drawable.btn_station_list_item_off_selector);
 		} else {

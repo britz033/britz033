@@ -163,8 +163,8 @@ public class MainActivity extends ActionBarActivity implements TabListener,
 
 		editor.putString("station_number", station_number);
 		editor.putString("station_name", station_name);
-		editor.putString("station_latitude", String.valueOf(latLng.latitude));
 		editor.putString("station_longitude", String.valueOf(latLng.longitude));
+		editor.putString("station_latitude", String.valueOf(latLng.latitude));
 		editor.commit();
 
 		this.stationNumber = station_number;

@@ -162,8 +162,8 @@ public class GMapFragment extends Fragment implements CallFragmentMethod,
 		double maxlnt = myLatLng.longitude + bound;
 		double minlnt = myLatLng.longitude - bound;
 
-		String[] projection = { "_id", "station_number", "station_name",
-				"station_latitude", "station_longitude" };
+		String[] projection = { "_id", "station_number", "station_name",  "station_longitude",
+				"station_latitude" };
 		String selection = "(station_latitude BETWEEN " + minlat + " AND "
 				+ maxlat + ") AND (station_longitude BETWEEN " + minlnt
 				+ " AND " + maxlnt + ")";
@@ -181,8 +181,8 @@ public class GMapFragment extends Fragment implements CallFragmentMethod,
 		for (int i = 0; i < c.getCount(); i++) {
 			String station_number = c.getString(1);
 			String station_name = c.getString(2);
-			double station_latitude = c.getDouble(3);
-			double station_longitude = c.getDouble(4);
+			double station_longitude = c.getDouble(3);
+			double station_latitude = c.getDouble(4);
 			LatLng boundLatLng = new LatLng(station_latitude, station_longitude);
 			c.moveToNext();
 			map.addMarker(new MarkerOptions().title(station_name)

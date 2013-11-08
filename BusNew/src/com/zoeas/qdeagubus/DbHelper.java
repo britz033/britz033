@@ -14,7 +14,7 @@ import android.util.Log;
 
 class DbHelper extends SQLiteOpenHelper{
 
-	public static final String DB_NAME = "StationDB2";
+	public static final String DB_NAME = "StationDB.db";
 	Context mcontext;
 	
 	public DbHelper(Context context) {

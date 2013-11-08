@@ -25,6 +25,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
 
 import com.zoeas.qdeagubus.MyContentProvider;
 import com.zoeas.qdeagubus.R;
@@ -37,10 +38,10 @@ public class FavoriteFragment extends Fragment implements ResponseTask {
 
 	public static final String KEY_LIST = "buslist";
 	public static final String KEY_ERROR = "error";
-	
-	Context context;
-	Cursor cursor;
-	String stationNum;
+
+	private Context context;
+	private Cursor cursor;
+	private String stationNum;
 
 	@Override
 	public void onAttach(Activity activity) {
@@ -60,73 +61,85 @@ public class FavoriteFragment extends Fragment implements ResponseTask {
 				viewPagerSetting(view);
 			}
 		});
-		
+
 		return view;
 	}
 
 	// 여기서 정류장 번호를 받는다.
 	// 즐겨찾기된 그림들을 DB에서 받아온다 그 정보는 어뎁터 내에 집어넣는다.
 
-	private void viewPagerSetting(View view) {
-		
-		float density = context.getResources().getDisplayMetrics().density;
-		int dip = (int)(density*30);
-		ViewPager pager = (ViewPager) view.findViewById(R.id.viewpager_favorite);
-		PagerTitleStrip titlepager = (PagerTitleStrip) view.findViewById(R.id.pager_title_strip);
-		titlepager.setTextSpacing(dip);
+	private void viewPagerSetting(final View view) {
 
 		Uri uri = MyContentProvider.CONTENT_URI;
 		String[] projection = { MyContentProvider.STATION_NUMBER, MyContentProvider.STATION_NAME };
-		String selection = MyContentProvider.STATION_FAVORITE_STATION + "=?";
+		String selection = MyContentProvider.STATION_FAVORITE + "=?";
 		String[] selectionArgs = { "1" };
-
-		// 미리보기에 쓰일 쿼리를 가져온다 and 미리보기를 표시할 아탑터를 세팅한다
+		
 		cursor = context.getContentResolver().query(uri, projection, selection, selectionArgs, null);
-		pager.setAdapter(new FavoritePreviewPagerAdatper(context, cursor));
-
-		OnPageChangeListener onPageChangeListener = new OnPageChangeListener() {
-
-			@Override
-			public void onPageSelected(int position) {
-				// 페이지가 선택되면 선택된 번호로 커서를 이동시켜 정류소 번호를 가져온다음 showInfo로 보내준다
-				Log.d("postion",String.valueOf(position));
-				cursor.moveToPosition(position);
-				stationNum = cursor.getString(0);
-				showInfo(stationNum);
-			}
-
-			@Override
-			public void onPageScrolled(int position, float arg1, int arg2) {
-				// TODO Auto-generated method stub
-
-			}
-
-			@Override
-			public void onPageScrollStateChanged(int arg0) {
-				// TODO Auto-generated method stub
-
-			}
-		};
 		
-		pager.setOnPageChangeListener(onPageChangeListener);
-		pager.setOffscreenPageLimit(5);
-		pager.setClipChildren(false);
-		pager.setPageMargin(0);
-		
-		onPageChangeListener.onPageSelected(0);
-		
+		TextView tv = (TextView) view.findViewById(R.id.text_favorite_preview_off);
+		ViewPager pager = (ViewPager) view.findViewById(R.id.viewpager_favorite);
+
+		if (cursor.getCount() != 0) {
+			tv.setVisibility(View.INVISIBLE);
+			float density = context.getResources().getDisplayMetrics().density;
+			int dip = (int) (density * 30);
+			
+			PagerTitleStrip titlepager = (PagerTitleStrip) view.findViewById(R.id.pager_title_strip);
+			titlepager.setTextSpacing(dip);
+
+			
+
+			// 미리보기에 쓰일 쿼리를 가져온다 and 미리보기를 표시할 아탑터를 세팅한다
+			pager.setAdapter(new FavoritePreviewPagerAdatper(context, cursor));
+
+			OnPageChangeListener onPageChangeListener = new OnPageChangeListener() {
+
+				@Override
+				public void onPageSelected(int position) {
+					// 페이지가 선택되면 선택된 번호로 커서를 이동시켜 정류소 번호를 가져온다음 showInfo로 보내준다
+					Log.d("postion", String.valueOf(position));
+					cursor.moveToPosition(position);
+					stationNum = cursor.getString(0);
+					showInfo(stationNum);
+				}
+
+				@Override
+				public void onPageScrolled(int position, float arg1, int arg2) {
+					// TODO Auto-generated method stub
+
+				}
+
+				@Override
+				public void onPageScrollStateChanged(int arg0) {
+					// TODO Auto-generated method stub
+
+				}
+			};
+
+			pager.setOnPageChangeListener(onPageChangeListener);
+			pager.setOffscreenPageLimit(5);
+			pager.setClipChildren(false);
+			pager.setPageMargin(0);
+
+			onPageChangeListener.onPageSelected(0);
+		} else {
+			pager.setAdapter(null);
+			tv.setVisibility(View.VISIBLE);
+			stationNum = null;
+		}
+
 		showInfo(stationNum);
 	}
 
 	/*
-	 * 받은 정류소 번호를 이용하여 
-	 * ConnectTask 로 인터넷 연결을 수행하고 그 결과값을 받을 인터페이스를 등록한다
+	 * 받은 정류소 번호를 이용하여 ConnectTask 로 인터넷 연결을 수행하고 그 결과값을 받을 인터페이스를 등록한다
 	 */
 	private void showInfo(String stationNum) {
 
-		
 		ConnectTask busInfoTask = new ConnectTask(context, stationNum);
-		busInfoTask.proxy = this;	// 인터페이스를 등록하여 Async의 작업이 끝나면 onTaskFinish 함수를 호출 가능케 한다
+		busInfoTask.proxy = this; // 인터페이스를 등록하여 Async의 작업이 끝나면 onTaskFinish 함수를
+									// 호출 가능케 한다
 
 		ProgressDialog wait = ProgressDialog.show(context, null, "잠시만 기다려주세요", true);
 		busInfoTask.execute();
@@ -147,12 +160,12 @@ public class FavoriteFragment extends Fragment implements ResponseTask {
 		if (error == null && list != null) {
 			// 정상일 경우
 			initData.putParcelableArrayList(KEY_LIST, list);
-			
+
 		} else if (error != null) {
 			// error 메세지가 있을 경우
 			initData.putString(KEY_ERROR, error);
 		} else {
-			// 이도 저도 아닐 경우 - 정류장 번호가 없다던지.. 
+			// 이도 저도 아닐 경우 - 정류장 번호가 없다던지..
 			initData.putString(KEY_ERROR, "정류소가 설정되어 있지 않습니다");
 		}
 
@@ -169,6 +182,6 @@ public class FavoriteFragment extends Fragment implements ResponseTask {
 	public void onStop() {
 		super.onStop();
 		cursor.close();
-		Log.d("onStop","호출되었습니다");
+		Log.d("onStop", "호출되었습니다");
 	}
 }

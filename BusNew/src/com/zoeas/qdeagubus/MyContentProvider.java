@@ -16,19 +16,17 @@ public class MyContentProvider extends ContentProvider{
 	
 	public static final String STATION_NUMBER = "station_number";
 	public static final String STATION_NAME = "station_name";
-	public static final String STATION_LATITUDE = "station_latitude";
-	public static final String STATION_LONGITUDE = "station_longitude";
-	public static final String STATION_FAVORITE_STATION = "station_favorite_station";
-	public static final String STATION_FAVORITE_BUS = "station_favorite_bus";
+	public static final String STATION_LATITUDE = "station_longitude";
+	public static final String STATION_LONGITUDE = "station_latitude";
+	public static final String STATION_FAVORITE = "station_favorite";
 	
 	// 이거 개실수. projection을 어떻게 구성하느냐에 따라 이 인덱스는 죄다 틀려질 수 있음. 일단은 놔둠
 	public static final int STATION_ID_INDEX = 0;
 	public static final int STATION_NUMBER_INDEX = 1;
 	public static final int STATION_NAME_INDEX = 2;
-	public static final int STATION_LATITUDE_INDEX = 3;
-	public static final int STATION_LONGITUDE_INDEX = 4;
-	public static final int STATION_FAVORITE_STATION_INDEX = 5;
-	public static final int STATION_FAVORITE_BUS_INDEX = 6;
+	public static final int STATION_LONGITUDE_INDEX = 3;
+	public static final int STATION_LATITUDE_INDEX = 4;
+	public static final int STATION_FAVORITE_INDEX = 5;
 	
 	// db는 이미 openhelper에서 DB이름으로 열었으니 여기선 테이블 네임을 중심으로 하면됨.
 	public static final String TABLE_NAME = "stationInfo";
