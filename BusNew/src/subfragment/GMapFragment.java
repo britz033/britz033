@@ -10,7 +10,6 @@ import android.content.DialogInterface.OnClickListener;
 import android.database.Cursor;
 import android.location.Location;
 import android.net.Uri;
-import android.opengl.Visibility;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
@@ -154,7 +153,7 @@ public class GMapFragment extends Fragment implements CallFragmentMethod,
 	public Loader<Cursor> onCreateLoader(int id, Bundle arg1) {
 		Log.d("onCreateLoader", "called");
 
-		Uri uri = MyContentProvider.CONTENT_URI;
+		Uri uri = MyContentProvider.CONTENT_URI_STATION;
 
 		final double bound = 0.005;
 		double maxlat = myLatLng.latitude + bound;
@@ -175,6 +174,7 @@ public class GMapFragment extends Fragment implements CallFragmentMethod,
 	public void onLoadFinished(Loader<Cursor> loader, Cursor c) {
 		Log.d("onLoadFininshed", "called");
 
+		Handler handler = new Handler();
 		// 기존의 cursor를 그대로 불러오기 때문에 시작시 반드시 커서위치를 처음으로 되돌려줘야함
 		c.moveToFirst();
 		Log.d("counter", String.valueOf(c.getCount()));
@@ -185,9 +185,18 @@ public class GMapFragment extends Fragment implements CallFragmentMethod,
 			double station_latitude = c.getDouble(4);
 			LatLng boundLatLng = new LatLng(station_latitude, station_longitude);
 			c.moveToNext();
-			map.addMarker(new MarkerOptions().title(station_name)
-					.snippet(station_number).position(boundLatLng));
-			map.setOnMarkerClickListener(this);
+			
+			final MarkerOptions op = new MarkerOptions();
+			op.title(station_name).snippet(station_number).position(boundLatLng);
+			handler.postDelayed(new Runnable() {
+				
+				@Override
+				public void run() {
+					map.addMarker(op);
+					map.setOnMarkerClickListener(GMapFragment.this);
+				}
+			},1200);
+			
 		}
 	}
 

@@ -70,7 +70,7 @@ public class FavoriteFragment extends Fragment implements ResponseTask {
 
 	private void viewPagerSetting(final View view) {
 
-		Uri uri = MyContentProvider.CONTENT_URI;
+		Uri uri = MyContentProvider.CONTENT_URI_STATION;
 		String[] projection = { MyContentProvider.STATION_NUMBER, MyContentProvider.STATION_NAME };
 		String selection = MyContentProvider.STATION_FAVORITE + "=?";
 		String[] selectionArgs = { "1" };
@@ -149,6 +149,9 @@ public class FavoriteFragment extends Fragment implements ResponseTask {
 
 	/*
 	 * 위에서 인터넷에서 버스정보 가져오기 작업이 끝났을때 호출되는 인터페이스, 최종결과를 뿌린다
+	 * 주의점 !!!! 
+	 *  commit가 아니라 commitAllowingStateLoss를 써야만 에러가 나지 않는다.
+	 *  이부분은 다시 찾아볼것
 	 */
 	@Override
 	public void onTaskFinish(ArrayList<BusInfo> list, String error) {
@@ -175,7 +178,7 @@ public class FavoriteFragment extends Fragment implements ResponseTask {
 		FragmentTransaction ft = fm.beginTransaction();
 		ft.replace(R.id.fragment_favorite_buslist, busListFragment);
 		ft.addToBackStack(null);
-		ft.commit();
+		ft.commitAllowingStateLoss();
 	}
 
 	@Override

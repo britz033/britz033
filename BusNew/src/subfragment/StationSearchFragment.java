@@ -106,7 +106,7 @@ public class StationSearchFragment extends ListFragment implements LoaderCallbac
 
 	@Override
 	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-		Uri baseUri = MyContentProvider.CONTENT_URI;
+		Uri baseUri = MyContentProvider.CONTENT_URI_STATION;
 		
 		// _id 안넣으면 에러 슈바
 		String[] projection = {"_id","station_number","station_name","station_longitude","station_latitude","station_favorite"};

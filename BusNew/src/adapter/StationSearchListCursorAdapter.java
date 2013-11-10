@@ -67,7 +67,7 @@ public class StationSearchListCursorAdapter extends CursorAdapter {
 
 		// 아이디 값을 기준으로 업데이트
 		Uri singleUri = ContentUris.withAppendedId(
-				MyContentProvider.CONTENT_URI, id);
+				MyContentProvider.CONTENT_URI_STATION, id);
 
 		mcontext.getContentResolver().update(singleUri, value, null, null);
 		

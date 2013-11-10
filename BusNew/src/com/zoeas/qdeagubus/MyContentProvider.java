@@ -10,6 +10,10 @@ import android.net.Uri;
 import android.text.TextUtils;
 import android.util.Log;
 
+
+/*
+ * http://developer.android.com/guide/topics/providers/content-provider-creating.html
+ */
 public class MyContentProvider extends ContentProvider{
 	
 	// 테이블의 모든 이름
@@ -20,6 +24,12 @@ public class MyContentProvider extends ContentProvider{
 	public static final String STATION_LONGITUDE = "station_latitude";
 	public static final String STATION_FAVORITE = "station_favorite";
 	
+	public static final String BUS_NUMBER = "bus_number";
+	public static final String BUS_INTERVAL = "bus_interval";
+	public static final String BUS_FORWARD = "bus_forward";
+	public static final String BUS_BACKWARD = "bus_backward";
+	public static final String BUS_FAVORITE = "bus_favorite";
+	
 	// 이거 개실수. projection을 어떻게 구성하느냐에 따라 이 인덱스는 죄다 틀려질 수 있음. 일단은 놔둠
 	public static final int STATION_ID_INDEX = 0;
 	public static final int STATION_NUMBER_INDEX = 1;
@@ -29,19 +39,38 @@ public class MyContentProvider extends ContentProvider{
 	public static final int STATION_FAVORITE_INDEX = 5;
 	
 	// db는 이미 openhelper에서 DB이름으로 열었으니 여기선 테이블 네임을 중심으로 하면됨.
-	public static final String TABLE_NAME = "stationInfo";
-	public static final Uri	CONTENT_URI = Uri.parse("content://com.zoeas.qdeagubus/stationInfo");
+	public static final String TABLE_NAME_STATION = "stationInfo";
+	public static final String TABLE_NAME_BUS = "busInfo";
 	
-	public static final String CONTENT_TYPE = "vnd.android.curosr.dir/stationInfo";
-	public static final String CONTENT_ITEM_TYPE = "vnd.android.curosr.item/stationInfo";
+	public static final Uri	CONTENT_URI_STATION = Uri.parse("content://com.zoeas.qdeagubus/stationInfo");
+	public static final Uri	CONTENT_URI_BUS = Uri.parse("content://com.zoeas.qdeagubus/busInfo");
+	
+	public static final String CONTENT_TYPE_STATION = "vnd.android.curosr.dir/stationInfo";
+	public static final String CONTENT_ITEM_TYPE_STATION = "vnd.android.curosr.item/stationInfo";
 	public static final int STATION_COLLECTION = 1;
 	public static final int SINGLE_STATION = 2;
 	
+	public static final String CONTENT_TYPE_BUS = "vnd.android.curosr.dir/stationInfo";
+	public static final String CONTENT_ITEM_TYPE_BUS = "vnd.android.curosr.item/stationInfo";
+	public static final int BUS_COLLECTION = 1;
+	public static final int SINGLE_BUS = 2;
+	public static final int TABLE_STATION = 1001;
+	public static final int TABLE_BUS = 1002;
+	
 	private static final UriMatcher matcher = new UriMatcher(UriMatcher.NO_MATCH);
+	private static final UriMatcher selectTable = new UriMatcher(UriMatcher.NO_MATCH);
 	static{
 		// 각각의 상수와 매치 station_collection = uri, gettype메소드에서 matcher 쉽게 할려고 정의
 		matcher.addURI("com.zoeas.qdeagubus", "stationInfo", STATION_COLLECTION);
 		matcher.addURI("com.zoeas.qdeagubus", "stationInfo/#", SINGLE_STATION);
+		
+		matcher.addURI("com.zoeas.qdeagubus", "busInfo", BUS_COLLECTION);
+		matcher.addURI("com.zoeas.qdeagubus", "busInfo/#", SINGLE_BUS);
+		
+		selectTable.addURI("com.zoeas.qdeagubus", "stationInfo/*", TABLE_STATION);
+		selectTable.addURI("com.zoeas.qdeagubus", "busInfo/*", TABLE_BUS);
+		selectTable.addURI("com.zoeas.qdeagubus", "stationInfo", TABLE_STATION);
+		selectTable.addURI("com.zoeas.qdeagubus", "busInfo", TABLE_BUS);
 	}
 	
 	SQLiteDatabase db;
@@ -54,10 +83,16 @@ public class MyContentProvider extends ContentProvider{
 	@Override
 	public String getType(Uri uri) {
 		if(matcher.match(uri) == STATION_COLLECTION){
-			return CONTENT_TYPE;
+			return CONTENT_TYPE_STATION;
 		}
 		if(matcher.match(uri) == SINGLE_STATION){
-			return CONTENT_ITEM_TYPE;
+			return CONTENT_ITEM_TYPE_STATION;
+		}
+		if(matcher.match(uri) == BUS_COLLECTION){
+			return CONTENT_TYPE_BUS;
+		}
+		if(matcher.match(uri) == SINGLE_BUS){
+			return CONTENT_ITEM_TYPE_BUS;
 		}
 		return null;
 	}
@@ -82,13 +117,19 @@ public class MyContentProvider extends ContentProvider{
 		SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
 		// 테이블을 설정한다. 리졸버도 그렇지만 테이블은 uri에 명시했으므로 실제 쿼리문에서는
 		// 테이블은 안들어간다. 고로 미리 설정해야된다. 
-		qb.setTables(TABLE_NAME);
+		if(selectTable.match(uri) == TABLE_STATION)
+			qb.setTables(TABLE_NAME_STATION);
+		else if (selectTable.match(uri) == TABLE_BUS)
+			qb.setTables(TABLE_NAME_BUS);
 		// uri 문에서 content://com.example.providertest/stationInfo 여기까진 그대로고 
 		// 꽁무니에 붙어 나오는 /# 머시기가 있다면 그걸로 추가검색문을 만들어준다. 
 		// #는 그냥 뭔가 온다는 표시고 만약 /#/# 식으로 세분화된다면 그것도 알아서 만들어주거나 무시하면된다.
 		// 자신이 원한다면 /#/#/# 이런것도 더욱 세밀하게 커스텀 할 수 있는듯. 어디까지나 원한다면
-		// 뭐.. 이 쿼리 메소드자체가 이미 커스텀이지만.
-		if(matcher.match(uri) == SINGLE_STATION){
+		// 
+	    // *: Matches a string of any valid characters of any length.
+	    // #: Matches a string of numeric characters of any length.
+
+		if(matcher.match(uri) == SINGLE_STATION || matcher.match(uri) == SINGLE_BUS){
 			qb.appendWhere("_id=" + uri.getLastPathSegment());
 		}
 		

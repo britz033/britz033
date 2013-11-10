@@ -81,6 +81,14 @@ public class MainActivity extends ActionBarActivity implements TabListener,
 	 * dbhelper도 호출 덕분에 이 코드는 망함. 그래서 dbhelper 쪽으로 이사감
 	 */
 
+	
+	//  commitAllowingStateLoss 를 사용해야 에러가 안난다. 이부분 주의
+	// http://stackoverflow.com/questions/7469082/getting-exception-illegalstateexception-can-not-perform-this-action-after-onsa
+	@Override
+	protected void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+	}
+	
 	private void viewPagerSetting() {
 		vp = (MainViewPager) findViewById(R.id.viewpager_main);
 		FragmentManager fm = getSupportFragmentManager();

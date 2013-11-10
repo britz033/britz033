@@ -1,12 +1,22 @@
 package subfragment;
 
-import com.zoeas.qdeagubus.R;
-
+import adapter.BusSearchListCursorAdapter;
+import android.content.Context;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
+import android.support.v4.app.ListFragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.app.LoaderManager.LoaderCallbacks;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
+import android.support.v4.widget.CursorAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.zoeas.qdeagubus.MyContentProvider;
+import com.zoeas.qdeagubus.R;
 
 
 /*  
@@ -26,18 +36,43 @@ import android.view.ViewGroup;
  
  */
 
-public class BusNumberSearchFragment extends Fragment{
+public class BusNumberSearchFragment extends ListFragment implements LoaderCallbacks<Cursor>{
+	
+	private Context context;
+	private BusSearchListCursorAdapter busAdapter;
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
+		context = getActivity();
 		View view = inflater.inflate(R.layout.fragment_search_bus_layout, null);
+		
+		busAdapter = new BusSearchListCursorAdapter(context, null, CursorAdapter.FLAG_AUTO_REQUERY);
+		setListAdapter(busAdapter);
+		
+		getLoaderManager().initLoader(0, null, this);
 		return view;
 	}
 	
 	@Override
-	public void onActivityCreated(Bundle savedInstanceState) {
-		super.onActivityCreated(savedInstanceState);
+	public Loader<Cursor> onCreateLoader(int id, Bundle arg1) {
 		
+		Uri uri = MyContentProvider.CONTENT_URI_BUS;
+		String[] projection = {"_id","bus_number"};
+		String selection = null;
+		String[] selectionArgs = null;
+		String sortOrder = null;
+		
+		return new CursorLoader(context, uri, projection, selection, selectionArgs, sortOrder);
+	}
+
+	@Override
+	public void onLoadFinished(Loader<Cursor> arg0, Cursor cursor) {
+		busAdapter.swapCursor(cursor);
+	}
+
+	@Override
+	public void onLoaderReset(Loader<Cursor> arg0) {
+		busAdapter.swapCursor(null);
 	}
 }

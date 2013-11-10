@@ -12,6 +12,11 @@ import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
 import android.util.Log;
 
+
+/*
+ * 컨텐트 프로바이더용
+ * 만약 DB가 없으면 asset에서 가져와 생성한다
+ */
 class DbHelper extends SQLiteOpenHelper{
 
 	public static final String DB_NAME = "StationDB.db";
