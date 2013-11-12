@@ -36,7 +36,6 @@ public class FavoriteFragmentBusList extends ListFragment {
 		if(error == null)
 			setListAdapter(new BusListAdapter(list));
 		else {
-			Log.d("에러메세지",error);
 			setListAdapter(null);
 			setEmptyText(error);
 		}
@@ -84,7 +83,8 @@ public class FavoriteFragmentBusList extends ListFragment {
 			
 			SpannableStringBuilder ssb = new SpannableStringBuilder();
 			
-			ssb.append(list.get(position).getSpannableStringBusInfo());
+			float density = context.getResources().getDisplayMetrics().density;
+			ssb.append(list.get(position).getSpannableStringBusInfo(density));
 			
 			holder.tv.setText(ssb);
 			

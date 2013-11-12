@@ -35,7 +35,7 @@ public class MainActivity extends ActionBarActivity implements TabListener,
 	private ArrayList<Fragment> flist; 			// 액티비티가 관리하는 애들
 	public interface CallFragmentMethod{public void OnCalled();}
 	public static final String PREF_NAME = "save_station_num";	// SharedPreferance 키값
-
+	
 	public enum MyTabs {
 		FAVORITE(0, "즐겨찾기", "subfragment.FavoriteFragment"), 
 		STATION_LISTVIEW(1, "정류소", "subfragment.SearchStationFragment"), 
@@ -74,9 +74,10 @@ public class MainActivity extends ActionBarActivity implements TabListener,
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-
+		
 		viewPagerSetting();
 		actionBarSetting();
+		
 
 	}
 

@@ -33,7 +33,7 @@ public class BusInfo implements Parcelable {
 		readFromParcel(in);
 	}
 
-	public SpannableStringBuilder getSpannableStringBusInfo() {
+	public SpannableStringBuilder getSpannableStringBusInfo(float density) {
 		SpannableStringBuilder spb = new SpannableStringBuilder();
 
 		if (soon) {
@@ -42,9 +42,11 @@ public class BusInfo implements Parcelable {
 			spb.append(sp).append(" ");
 		}
 		
+		int textSize = (int)(30*density);
+		
 		//그냥 픽셀값이라 나중에 수정해야함
 		SpannableString num = new SpannableString(busNum);
-		num.setSpan(new AbsoluteSizeSpan(130), 0, num.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+		num.setSpan(new AbsoluteSizeSpan(textSize), 0, num.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 		num.setSpan(new StyleSpan(android.graphics.Typeface.BOLD), 0, num.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 		
 		spb.append(num).append(" ").append("[");
@@ -54,7 +56,7 @@ public class BusInfo implements Parcelable {
 
 		return spb;
 	}
-
+	
 	public String getStation() {
 		return station;
 	}
