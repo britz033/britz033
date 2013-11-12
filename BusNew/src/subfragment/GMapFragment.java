@@ -52,6 +52,7 @@ public class GMapFragment extends Fragment implements CallFragmentMethod,
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
 		context = activity;
+		
 	}
 
 	@Override
@@ -107,24 +108,23 @@ public class GMapFragment extends Fragment implements CallFragmentMethod,
 
 	}
 
-	boolean cancle;
 	// 생성될때가 아니라 자신이 선택될때 불려진다.
 	// 인터페이스로 메인 ViewPager의 OnPageChangeListener 에서 호출한다.
 	@Override
 	public void OnCalled() {
-		cancle = false; // 취소를 누르면 위치추적장소로 자동이동을 하지 않는다. 
+//		cancle = false; // 취소를 누르면 위치추적장소로 자동이동을 하지 않는다. 
 		
-		final ProgressDialog wait = new ProgressDialog(context); 
-		wait.setButton(DialogInterface.BUTTON_NEGATIVE,"취소", new OnClickListener() {
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-				cancle = true;
-				dialog.dismiss();
-				tv.setVisibility(View.INVISIBLE);
-			}
-		});
-		wait.setMessage("위치정보를 가져오고 있습니다");
-		wait.show();
+//		final ProgressDialog wait = new ProgressDialog(context); 
+//		wait.setButton(DialogInterface.BUTTON_NEGATIVE,"취소", new OnClickListener() {
+//			@Override
+//			public void onClick(DialogInterface dialog, int which) {
+//				cancle = true;
+//				dialog.dismiss();
+//				tv.setVisibility(View.INVISIBLE);
+//			}
+//		});
+//		wait.setMessage("위치정보를 가져오고 있습니다");
+//		wait.show();
 		tv.setVisibility(View.VISIBLE);
 
 		// MyLocation 클래스 콜백 리스너. gps나 네트웤 위치 신호가 오기까지 기다리다가 onchange 리스너가 호출되면
@@ -133,8 +133,8 @@ public class GMapFragment extends Fragment implements CallFragmentMethod,
 			@Override
 			public void gotLocation(Location location) {
 
-				if (map != null && location != null && !cancle) {
-					wait.dismiss();
+				if (map != null && location != null) {
+//					wait.dismiss();
 					tv.setVisibility(View.INVISIBLE);
 					myLatLng = new LatLng(location.getLatitude(),
 							location.getLongitude());

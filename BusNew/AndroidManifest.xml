@@ -34,6 +34,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name="subfragment.BusInfoActivity"
+            android:label="번호정보"/>
         <receiver 
             android:name=".BusWidget"
             android:label="버스위젯"

@@ -11,6 +11,7 @@ import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.text.Editable;
+import android.text.InputType;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -26,21 +27,19 @@ import com.google.android.gms.maps.model.LatLng;
 import com.zoeas.qdeagubus.MyContentProvider;
 import com.zoeas.qdeagubus.R;
 
-public class StationSearchFragment extends ListFragment implements LoaderCallbacks<Cursor>,OnKeyListener{
+public class SearchStationFragment extends ListFragment implements LoaderCallbacks<Cursor>,OnKeyListener{
 	
 	private StationSearchListCursorAdapter madapter;
 	private EditText et;
 	private Context context;
+	private InputMethodManager imm;
 	
-//	public interface OnBusStationInfoListener{
-//		public void OnBusStationInfo(String station_number, String station_name, LatLng latLng);
-//		public void OnBusStationInfo(String station_number, String station_name);
-//	}
 	
 	@Override
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
 		context = activity;
+		imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
 	}
 	
 	@Override
@@ -49,7 +48,8 @@ public class StationSearchFragment extends ListFragment implements LoaderCallbac
 		View view = inflater.inflate(R.layout.fragment_search_station_layout, null);
 		et = (EditText) view.findViewById(R.id.edit_search_sub2fragment);
 		et.addTextChangedListener(new MyWatcher());
-		et.setOnKeyListener(this); 
+		et.setOnKeyListener(this);
+		
 		return view;
 	}
 	
@@ -62,6 +62,7 @@ public class StationSearchFragment extends ListFragment implements LoaderCallbac
 		setListAdapter(madapter);
 		getLoaderManager().initLoader(0, null, this);
 	}
+	
 	
 	@Override
 	public void onListItemClick(ListView l, View v, int position, long id) {
@@ -97,7 +98,7 @@ public class StationSearchFragment extends ListFragment implements LoaderCallbac
 			// 데이터베이스 검색 하여 리스트뷰 새로 뿌림
 			Bundle search = new Bundle();
 			search.putString("key", s.toString());
-			getLoaderManager().restartLoader(0, search, StationSearchFragment.this);
+			getLoaderManager().restartLoader(0, search, SearchStationFragment.this);
 		}
 		
 	}
@@ -133,7 +134,6 @@ public class StationSearchFragment extends ListFragment implements LoaderCallbac
 	@Override
 	public boolean onKey(View v, int keyCode, KeyEvent event) {
 		if(event.getAction() == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER){
-			InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
 			imm.hideSoftInputFromWindow(et.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
 			return true;
 		}

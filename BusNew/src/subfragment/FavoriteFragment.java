@@ -42,6 +42,7 @@ public class FavoriteFragment extends Fragment implements ResponseTask {
 	private Context context;
 	private Cursor cursor;
 	private String stationNum;
+	private View view;
 
 	@Override
 	public void onAttach(Activity activity) {
@@ -51,16 +52,8 @@ public class FavoriteFragment extends Fragment implements ResponseTask {
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		final View view = inflater.inflate(R.layout.fragment_favorite_layout, null);
+		view = inflater.inflate(R.layout.fragment_favorite_layout, null);
 		viewPagerSetting(view);
-
-		Button btn = (Button) view.findViewById(R.id.btn_refrash_favorite);
-		btn.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				viewPagerSetting(view);
-			}
-		});
 
 		return view;
 	}
@@ -88,7 +81,6 @@ public class FavoriteFragment extends Fragment implements ResponseTask {
 			PagerTitleStrip titlepager = (PagerTitleStrip) view.findViewById(R.id.pager_title_strip);
 			titlepager.setTextSpacing(dip);
 
-			
 
 			// 미리보기에 쓰일 쿼리를 가져온다 and 미리보기를 표시할 아탑터를 세팅한다
 			pager.setAdapter(new FavoritePreviewPagerAdatper(context, cursor));
@@ -98,7 +90,6 @@ public class FavoriteFragment extends Fragment implements ResponseTask {
 				@Override
 				public void onPageSelected(int position) {
 					// 페이지가 선택되면 선택된 번호로 커서를 이동시켜 정류소 번호를 가져온다음 showInfo로 보내준다
-					Log.d("postion", String.valueOf(position));
 					cursor.moveToPosition(position);
 					stationNum = cursor.getString(0);
 					showInfo(stationNum);
@@ -120,7 +111,6 @@ public class FavoriteFragment extends Fragment implements ResponseTask {
 			pager.setOnPageChangeListener(onPageChangeListener);
 			pager.setOffscreenPageLimit(5);
 			pager.setClipChildren(false);
-			pager.setPageMargin(0);
 
 			onPageChangeListener.onPageSelected(0);
 		} else {
@@ -141,9 +131,7 @@ public class FavoriteFragment extends Fragment implements ResponseTask {
 		busInfoTask.proxy = this; // 인터페이스를 등록하여 Async의 작업이 끝나면 onTaskFinish 함수를
 									// 호출 가능케 한다
 
-		ProgressDialog wait = ProgressDialog.show(context, null, "잠시만 기다려주세요", true);
 		busInfoTask.execute();
-		wait.dismiss();
 
 	}
 
@@ -185,6 +173,9 @@ public class FavoriteFragment extends Fragment implements ResponseTask {
 	public void onStop() {
 		super.onStop();
 		cursor.close();
-		Log.d("onStop", "호출되었습니다");
+	}
+	
+	public void refreshPreview(){
+		viewPagerSetting(view);
 	}
 }

@@ -5,10 +5,12 @@ import java.util.ArrayList;
 import android.content.Context;
 import android.database.Cursor;
 import android.support.v4.view.PagerAdapter;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.ImageView;
+import android.widget.ImageView.ScaleType;
 
 import com.zoeas.qdeagubus.R;
 
@@ -29,7 +31,7 @@ public class FavoritePreviewPagerAdatper extends PagerAdapter {
 		this.cursor = c;
 		cursor.moveToFirst();  // 바깥에서 이미 커서를 움직일지도 모르므로 그냥 무조건 첫번째로
 		float density = context.getResources().getDisplayMetrics().density;
-		height = (int)(20 * density);
+		height = (int)(20*density);
 		width = (int)(20*density);
 	}
 
@@ -44,6 +46,8 @@ public class FavoritePreviewPagerAdatper extends PagerAdapter {
 		
 		StringBuilder sb = new StringBuilder("station");
 		sb.append(cursor.getString(0));
+		Log.d("container 확인", container.toString());
+		Log.d("넓이 높이 확인", String.valueOf(width) + " " + String.valueOf(height));
 		
 		LayoutParams params = new LayoutParams(width, height);
 		ImageView iv = new ImageView(context);
@@ -53,7 +57,9 @@ public class FavoritePreviewPagerAdatper extends PagerAdapter {
 			id = R.drawable.station00005;
 		
 		iv.setImageResource(id);
-		container.addView(iv);
+		iv.setScaleType(ScaleType.CENTER);
+		
+		container.addView(iv,0);
 		
 		return iv;
 	}

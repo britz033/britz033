@@ -2,8 +2,11 @@ package com.zoeas.qdeagubus;
 
 import java.util.ArrayList;
 
+import subfragment.FavoriteFragment;
 import subfragment.GMapFragment;
 import subfragment.OnSaveBusStationInfoListener;
+import adapter.StationSearchListCursorAdapter.OnCommunicationActivity;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
@@ -20,12 +23,13 @@ import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
 
 public class MainActivity extends ActionBarActivity implements TabListener,
-		OnSaveBusStationInfoListener {
+		OnSaveBusStationInfoListener, OnCommunicationActivity {
 	
 	private boolean mflag = false; // 뒤로가기 버튼 두번으로 종료 플레그 
 	private ArrayList<Fragment> flist; 			// 액티비티가 관리하는 애들
@@ -34,10 +38,10 @@ public class MainActivity extends ActionBarActivity implements TabListener,
 
 	public enum MyTabs {
 		FAVORITE(0, "즐겨찾기", "subfragment.FavoriteFragment"), 
-		STATION_LISTVIEW(1, "정류소", "subfragment.StationSearchFragment"), 
-		BUS_LISTVIEW(2, "버스", "subfragment.BusNumberSearchFragment"), 
+		STATION_LISTVIEW(1, "정류소", "subfragment.SearchStationFragment"), 
+		BUS_LISTVIEW(2, "버스", "subfragment.SearchBusNumberFragment"), 
 		GMAP(3, "주변맵", "subfragment.GMapFragment"),
-		DUMMY(4, "설정", "subfragment.BusNumberSearchFragment");
+		DUMMY(4, "설정", "subfragment.SettingFragment");
 		private final String name;
 		private final String fragmentName;
 		private final int num;
@@ -129,11 +133,14 @@ public class MainActivity extends ActionBarActivity implements TabListener,
 					CallFragmentMethod call = (CallFragmentMethod)flist.get(position);
 					call.OnCalled();
 				}
+				
+				InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+				imm.hideSoftInputFromWindow(vp.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
 			}
 
 			@Override
 			public void onPageScrolled(int arg0, float arg1, int arg2) {
-
+				
 			}
 
 			@Override
@@ -189,7 +196,7 @@ public class MainActivity extends ActionBarActivity implements TabListener,
 
 	@Override
 	public void onTabSelected(Tab tab, FragmentTransaction ft) {
-		vp.setCurrentItem(tab.getPosition());
+		vp.setCurrentItem(tab.getPosition(), false);
 	}
 
 	@Override
@@ -207,7 +214,6 @@ public class MainActivity extends ActionBarActivity implements TabListener,
 	// gmap 탭 호출
 	public void btnOnclick(View view) {
 		int index = MyTabs.GMAP.getValue();		// gmap탭의 번호를 가져온다
-//		Toast.makeText(this, latlng.toString(), 0).show();
 		vp.setCurrentItem(index, true);
 		((GMapFragment) flist.get(index)).setGMap(stationNumber, stationName,
 				latlng);
@@ -232,6 +238,12 @@ public class MainActivity extends ActionBarActivity implements TabListener,
 			
 		} else
 			super.onBackPressed();
+	}
+
+	// 정류장 검색에서 리스트뷰 즐겨찾기 추가시 불러짐
+	@Override
+	public void OnFavoriteRefresh() {
+		((FavoriteFragment)flist.get(MyTabs.FAVORITE.getValue())).refreshPreview();
 	}
 	
 
