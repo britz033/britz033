@@ -6,23 +6,39 @@
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" 
-        android:layout_weight="30"
+        android:layout_weight="15"
         >
         <TextView
             android:id="@+id/text_activity_businfo_number"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="505"
-            android:textSize="30sp"
+            android:textSize="60sp"
             android:textStyle="bold"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:gravity="center"
+            android:textColor="#000000"
+            android:background="@drawable/bus_num_back"
             />
         <TextView
-            android:id="@+id/text_activity_businfo_current"
+            android:id="@+id/text_activity_businfo_stationname"
             android:layout_alignParentRight="true"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="didjfd\n dkfkdaf\n dkdd"
-            android:textSize="10sp"
+            android:text="한라타운건너"
+            android:textSize="15sp"
+            android:paddingRight="10dp"
+            />
+        <TextView
+            android:id="@+id/text_activity_businfo_current"
+            android:layout_below="@+id/text_activity_businfo_stationname"
+            android:layout_alignParentRight="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="전전 출발"
+            android:textSize="22sp"
+            android:paddingRight="10dp"
             />
     </RelativeLayout>
     <fragment 
@@ -36,7 +52,7 @@
         android:id="@+id/viewpager_activity_businfo_path"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="30"
+        android:layout_weight="35"
         />
 
 </LinearLayout>

@@ -1,8 +1,11 @@
 package adapter;
 
+import com.zoeas.qdeagubus.R;
+
 import android.content.Context;
 import android.database.Cursor;
 import android.support.v4.widget.CursorAdapter;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
@@ -21,13 +24,14 @@ public class BusSearchListCursorAdapter extends CursorAdapter implements OnTouch
 
 	@Override
 	public void bindView(View view, Context context, Cursor cursor) {
-		((TextView)view).setText(cursor.getString(1));
+		TextView tv = (TextView) view.findViewById(R.id.text_bus_search_list_item);
+		tv.setText(cursor.getString(1));
 		view.setOnTouchListener(this);
 	}
 
 	@Override
 	public View newView(Context context, Cursor cursor, ViewGroup parent) {
-		return new TextView(context);
+		return LayoutInflater.from(context).inflate(R.layout.list_bus_search_item, null);
 	}
 
 	@Override

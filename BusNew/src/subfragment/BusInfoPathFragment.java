@@ -1,5 +1,6 @@
 package subfragment;
 
+import adapter.PathPagerAdapter;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -17,9 +18,8 @@ public class BusInfoPathFragment extends Fragment{
 		TextView tv = (TextView) view.findViewById(R.id.text_path);
 		
 		Bundle args = getArguments();
-		tv.setText(args.getString("station"));
 		
-		
+		tv.setText(args.getString(PathPagerAdapter.PATH_STATION_NAME));
 		
 		return view;
 	}

@@ -1,5 +1,6 @@
 package subfragment;
 
+import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -18,23 +19,28 @@ import android.widget.TextView;
 import com.zoeas.qdeagubus.MyContentProvider;
 import com.zoeas.qdeagubus.R;
 
-public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks<Cursor> {
-	
+public class BusInfoActivity extends FragmentActivity implements
+		LoaderCallbacks<Cursor> {
 
+	public static final String KEY_BUS_INFO = "BUSNUM";
+	public static final String KEY_STATION_NAME = "STATION";
 	private ViewPager pathPager;
-	
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_businfo);
-		
-		pathPager = (ViewPager) findViewById(R.id.viewpager_activity_businfo_path);
-		
 
-		String busNum = getIntent().getExtras().getString("busNum");
+		pathPager = (ViewPager) findViewById(R.id.viewpager_activity_businfo_path);
+
+		String busNum = getIntent().getExtras().getString(KEY_BUS_INFO);
+		String stationName = getIntent().getExtras().getString(KEY_STATION_NAME);
 		TextView textBusNumber = (TextView) findViewById(R.id.text_activity_businfo_number);
+		TextView textStationName = (TextView) findViewById(R.id.text_activity_businfo_stationname);
 		textBusNumber.setText(busNum);
-		
+		if(stationName != null)
+			textStationName.setText(stationName);
+
 		getSupportLoaderManager().initLoader(0, getIntent().getExtras(), this);
 
 		Log.d("버스인포", "curosr 쓰기직전");
@@ -48,19 +54,21 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 		String busForward = cursor.getString(2);
 		String busBackward = cursor.getString(3);
 		String busFavorite = cursor.getString(4);
-		
-		Pattern pattern = Pattern.compile("");
+
+		Pattern pattern = Pattern.compile("([^,]+),");
 		Matcher matcher = pattern.matcher(busForward);
-		
-		String[] path = new String[2];
-		if(matcher.find()){
-			path[0] = matcher.group(1);
-			path[1] = matcher.group(2);
+
+		ArrayList<String> path = new ArrayList<String>();
+		while (true) {
+			if (!matcher.find())
+				break;
+			path.add(matcher.group(1));
 		}
-		
-		PathPagerAdapter adapter = new PathPagerAdapter<BusInfoPathFragment>(getSupportFragmentManager(), path, BusInfoPathFragment.class);
+
+		PathPagerAdapter<BusInfoPathFragment> adapter = new PathPagerAdapter<BusInfoPathFragment>(
+				getSupportFragmentManager(), path, BusInfoPathFragment.class);
 		pathPager.setAdapter(adapter);
-		
+
 		TextView textBusInterval = (TextView) findViewById(R.id.text_activity_businfo_current);
 		textBusInterval.setText(busInterval);
 	}
@@ -69,8 +77,9 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 	public Loader<Cursor> onCreateLoader(int id, Bundle busNum) {
 		Uri uri = MyContentProvider.CONTENT_URI_BUS;
 
-		String[] projection = { "_id", "bus_interval", "bus_forward", "bus_backward", "bus_favorite" };
-		String selection = "bus_number='" + busNum.getString("busNum") + "'";
+		String[] projection = { "_id", "bus_interval", "bus_forward",
+				"bus_backward", "bus_favorite" };
+		String selection = "bus_number='" + busNum.getString(KEY_BUS_INFO) + "'";
 
 		Log.d("버스인포", selection);
 
@@ -80,7 +89,7 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 	@Override
 	public void onLoadFinished(Loader<Cursor> arg0, Cursor cursor) {
 		Log.d("버스인포", "커서finish");
-		
+
 		initBusInfo(cursor);
 	}
 

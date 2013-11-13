@@ -5,14 +5,15 @@ import internet.BusInfo;
 import java.util.ArrayList;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.text.SpannableStringBuilder;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.zoeas.qdeagubus.R;
@@ -22,7 +23,9 @@ import com.zoeas.qdeagubus.R;
  */
 public class FavoriteFragmentBusList extends ListFragment {
 	
-	Context context;
+	private Context context;
+	private ArrayList<BusInfo> list;
+	private String stationName;
 
 	@Override
 	public void onViewCreated(View view, Bundle savedInstanceState) {
@@ -31,22 +34,28 @@ public class FavoriteFragmentBusList extends ListFragment {
 		
 		Bundle data = getArguments();
 		String error = data.getString(FavoriteFragment.KEY_ERROR);
-		ArrayList<BusInfo> list = data.getParcelableArrayList(FavoriteFragment.KEY_LIST);
+		list = data.getParcelableArrayList(FavoriteFragment.KEY_BUSINFO_LIST);
+		stationName = data.getString(FavoriteFragment.KEY_STATION_NAME);
 		
 		if(error == null)
-			setListAdapter(new BusListAdapter(list));
+			setListAdapter(new BusListAdapter());
 		else {
 			setListAdapter(null);
 			setEmptyText(error);
 		}
 	}
+	
+	@Override
+	public void onListItemClick(ListView l, View v, int position, long id) {
+		super.onListItemClick(l, v, position, id);
+		String busNum =list.get(position).getBusNum();
+		Intent intent = new Intent(context, BusInfoActivity.class);
+		intent.putExtra(BusInfoActivity.KEY_BUS_INFO, busNum);
+		intent.putExtra(BusInfoActivity.KEY_STATION_NAME,stationName);
+		startActivity(intent);
+	}
 
 	class BusListAdapter extends BaseAdapter {
-		ArrayList<BusInfo> list;
-		
-		public BusListAdapter(ArrayList<BusInfo> list){
-			this.list = list;
-		}
 		
 		class ViewHolder {
 			TextView tv;

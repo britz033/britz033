@@ -15,9 +15,10 @@
         />
     <TextView
         android:id="@+id/text_station_item_number"
-        android:layout_below="@+id/item_station_name" 
+        android:layout_toRightOf="@+id/text_station_item_name" 
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/text_station_item_name"
         android:text="default"
         android:textSize="10sp"
         />

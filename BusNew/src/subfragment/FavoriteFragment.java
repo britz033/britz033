@@ -36,12 +36,14 @@ import com.zoeas.qdeagubus.R;
 
 public class FavoriteFragment extends Fragment implements ResponseTask {
 
-	public static final String KEY_LIST = "buslist";
+	public static final String KEY_BUSINFO_LIST = "buslist";
+	public static final String KEY_STATION_NAME = "station";
 	public static final String KEY_ERROR = "error";
 
 	private Context context;
 	private Cursor cursor;
 	private String stationNum;
+	private String stationName;
 	private View view;
 
 	@Override
@@ -92,6 +94,7 @@ public class FavoriteFragment extends Fragment implements ResponseTask {
 					// 페이지가 선택되면 선택된 번호로 커서를 이동시켜 정류소 번호를 가져온다음 showInfo로 보내준다
 					cursor.moveToPosition(position);
 					stationNum = cursor.getString(0);
+					stationName = cursor.getString(1);
 					showInfo(stationNum);
 				}
 
@@ -150,7 +153,8 @@ public class FavoriteFragment extends Fragment implements ResponseTask {
 		// 각종오류 감지 및 정보뿌림
 		if (error == null && list != null) {
 			// 정상일 경우
-			initData.putParcelableArrayList(KEY_LIST, list);
+			initData.putParcelableArrayList(KEY_BUSINFO_LIST, list);
+			initData.putString(KEY_STATION_NAME, stationName);
 
 		} else if (error != null) {
 			// error 메세지가 있을 경우

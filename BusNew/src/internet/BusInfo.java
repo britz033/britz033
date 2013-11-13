@@ -44,7 +44,6 @@ public class BusInfo implements Parcelable {
 		
 		int textSize = (int)(30*density);
 		
-		//그냥 픽셀값이라 나중에 수정해야함
 		SpannableString num = new SpannableString(busNum);
 		num.setSpan(new AbsoluteSizeSpan(textSize), 0, num.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 		num.setSpan(new StyleSpan(android.graphics.Typeface.BOLD), 0, num.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);

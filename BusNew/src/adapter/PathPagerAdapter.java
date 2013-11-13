@@ -1,5 +1,7 @@
 package adapter;
 
+import java.util.ArrayList;
+
 import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -9,13 +11,15 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 
 public class PathPagerAdapter<T extends Fragment> extends FragmentStatePagerAdapter{
 	
+	public static final String PATH_STATION_NAME = "STATION";
+	
 	private Class<T> fragmentclass;
-	private String[] station;
+	private ArrayList<String> station;
 
-	public PathPagerAdapter(FragmentManager fm, String[] station, Class<T> fragmentclass) {
+	public PathPagerAdapter(FragmentManager fm, ArrayList<String> path, Class<T> fragmentclass) {
 		super(fm);
 		this.fragmentclass = fragmentclass;
-		this.station = station;
+		this.station = path;
 	}
 
 	@Override
@@ -31,7 +35,7 @@ public class PathPagerAdapter<T extends Fragment> extends FragmentStatePagerAdap
 		}
 		
 		Bundle args = new Bundle();
-		args.putString("station", station[position]);
+		args.putString(PATH_STATION_NAME, station.get(position));
 		fragment.setArguments(args);
 		
 		return fragment;
@@ -39,12 +43,12 @@ public class PathPagerAdapter<T extends Fragment> extends FragmentStatePagerAdap
 	
 	@Override
 	public float getPageWidth(int position) {
-		return 0.25f;
+		return 0.20f;
 	}
 
 	@Override
 	public int getCount() {
-		return station.length;
+		return station.size();
 	}
 
 	
