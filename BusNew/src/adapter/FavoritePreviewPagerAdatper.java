@@ -62,7 +62,7 @@ public class FavoritePreviewPagerAdatper extends PagerAdapter {
 		
 		return rl;
 	}
-	
+
 
 	@Override
 	public int getCount() {

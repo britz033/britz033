@@ -12,6 +12,7 @@
         android:layout_centerVertical="true"
         android:padding="3dp"
         android:background="#ffffff"
+        android:adjustViewBounds="true"
         />
 
 </RelativeLayout>
