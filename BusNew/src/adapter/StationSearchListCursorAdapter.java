@@ -45,7 +45,7 @@ public class StationSearchListCursorAdapter extends CursorAdapter implements OnT
 
 	final OnClickListener listener = new OnClickListener() {
 		@Override
-		public void onClick(View v) {
+		public synchronized void onClick(View v) {
 			// 클릭된 아이템의 위치를 반환한다
 			int position = (Integer) v.getTag();
 			Cursor mcursor = StationSearchListCursorAdapter.this.getCursor();

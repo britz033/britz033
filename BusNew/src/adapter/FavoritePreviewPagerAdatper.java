@@ -1,17 +1,14 @@
 package adapter;
 
-import java.util.ArrayList;
-
 import android.content.Context;
 import android.database.Cursor;
 import android.graphics.drawable.Drawable;
 import android.support.v4.view.PagerAdapter;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewGroup.LayoutParams;
 import android.widget.ImageView;
-import android.widget.ImageView.ScaleType;
 import android.widget.RelativeLayout;
 
 import com.zoeas.qdeagubus.R;
@@ -21,56 +18,72 @@ import com.zoeas.qdeagubus.R;
  * 현재는 일단 글자만 표현
  */
 public class FavoritePreviewPagerAdatper extends PagerAdapter {
-	
+
 	private Context context;
 	private Cursor cursor;
 	private Drawable img;
 	private LayoutInflater inflater;
-	
-	public FavoritePreviewPagerAdatper(Context context, Cursor c){
+
+	public FavoritePreviewPagerAdatper(Context context, Cursor c) {
 		this.context = context;
 		this.cursor = c;
-		cursor.moveToFirst();  // 바깥에서 이미 커서를 움직일지도 모르므로 그냥 무조건 첫번째로
-		
+		// if (cursor != null)
+		// cursor.moveToFirst(); // 바깥에서 이미 커서를 움직일지도 모르므로 그냥 무조건 첫번째로
+
 		inflater = LayoutInflater.from(context);
-		
+
 	}
 
 	@Override
 	public boolean isViewFromObject(View view, Object object) {
-		return view == (View)object;
+		return view == (View) object;
 	}
 
 	@Override
 	public Object instantiateItem(ViewGroup container, int position) {
-		cursor.moveToPosition(position);
-		
+		Log.d("data","불려짐");
+		if (cursor == null)
+			return null;
+
 		RelativeLayout rl = (RelativeLayout) inflater.inflate(R.layout.viewpager_favorite_preview, null);
 		ImageView iv = (ImageView) rl.findViewById(R.id.img_favorite_preview);
+		int id = 0;
 		
+		cursor.moveToPosition(position);
+
 		StringBuilder sb = new StringBuilder("station");
 		sb.append(cursor.getString(0));
-		int id = context.getResources().getIdentifier(sb.toString(), "drawable", context.getPackageName());
-		if(id == 0)
+		id = context.getResources().getIdentifier(sb.toString(), "drawable", context.getPackageName());
+		if (id == 0)
 			id = R.drawable.station00005;
-		img = context.getResources().getDrawable(id); 
-		
+
+		img = context.getResources().getDrawable(id);
+
 		iv.setImageDrawable(img);
-		
-		
-		container.addView(rl,0);
-		
+
+		container.addView(rl, 0);
+
 		return rl;
 	}
 
-
 	@Override
 	public int getCount() {
+		if (cursor == null)
+			return 0;
 		return cursor.getCount();
 	}
 	
 	@Override
+	public int getItemPosition(Object object) {
+		return POSITION_NONE;
+	}
+
+	@Override
 	public CharSequence getPageTitle(int position) {
+		if (cursor == null)
+			return null;
+		if (cursor.getCount() == 0)
+			return "정류장 즐겨찾기를 추가하세요";
 		cursor.moveToPosition(position);
 		return cursor.getString(1);
 	}
@@ -78,6 +91,15 @@ public class FavoritePreviewPagerAdatper extends PagerAdapter {
 	@Override
 	public void destroyItem(ViewGroup container, int position, Object object) {
 		container.removeView((RelativeLayout) object);
+	}
+
+	public void swapCursor(Cursor cursor) {
+		if(this.cursor == cursor)
+			return;
+		if (cursor != null)
+			Log.d("어뎁터에서 커서스왑, 커서 count", String.valueOf(cursor.getCount()));
+		this.cursor = cursor;
+		notifyDataSetChanged();
 	}
 
 }

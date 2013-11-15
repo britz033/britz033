@@ -29,6 +29,10 @@ public class BusInfo implements Parcelable {
 		station = "버스역";
 	}
 
+	public void setRoute(String route) {
+		busNum = busNum + " " + route;
+	}
+
 	public BusInfo(Parcel in) {
 		readFromParcel(in);
 	}

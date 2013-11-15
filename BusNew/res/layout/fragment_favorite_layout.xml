@@ -31,15 +31,6 @@
                 android:textColor="#fff"
                 android:textStyle="bold" />
         </android.support.v4.view.ViewPager>
-        <TextView
-            android:id="@+id/text_favorite_preview_off"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="미리보기가 설정되어 있지 않습니다"
-            android:textSize="20sp"
-            android:visibility="invisible"
-            android:layout_gravity="center"
-            />
     </FrameLayout>
 
     <LinearLayout

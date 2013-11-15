@@ -66,7 +66,7 @@ public class SearchBusNumberFragment extends ListFragment implements LoaderCallb
 		
 		imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
 
-		busAdapter = new BusSearchListCursorAdapter(context, null, CursorAdapter.FLAG_AUTO_REQUERY);
+		busAdapter = new BusSearchListCursorAdapter(context, null, 0);
 		setListAdapter(busAdapter);
 
 		getLoaderManager().initLoader(0, null, this);

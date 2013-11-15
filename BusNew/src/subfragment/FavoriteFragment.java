@@ -16,6 +16,9 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.LoaderManager.LoaderCallbacks;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.support.v4.view.PagerTitleStrip;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
@@ -34,7 +37,7 @@ import com.zoeas.qdeagubus.R;
  * 그것을 전광판에 뿌림. 시작시는 가장 처음것(이후 다시 수정)을 뿌림
  */
 
-public class FavoriteFragment extends Fragment implements ResponseTask {
+public class FavoriteFragment extends Fragment implements ResponseTask, LoaderCallbacks<Cursor> {
 
 	public static final String KEY_BUSINFO_LIST = "buslist";
 	public static final String KEY_STATION_NAME = "station";
@@ -45,6 +48,8 @@ public class FavoriteFragment extends Fragment implements ResponseTask {
 	private String stationNum;
 	private String stationName;
 	private View view;
+	private FavoritePreviewPagerAdatper adapter;
+	private ViewPager pager;
 
 	@Override
 	public void onAttach(Activity activity) {
@@ -55,74 +60,61 @@ public class FavoriteFragment extends Fragment implements ResponseTask {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		view = inflater.inflate(R.layout.fragment_favorite_layout, null);
+		getLoaderManager().initLoader(0, null, this);
+		
 		viewPagerSetting(view);
-
+		
 		return view;
 	}
 
 	// 여기서 정류장 번호를 받는다.
 	// 즐겨찾기된 그림들을 DB에서 받아온다 그 정보는 어뎁터 내에 집어넣는다.
-
 	private void viewPagerSetting(final View view) {
 
-		Uri uri = MyContentProvider.CONTENT_URI_STATION;
-		String[] projection = { MyContentProvider.STATION_NUMBER, MyContentProvider.STATION_NAME };
-		String selection = MyContentProvider.STATION_FAVORITE + "=?";
-		String[] selectionArgs = { "1" };
+		float density = context.getResources().getDisplayMetrics().density;
+		int dip = (int) (density * 30);
+
+		PagerTitleStrip titlepager = (PagerTitleStrip) view.findViewById(R.id.pager_title_strip);
+		titlepager.setTextSpacing(dip);
 		
-		cursor = context.getContentResolver().query(uri, projection, selection, selectionArgs, null);
+		adapter = new FavoritePreviewPagerAdatper(context, null);
+		pager = (ViewPager) view.findViewById(R.id.viewpager_favorite);
+		pager.setAdapter(adapter);
+
+		// 미리보기에 쓰일 쿼리를 가져온다 and 미리보기를 표시할 아탑터를 세팅한다
+
+		OnPageChangeListener onPageChangeListener = new OnPageChangeListener() {
+
+			@Override
+			public void onPageSelected(int position) {
+				// 페이지가 선택되면 선택된 번호로 커서를 이동시켜 정류소 번호를 가져온다음 showInfo로 보내준다
+				cursor.moveToPosition(position);
+				stationNum = cursor.getString(0);
+				stationName = cursor.getString(1);
+				Log.d("onPageSelected","갱신");
+				showInfo(stationNum);
+			}
+
+			@Override
+			public void onPageScrolled(int position, float arg1, int arg2) {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void onPageScrollStateChanged(int arg0) {
+				// TODO Auto-generated method stub
+
+			}
+		};
+
+
+		pager.setOnPageChangeListener(onPageChangeListener);
+		pager.setOffscreenPageLimit(5);
+		pager.setClipChildren(false);
 		
-		TextView tv = (TextView) view.findViewById(R.id.text_favorite_preview_off);
-		ViewPager pager = (ViewPager) view.findViewById(R.id.viewpager_favorite);
-
-		if (cursor.getCount() != 0) {
-			tv.setVisibility(View.INVISIBLE);
-			float density = context.getResources().getDisplayMetrics().density;
-			int dip = (int) (density * 30);
-			
-			PagerTitleStrip titlepager = (PagerTitleStrip) view.findViewById(R.id.pager_title_strip);
-			titlepager.setTextSpacing(dip);
-
-
-			// 미리보기에 쓰일 쿼리를 가져온다 and 미리보기를 표시할 아탑터를 세팅한다
-			pager.setAdapter(new FavoritePreviewPagerAdatper(context, cursor));
-
-			OnPageChangeListener onPageChangeListener = new OnPageChangeListener() {
-
-				@Override
-				public void onPageSelected(int position) {
-					// 페이지가 선택되면 선택된 번호로 커서를 이동시켜 정류소 번호를 가져온다음 showInfo로 보내준다
-					cursor.moveToPosition(position);
-					stationNum = cursor.getString(0);
-					stationName = cursor.getString(1);
-					showInfo(stationNum);
-				}
-
-				@Override
-				public void onPageScrolled(int position, float arg1, int arg2) {
-					// TODO Auto-generated method stub
-
-				}
-
-				@Override
-				public void onPageScrollStateChanged(int arg0) {
-					// TODO Auto-generated method stub
-
-				}
-			};
-
-			pager.setOnPageChangeListener(onPageChangeListener);
-			pager.setOffscreenPageLimit(5);
-			pager.setClipChildren(false);
-
-			onPageChangeListener.onPageSelected(0);
-		} else {
-			pager.setAdapter(null);
-			tv.setVisibility(View.VISIBLE);
-			stationNum = null;
-		}
-
 		showInfo(stationNum);
+		Log.d("즐겨찾기 미리보기","페이저세팅 끝");
 	}
 
 	/*
@@ -139,10 +131,8 @@ public class FavoriteFragment extends Fragment implements ResponseTask {
 	}
 
 	/*
-	 * 위에서 인터넷에서 버스정보 가져오기 작업이 끝났을때 호출되는 인터페이스, 최종결과를 뿌린다
-	 * 주의점 !!!! 
-	 *  commit가 아니라 commitAllowingStateLoss를 써야만 에러가 나지 않는다.
-	 *  이부분은 다시 찾아볼것
+	 * 위에서 인터넷에서 버스정보 가져오기 작업이 끝났을때 호출되는 인터페이스, 최종결과를 뿌린다 주의점 !!!! commit가 아니라
+	 * commitAllowingStateLoss를 써야만 에러가 나지 않는다. 이부분은 다시 찾아볼것
 	 */
 	@Override
 	public void onTaskFinish(ArrayList<BusInfo> list, String error) {
@@ -173,13 +163,37 @@ public class FavoriteFragment extends Fragment implements ResponseTask {
 		ft.commitAllowingStateLoss();
 	}
 
-	@Override
-	public void onStop() {
-		super.onStop();
-		cursor.close();
+	public void refreshPreview() {
+		getLoaderManager().restartLoader(0, null, this);
 	}
-	
-	public void refreshPreview(){
-		viewPagerSetting(view);
+
+	@Override
+	public Loader<Cursor> onCreateLoader(int id, Bundle arg1) {
+		Log.d("즐겨찾기 미리보기","로더생성");
+		Uri uri = MyContentProvider.CONTENT_URI_STATION;
+		String[] projection = { MyContentProvider.STATION_NUMBER, MyContentProvider.STATION_NAME };
+		String selection = MyContentProvider.STATION_FAVORITE + "=?";
+		String[] selectionArgs = { "1" };
+
+		return new CursorLoader(context, uri, projection, selection, selectionArgs, null);
+	}
+
+	@Override
+	public void onLoadFinished(Loader<Cursor> arg0, Cursor cursor) {
+		Log.d("즐겨찾기 미리보기","스왑작동");
+		adapter.swapCursor(cursor);
+		this.cursor = cursor;
+		if(cursor.getCount() == 0)
+			showInfo(null);
+		else {
+			cursor.moveToPosition(pager.getCurrentItem());
+			stationNum = cursor.getString(0);
+			showInfo(stationNum);
+		}
+	}
+
+	@Override
+	public void onLoaderReset(Loader<Cursor> arg0) {
+		adapter.swapCursor(null);
 	}
 }

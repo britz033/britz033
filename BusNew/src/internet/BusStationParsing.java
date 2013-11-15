@@ -17,6 +17,9 @@ import android.widget.Toast;
  * class="marquee">순환3-1</span></span><span class="arr_state">전</span><span
  * class="cur_pos"><span class="marquee">출발</span></span></li>
  * 
+ *  <li class="nm"><span class="route_no"><span class="marquee">성서2</span></span><span class="arr_state">13분</span>
+ *  <span class="cur_pos"><span class="marquee">월성푸르지오 <span class="route_note">(대천-다사-대평-다사-대천)</span></span></span></li>
+ * 
  * <li class="nm"><span class="route_no"><span
  * class="marquee">604</span></span><span class="arr_state">8분</span><span
  * class="cur_pos"><span class="marquee">대명초교</span></span></li>
@@ -30,8 +33,7 @@ import android.widget.Toast;
 
 public class BusStationParsing {
 
-	public BusStationParsing(XmlPullParser parser,
-			ArrayList<BusInfo> busInfoArray) throws Exception{
+	public BusStationParsing(XmlPullParser parser, ArrayList<BusInfo> busInfoArray) throws Exception {
 		parser.next(); // 문서의 시작은 넘어감
 		int status = parser.getEventType(); // 현재 parser가 가르키는 곳의 상황을
 											// 가져옴.문서의
@@ -39,7 +41,7 @@ public class BusStationParsing {
 		String tag = null; // 태그 이름
 		BusInfo bus = null;
 		boolean end_flag = false;
-//		busInfoArray = new ArrayList<BusInfo>();
+		// busInfoArray = new ArrayList<BusInfo>();
 
 		Log.d("BusstaionParsing", "시작합니다");
 		// 문서끝에 닿을때까지 돌림
@@ -73,7 +75,15 @@ public class BusStationParsing {
 
 					nextCount(parser, 4);
 					bus.setCurrent(parser.getText());
-
+					
+					status = parser.next();
+					if(status == XmlPullParser.START_TAG){
+						tag = parser.getName();
+						if(tag.equals("span"))
+							parser.next();
+							bus.setRoute(parser.getText());
+					}
+						
 					busInfoArray.add(bus);
 				} else if (tag.equals("p")) {
 					int count = parser.getAttributeCount();

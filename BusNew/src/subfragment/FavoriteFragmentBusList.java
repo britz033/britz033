@@ -51,7 +51,7 @@ public class FavoriteFragmentBusList extends ListFragment {
 		String busNum =list.get(position).getBusNum();
 		Intent intent = new Intent(context, BusInfoActivity.class);
 		intent.putExtra(BusInfoActivity.KEY_BUS_INFO, busNum);
-		intent.putExtra(BusInfoActivity.KEY_STATION_NAME,stationName);
+		intent.putExtra(BusInfoActivity.KEY_CURRENT_STATION_NAME,stationName);
 		startActivity(intent);
 	}
 
