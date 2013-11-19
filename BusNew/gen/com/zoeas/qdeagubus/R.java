@@ -1188,13 +1188,15 @@ containing a value of this type.
         public static final int spinner_ab_pressed_dbus=0x7f0200a3;
         public static final int spinner_background_ab_dbus=0x7f0200a4;
         public static final int station00005=0x7f0200a5;
-        public static final int tab_indicator_ab_dbus=0x7f0200a6;
-        public static final int tab_selected_dbus=0x7f0200a7;
-        public static final int tab_selected_focused_dbus=0x7f0200a8;
-        public static final int tab_selected_pressed_dbus=0x7f0200a9;
-        public static final int tab_unselected_dbus=0x7f0200aa;
-        public static final int tab_unselected_focused_dbus=0x7f0200ab;
-        public static final int tab_unselected_pressed_dbus=0x7f0200ac;
+        public static final int station_point=0x7f0200a6;
+        public static final int station_point2=0x7f0200a7;
+        public static final int tab_indicator_ab_dbus=0x7f0200a8;
+        public static final int tab_selected_dbus=0x7f0200a9;
+        public static final int tab_selected_focused_dbus=0x7f0200aa;
+        public static final int tab_selected_pressed_dbus=0x7f0200ab;
+        public static final int tab_unselected_dbus=0x7f0200ac;
+        public static final int tab_unselected_focused_dbus=0x7f0200ad;
+        public static final int tab_unselected_pressed_dbus=0x7f0200ae;
     }
     public static final class id {
         public static final int action_bar=0x7f07001d;

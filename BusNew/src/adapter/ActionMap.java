@@ -7,6 +7,8 @@ import android.util.Log;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
@@ -17,6 +19,7 @@ public class ActionMap {
 	private int colorIndex;
 	private LatLng prePoint;
 	private float density;
+	private int zIndex;
 	
 	public ActionMap(float density){
 		if(map==null)
@@ -35,7 +38,8 @@ public class ActionMap {
 	}
 	
 	private void init(){
-		colorIndex = 150;
+		colorIndex = 120;
+		zIndex = 0;
 	}
 	
 	public void setMap(GoogleMap map){
@@ -43,15 +47,32 @@ public class ActionMap {
 	}
 	
 	public void drawLine(LatLng point){
-		colorIndex += 5;
+		colorIndex -= 2;
 		colorIndex %= 360;
+		
+		zIndex++;
+		
+		int depth = 1000; // 위선과 아랫선이 겹치지 않게
+		
 		int color = Color.HSVToColor(new float[]{colorIndex,1,1});
 		if(prePoint != null){
-			map.addPolyline((new PolylineOptions()).add(prePoint, point).width((int)(9*density)).color(Color.BLACK));
-			map.addPolyline((new PolylineOptions()).add(prePoint, point).width((int)(5*density)).color(color));
-			
+			map.addPolyline((new PolylineOptions()).add(prePoint, point).width((int)(5*density)).color(Color.BLACK).zIndex(zIndex));
+			map.addPolyline((new PolylineOptions()).add(prePoint, point).width((int)(3*density)).color(color).zIndex(zIndex+depth));
 		}
 		prePoint = point;
+	}
+	
+	
+	public void addMarker(String title, LatLng latLng){
+		MarkerOptions markerOptions = new MarkerOptions();
+		markerOptions.title(title).position(latLng);
+		map.addMarker(markerOptions);
+	}
+	
+	public void addMarker(String title, LatLng latLng, int icon){
+		MarkerOptions markerOptions = new MarkerOptions();
+		markerOptions.title(title).position(latLng).icon(BitmapDescriptorFactory.fromResource(icon)).anchor(0.5f, 0.5f);
+		map.addMarker(markerOptions);
 	}
 	
 	public void addMarker(String title, String contents, LatLng latLng){
@@ -60,9 +81,9 @@ public class ActionMap {
 		map.addMarker(markerOptions);
 	}
 	
-	public void addMarker(String title, LatLng latLng){
+	public void addMarker(String title, String contents, LatLng latLng, int icon){
 		MarkerOptions markerOptions = new MarkerOptions();
-		markerOptions.title(title).position(latLng);
+		markerOptions.title(title).snippet(contents).position(latLng).icon(BitmapDescriptorFactory.fromResource(icon));
 		map.addMarker(markerOptions);
 	}
 	

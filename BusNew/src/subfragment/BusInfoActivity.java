@@ -191,6 +191,7 @@ public class BusInfoActivity extends FragmentActivity implements
 				LatLng latLng = new LatLng(cursor.getDouble(2),
 						cursor.getDouble(3));
 				actionMap.drawLine(latLng);
+				actionMap.addMarker(cursor.getString(1), latLng, R.drawable.station_point2);
 
 				if (cursor.getString(1).equals(currentStationName)) {
 					actionMap.moveMap(latLng);
