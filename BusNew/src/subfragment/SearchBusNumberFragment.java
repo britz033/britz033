@@ -136,6 +136,7 @@ public class SearchBusNumberFragment extends ListFragment implements LoaderCallb
 		
 		Intent intent = new Intent(context,BusInfoActivity.class);
 		intent.putExtra(BusInfoActivity.KEY_BUS_INFO, busNum);
+		intent.putExtra(BusInfoActivity.KEY_CURRENT_STATION_NAME, "현재정류소");
 		startActivity(intent);
 	}
 	

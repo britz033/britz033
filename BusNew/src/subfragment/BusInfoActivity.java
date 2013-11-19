@@ -4,14 +4,13 @@ import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import adapter.ActionMap;
 import adapter.PathPagerAdapter;
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.LoaderManager;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
@@ -20,6 +19,9 @@ import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.util.Log;
 import android.widget.TextView;
 
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.zoeas.qdeagubus.MyContentProvider;
 import com.zoeas.qdeagubus.R;
 
@@ -38,28 +40,45 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 	private ArrayList<String> path;
 	private Cursor mcursor;
 	private int loopIndex;
+	private ActionMap actionMap;
+	private String currentStationName;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_businfo);
+		actionMap = new ActionMap();
 		loopIndex = 0;
 
 		// 각정보를 넣을 곳을 기본 세팅하고 쿼리를 스타트
 		pathPager = (ViewPager) findViewById(R.id.viewpager_activity_businfo_path);
 
 		String busNum = getIntent().getExtras().getString(KEY_BUS_INFO);
-		String stationName = getIntent().getExtras().getString(KEY_CURRENT_STATION_NAME);
+		currentStationName = getIntent().getExtras().getString(KEY_CURRENT_STATION_NAME);
 		TextView textBusNumber = (TextView) findViewById(R.id.text_activity_businfo_number);
 		TextView textStationName = (TextView) findViewById(R.id.text_activity_businfo_stationname);
 		textBusNumber.setText(busNum);
-		if (stationName != null)
-			textStationName.setText(stationName);
+		if (currentStationName != null)
+			textStationName.setText(currentStationName);
+		else
+			currentStationName = "정류장이 설정되어 있지 않습니다";
 
 		getSupportLoaderManager().initLoader(0, getIntent().getExtras(), this);
 
 		Log.d("버스인포", "onCreate 호출");
-
+	}
+	
+	@Override
+	protected void onResume() {
+		super.onResume();
+		mapSetIfNeeded();
+		
+	}
+	
+	private void mapSetIfNeeded(){
+		if(!actionMap.isMap()){
+			actionMap.setMap(((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.busmap)).getMap());
+		}
 	}
 
 	// 로더 쿼리가 끝난후 호출
@@ -70,22 +89,21 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 			String busInterval = mcursor.getString(1);
 			String busForward = mcursor.getString(2);
 			String busBackward = mcursor.getString(3);
-			String busFavorite = mcursor.getString(4);
+			int busFavorite = mcursor.getInt(4);
 
 			Pattern pattern = Pattern.compile("([^,]+),");
 			Matcher matcher = pattern.matcher(busForward);
 
 			path = new ArrayList<String>();
 			String station = null;
-			Bundle data = new Bundle();
 
 			while (true) {
 				if (!matcher.find())
 					break;
-				station = matcher.group(1);
+				station = matcher.group(1).replace(" ()", "");		// 간혹 어디어디 () 이런 식의 골때리는 역명이 있는데 괄호 제거안하면 에러 
 				path.add(station);
 			}
-
+			
 			PathPagerAdapter<BusInfoPathItemFragment> adapter = new PathPagerAdapter<BusInfoPathItemFragment>(
 					getSupportFragmentManager(), path, BusInfoPathItemFragment.class);
 			pathPager.setAdapter(adapter);
@@ -103,7 +121,7 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 
 	}
 
-	// 받은 버스번호를 토대로 경로를 뽑은데서 다시 각 경로마다의 버스정류장을 쿼리함.
+	// 받은 버스번호를 토대로 경로를 뽑은데서 다시 각 경로마다의 버스정류장을 반복쿼리함, 반복 index는 loopIndex
 	public void loopQuery() {
 		try {
 			Log.d("루프 스테이션 이름", path.get(loopIndex));
@@ -137,7 +155,7 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 			selection = "bus_number='" + data.getString(KEY_BUS_INFO) + "'";
 		} else if (id == 1) {
 			uri = MyContentProvider.CONTENT_URI_STATION;
-			projection = new String[] { "_id", "station_longitude", "station_latitude" };
+			projection = new String[] { "_id", "station_name", "station_latitude" ,"station_longitude"};
 			selection = "station_name='" + data.getString(KEY_PATH_STATION) + "'";
 		}
 
@@ -154,8 +172,16 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 			initBusInfo();
 			break;
 		case 1:
+			// 처음이것이 불려질시 앞에 ininbusInfo에서 loopQuery를 호출했으므로 loopIndex 는 1인 상태
 			cursor.moveToNext();
-			Log.d("좌표", String.valueOf(cursor.getDouble(1)));
+			LatLng latLng = new LatLng(cursor.getDouble(2), cursor.getDouble(3));
+			actionMap.drawLine(latLng);
+			
+			Log.d("현재정류소", currentStationName);
+			if(cursor.getString(1).equals(currentStationName)){
+				actionMap.moveMap(latLng);
+				actionMap.addMarker(path.get(loopIndex-1),latLng);
+			}
 			if (loopIndex < path.size()) {
 				loopQuery();
 			}

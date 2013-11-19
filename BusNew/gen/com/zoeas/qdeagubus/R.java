@@ -1216,6 +1216,7 @@ containing a value of this type.
         public static final int beginning=0x7f060011;
         public static final int btn_gomap=0x7f060056;
         public static final int btn_station_item_favorite=0x7f06005b;
+        public static final int busmap=0x7f060048;
         public static final int checkbox=0x7f06002e;
         public static final int collapseActionView=0x7f06000d;
         public static final int default_activity_button=0x7f060029;
@@ -1229,7 +1230,6 @@ containing a value of this type.
         public static final int expand_activities_button=0x7f060027;
         public static final int expanded_menu=0x7f06002d;
         public static final int fragment_favorite_buslist=0x7f06004f;
-        public static final int gmap=0x7f060048;
         public static final int home=0x7f060014;
         public static final int homeAsUp=0x7f060005;
         public static final int hybrid=0x7f06001a;

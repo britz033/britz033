@@ -8,7 +8,7 @@ import java.util.ArrayList;
 
 import adapter.FavoritePreviewPagerAdatper;
 import android.app.Activity;
-import android.app.ProgressDialog;
+import android.app.AlertDialog;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
@@ -25,10 +25,7 @@ import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.TextView;
 
 import com.zoeas.qdeagubus.MyContentProvider;
 import com.zoeas.qdeagubus.R;
@@ -61,9 +58,9 @@ public class FavoriteFragment extends Fragment implements ResponseTask, LoaderCa
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		view = inflater.inflate(R.layout.fragment_favorite_layout, null);
 		getLoaderManager().initLoader(0, null, this);
-		
+
 		viewPagerSetting(view);
-		
+
 		return view;
 	}
 
@@ -76,7 +73,7 @@ public class FavoriteFragment extends Fragment implements ResponseTask, LoaderCa
 
 		PagerTitleStrip titlepager = (PagerTitleStrip) view.findViewById(R.id.pager_title_strip);
 		titlepager.setTextSpacing(dip);
-		
+
 		adapter = new FavoritePreviewPagerAdatper(context, null);
 		pager = (ViewPager) view.findViewById(R.id.viewpager_favorite);
 		pager.setAdapter(adapter);
@@ -89,9 +86,8 @@ public class FavoriteFragment extends Fragment implements ResponseTask, LoaderCa
 			public void onPageSelected(int position) {
 				// 페이지가 선택되면 선택된 번호로 커서를 이동시켜 정류소 번호를 가져온다음 showInfo로 보내준다
 				cursor.moveToPosition(position);
-				stationNum = cursor.getString(0);
-				stationName = cursor.getString(1);
-				Log.d("onPageSelected","갱신");
+				settingInfo();
+				Log.d("onPageSelected", "갱신");
 				showInfo(stationNum);
 			}
 
@@ -108,13 +104,12 @@ public class FavoriteFragment extends Fragment implements ResponseTask, LoaderCa
 			}
 		};
 
-
 		pager.setOnPageChangeListener(onPageChangeListener);
 		pager.setOffscreenPageLimit(5);
 		pager.setClipChildren(false);
-		
-		showInfo(stationNum);
-		Log.d("즐겨찾기 미리보기","페이저세팅 끝");
+		pager.setCurrentItem(0);
+
+		Log.d("즐겨찾기 미리보기", "페이저세팅 끝");
 	}
 
 	/*
@@ -167,9 +162,18 @@ public class FavoriteFragment extends Fragment implements ResponseTask, LoaderCa
 		getLoaderManager().restartLoader(0, null, this);
 	}
 
+	private void settingInfo() {
+		if (cursor != null && cursor.getCount() > 0) {
+			stationNum = cursor.getString(0);
+			stationName = cursor.getString(1);
+		} else {
+			new AlertDialog.Builder(context).setTitle("정보 갱신에 문제가 있습니다").setIcon(android.R.drawable.ic_dialog_alert).create().show();
+		}
+	}
+
 	@Override
 	public Loader<Cursor> onCreateLoader(int id, Bundle arg1) {
-		Log.d("즐겨찾기 미리보기","로더생성");
+		Log.d("즐겨찾기 미리보기", "로더생성");
 		Uri uri = MyContentProvider.CONTENT_URI_STATION;
 		String[] projection = { MyContentProvider.STATION_NUMBER, MyContentProvider.STATION_NAME };
 		String selection = MyContentProvider.STATION_FAVORITE + "=?";
@@ -180,14 +184,14 @@ public class FavoriteFragment extends Fragment implements ResponseTask, LoaderCa
 
 	@Override
 	public void onLoadFinished(Loader<Cursor> arg0, Cursor cursor) {
-		Log.d("즐겨찾기 미리보기","스왑작동");
+		Log.d("즐겨찾기 미리보기", "스왑작동");
 		adapter.swapCursor(cursor);
 		this.cursor = cursor;
-		if(cursor.getCount() == 0)
+		if (cursor.getCount() == 0)
 			showInfo(null);
 		else {
 			cursor.moveToPosition(pager.getCurrentItem());
-			stationNum = cursor.getString(0);
+			settingInfo();
 			showInfo(stationNum);
 		}
 	}

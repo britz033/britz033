@@ -58,38 +58,42 @@ public class GMapFragment extends Fragment implements CallFragmentMethod,
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
+		density = context.getResources().getDisplayMetrics().density;
+		
 		View view = inflater.inflate(R.layout.fragment_gmap_layout, null);
 		tv = (TextView) view.findViewById(R.id.text_map_loading);
 		return view;
 	}
 
-	// 맵 생성
+	
 	@Override
-	public void onActivityCreated(Bundle savedInstanceState) {
-		super.onActivityCreated(savedInstanceState);
-		density = context.getResources().getDisplayMetrics().density;
-
-		FragmentManager fm = getChildFragmentManager();
-		mapFragment = (SupportMapFragment) fm.findFragmentById(R.id.map);
-
-		if (mapFragment == null) {
-			FragmentTransaction ft = fm.beginTransaction();
-			mapFragment = SupportMapFragment.newInstance();
-			ft.replace(R.id.map, mapFragment);
-			ft.commit();
+	public void onResume() {
+		super.onResume();
+		setupMapIfNeeded();
+	}
+	
+	// 맵 세팅
+	private void setupMapIfNeeded(){
+		if(map == null){
+			FragmentManager fm = getChildFragmentManager();
+			SupportMapFragment mapFragment = (SupportMapFragment) fm.findFragmentById(R.id.map);
+			if(mapFragment == null){
+				FragmentTransaction ft = fm.beginTransaction();
+				mapFragment = new SupportMapFragment();
+				ft.add(mapFragment, "myLocation");
+				ft.commit();
+			}
+			
+			map = mapFragment.getMap();
 		}
-
-		if (map == null) {
-			new Handler().postDelayed(new Runnable() {
-
-				@Override
-				public void run() {
-					map = mapFragment.getMap();
-					map.setMyLocationEnabled(true);
-				}
-			}, 3000);
+		
+		if(map != null){
+			setUpMap();
 		}
-
+	}
+	
+	private void setUpMap(){
+		map.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(35.871942,128.601122), 11));
 	}
 
 	public void setGMap(String station_number, String station_name,
