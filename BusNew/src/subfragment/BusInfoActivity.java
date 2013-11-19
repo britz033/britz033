@@ -31,7 +31,8 @@ import com.zoeas.qdeagubus.R;
  * 쿼리시 에러가 나면 try문으로 캐취해서 경고문 띄움
  */
 
-public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks<Cursor>, OnPageChangeListener {
+public class BusInfoActivity extends FragmentActivity implements
+		LoaderCallbacks<Cursor>, OnPageChangeListener {
 
 	public static final String KEY_BUS_INFO = "BUSNUM";
 	public static final String KEY_CURRENT_STATION_NAME = "STATION";
@@ -47,14 +48,15 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_businfo);
-		actionMap = new ActionMap();
+		actionMap = new ActionMap(getResources().getDisplayMetrics().density);
 		loopIndex = 0;
 
 		// 각정보를 넣을 곳을 기본 세팅하고 쿼리를 스타트
 		pathPager = (ViewPager) findViewById(R.id.viewpager_activity_businfo_path);
 
 		String busNum = getIntent().getExtras().getString(KEY_BUS_INFO);
-		currentStationName = getIntent().getExtras().getString(KEY_CURRENT_STATION_NAME);
+		currentStationName = getIntent().getExtras().getString(
+				KEY_CURRENT_STATION_NAME);
 		TextView textBusNumber = (TextView) findViewById(R.id.text_activity_businfo_number);
 		TextView textStationName = (TextView) findViewById(R.id.text_activity_businfo_stationname);
 		textBusNumber.setText(busNum);
@@ -67,18 +69,20 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 
 		Log.d("버스인포", "onCreate 호출");
 	}
-	
+
 	@Override
 	protected void onResume() {
 		super.onResume();
 		mapSetIfNeeded();
-		
+
 	}
-	
-	private void mapSetIfNeeded(){
-		if(!actionMap.isMap()){
-			actionMap.setMap(((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.busmap)).getMap());
+
+	private void mapSetIfNeeded() {
+		if (!actionMap.isMap()) {
+			actionMap.setMap(((SupportMapFragment) getSupportFragmentManager()
+					.findFragmentById(R.id.busmap)).getMap());
 		}
+		actionMap.moveMap(new LatLng(35.8719607, 128.5910759)); // 처음로딩때 대구시
 	}
 
 	// 로더 쿼리가 끝난후 호출
@@ -100,19 +104,24 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 			while (true) {
 				if (!matcher.find())
 					break;
-				station = matcher.group(1).replace(" ()", "");		// 간혹 어디어디 () 이런 식의 골때리는 역명이 있는데 괄호 제거안하면 에러 
+				station = matcher.group(1).replace(" ()", ""); // 간혹 어디어디 () 이런
+																// 식의 골때리는 역명이
+																// 있는데 괄호 제거안하면
+																// 에러
 				path.add(station);
 			}
-			
+
 			PathPagerAdapter<BusInfoPathItemFragment> adapter = new PathPagerAdapter<BusInfoPathItemFragment>(
-					getSupportFragmentManager(), path, BusInfoPathItemFragment.class);
+					getSupportFragmentManager(), path,
+					BusInfoPathItemFragment.class);
 			pathPager.setAdapter(adapter);
 			pathPager.setOnPageChangeListener(this);
 
 			TextView textBusInterval = (TextView) findViewById(R.id.text_activity_businfo_current);
 			textBusInterval.setText(busInterval);
 		} catch (Exception e) {
-			new AlertDialog.Builder(this).setMessage("현재 이 버스는 업데이트되어 있지 않습니다").show();
+			new AlertDialog.Builder(this).setMessage("현재 이 버스는 업데이트되어 있지 않습니다")
+					.show();
 			// 전광판에서 가져온 버스번호가 제대로 매치가 안되거나 없을때 발생
 			e.printStackTrace();
 		}
@@ -133,9 +142,9 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 			AlertDialog.Builder builder = new AlertDialog.Builder(this);
 			builder.setMessage("이 버스는 경로를 불러올 수 없습니다");
 			builder.create().show();
-			
+
 			// 버스 경로에서 불러온 이름으로 버스정류장을 다시 검색하였으나 존재치 않음
-			
+
 			e.printStackTrace();
 		}
 
@@ -151,12 +160,15 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 		if (id == 0) {
 			Log.d("로더 init", data.getString(KEY_BUS_INFO));
 			uri = MyContentProvider.CONTENT_URI_BUS;
-			projection = new String[] { "_id", "bus_interval", "bus_forward", "bus_backward", "bus_favorite" };
+			projection = new String[] { "_id", "bus_interval", "bus_forward",
+					"bus_backward", "bus_favorite" };
 			selection = "bus_number='" + data.getString(KEY_BUS_INFO) + "'";
 		} else if (id == 1) {
 			uri = MyContentProvider.CONTENT_URI_STATION;
-			projection = new String[] { "_id", "station_name", "station_latitude" ,"station_longitude"};
-			selection = "station_name='" + data.getString(KEY_PATH_STATION) + "'";
+			projection = new String[] { "_id", "station_name",
+					"station_latitude", "station_longitude" };
+			selection = "station_name='" + data.getString(KEY_PATH_STATION)
+					+ "'";
 		}
 
 		return new CursorLoader(this, uri, projection, selection, null, null);
@@ -172,20 +184,27 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 			initBusInfo();
 			break;
 		case 1:
-			// 처음이것이 불려질시 앞에 ininbusInfo에서 loopQuery를 호출했으므로 loopIndex 는 1인 상태
-			cursor.moveToNext();
-			LatLng latLng = new LatLng(cursor.getDouble(2), cursor.getDouble(3));
-			actionMap.drawLine(latLng);
-			
-			Log.d("현재정류소", currentStationName);
-			if(cursor.getString(1).equals(currentStationName)){
-				actionMap.moveMap(latLng);
-				actionMap.addMarker(path.get(loopIndex-1),latLng);
+			try {
+				// 처음이것이 불려질시 앞에 ininbusInfo에서 loopQuery를 호출했으므로 loopIndex 는 1인
+				// 상태
+				cursor.moveToNext();
+				LatLng latLng = new LatLng(cursor.getDouble(2),
+						cursor.getDouble(3));
+				actionMap.drawLine(latLng);
+
+				if (cursor.getString(1).equals(currentStationName)) {
+					actionMap.moveMap(latLng);
+					actionMap.addMarker(path.get(loopIndex - 1), latLng);
+				}
+				if (loopIndex < path.size()) {
+					loopQuery();
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+				new AlertDialog.Builder(this).setTitle("경로데이터가 부족합니다").create().show();
+			} finally {
+				break;
 			}
-			if (loopIndex < path.size()) {
-				loopQuery();
-			}
-			break;
 		}
 
 	}
@@ -196,7 +215,8 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 	}
 
 	@Override
-	public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+	public void onPageScrolled(int position, float positionOffset,
+			int positionOffsetPixels) {
 		// TODO Auto-generated method stub
 
 	}
