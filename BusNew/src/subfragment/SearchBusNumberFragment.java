@@ -50,6 +50,7 @@ public class SearchBusNumberFragment extends ListFragment implements LoaderCallb
 	private EditText et;
 	private InputMethodManager imm;
 	private static final String SELECTION_KEY = "selection";
+	public static final String DEFAULT_STATION = "정류소가 선택되지 않았습니다";
 	
 	
 
@@ -136,7 +137,7 @@ public class SearchBusNumberFragment extends ListFragment implements LoaderCallb
 		
 		Intent intent = new Intent(context,BusInfoActivity.class);
 		intent.putExtra(BusInfoActivity.KEY_BUS_INFO, busNum);
-		intent.putExtra(BusInfoActivity.KEY_CURRENT_STATION_NAME, "현재정류소");
+		intent.putExtra(BusInfoActivity.KEY_CURRENT_STATION_NAME, DEFAULT_STATION);
 		startActivity(intent);
 	}
 	

@@ -1,58 +1,67 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:sw="http//schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical" >
+
     <RelativeLayout
         android:layout_width="wrap_content"
-        android:layout_height="0dp" 
-        android:layout_weight="20"
-        >
+        android:layout_height="0dp"
+        android:layout_weight="20" >
+
         <TextView
             android:id="@+id/text_activity_businfo_number"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="505"
-            android:textSize="55sp"
-            android:textStyle="bold"
+            android:gravity="center"
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
-            android:gravity="center"
-            android:textColor="#000000"
-            android:background="@drawable/bus_num_back"
-            />
+            android:text="505"
+            android:textColor="#ffffff"
+            android:textSize="35sp"
+            android:textStyle="bold" />
+
         <TextView
             android:id="@+id/text_activity_businfo_stationname"
-            android:layout_alignParentRight="true"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="한라타운건너"
-            android:textSize="15sp"
+            android:layout_alignParentRight="true"
             android:paddingRight="10dp"
-            />
+            android:text="한라타운건너"
+            android:textSize="15sp" />
+
         <TextView
             android:id="@+id/text_activity_businfo_current"
-            android:layout_below="@+id/text_activity_businfo_stationname"
-            android:layout_alignParentRight="true"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="전전 출발"
-            android:textSize="22sp"
+            android:layout_alignParentRight="true"
+            android:layout_below="@+id/text_activity_businfo_stationname"
             android:paddingRight="10dp"
-            />
+            android:text="전전 출발"
+            android:textSize="22sp" />
+
+<!--         <com.zoeas.qdeagubus.Switch -->
+<!--             android:id="@+id/switch_path" -->
+<!--             android:layout_width="wrap_content" -->
+<!--             android:layout_height="wrap_content" -->
+<!--             android:layout_below="@+id/text_activity_businfo_current" -->
+<!--             sw:isChecked="true" -->
+<!--             sw:textLeft="정방향" -->
+<!--             sw:textRight="역방향" /> -->
     </RelativeLayout>
-    <fragment 
+
+    <fragment
         android:id="@+id/busmap"
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="40"
-        />
+        android:layout_weight="40" />
+
     <android.support.v4.view.ViewPager
         android:id="@+id/viewpager_activity_businfo_path"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="35"
-        />
+        android:layout_weight="35" />
 
 </LinearLayout>

@@ -209,6 +209,10 @@ or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>na
 or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>".
          */
         public static final int background=0x7f010039;
+        /** <p>Must be a reference to another resource, in the form "<code>@[+][<i>package</i>:]<i>type</i>:<i>name</i></code>"
+or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>".
+         */
+        public static final int backgroundDrawable=0x7f01007f;
         /**  Specifies a background drawable for the bottom component of a split action bar. 
          <p>May be a reference to another resource, in the form "<code>@[+][<i>package</i>:]<i>type</i>:<i>name</i></code>"
 or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>".
@@ -275,6 +279,24 @@ theme attribute (in the form
 containing a value of this type.
          */
         public static final int cameraZoom=0x7f010005;
+        /** <p>Must be a color value, in the form of "<code>#<i>rgb</i></code>", "<code>#<i>argb</i></code>",
+"<code>#<i>rrggbb</i></code>", or "<code>#<i>aarrggbb</i></code>".
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+         */
+        public static final int colorChecked=0x7f01007e;
+        /** <p>Must be a color value, in the form of "<code>#<i>rgb</i></code>", "<code>#<i>argb</i></code>",
+"<code>#<i>rrggbb</i></code>", or "<code>#<i>aarrggbb</i></code>".
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+         */
+        public static final int colorUnChecked=0x7f01007d;
         /**  Specifies a layout for custom navigation. Overrides navigationMode. 
          <p>Must be a reference to another resource, in the form "<code>@[+][<i>package</i>:]<i>type</i>:<i>name</i></code>"
 or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>".
@@ -407,6 +429,24 @@ theme attribute (in the form
 containing a value of this type.
          */
         public static final int initialActivityCount=0x7f010074;
+        /** <p>Must be a dimension value, which is a floating point number appended with a unit such as "<code>14.5sp</code>".
+Available units are: px (pixels), dp (density-independent pixels), sp (scaled pixels based on preferred font size),
+in (inches), mm (millimeters).
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+         */
+        public static final int innerPadding=0x7f010081;
+        /** <p>Must be a boolean value, either "<code>true</code>" or "<code>false</code>".
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+         */
+        public static final int isChecked=0x7f010082;
         /**  Specifies whether the theme is light, otherwise it is dark. 
          <p>Must be a boolean value, either "<code>true</code>" or "<code>false</code>".
 <p>This may also be a reference to a resource (in the form
@@ -747,6 +787,40 @@ containing a value of this type.
 or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>".
          */
         public static final int subtitleTextStyle=0x7f010035;
+        /** <p>Must be a dimension value, which is a floating point number appended with a unit such as "<code>14.5sp</code>".
+Available units are: px (pixels), dp (density-independent pixels), sp (scaled pixels based on preferred font size),
+in (inches), mm (millimeters).
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+         */
+        public static final int switchDrawable=0x7f010080;
+        /** <p>Must be a dimension value, which is a floating point number appended with a unit such as "<code>14.5sp</code>".
+Available units are: px (pixels), dp (density-independent pixels), sp (scaled pixels based on preferred font size),
+in (inches), mm (millimeters).
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+         */
+        public static final int switchMinWidth=0x7f01007b;
+        /** <p>Must be a dimension value, which is a floating point number appended with a unit such as "<code>14.5sp</code>".
+Available units are: px (pixels), dp (density-independent pixels), sp (scaled pixels based on preferred font size),
+in (inches), mm (millimeters).
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+         */
+        public static final int switchPadding=0x7f01007c;
+        /** <p>Must be a reference to another resource, in the form "<code>@[+][<i>package</i>:]<i>type</i>:<i>name</i></code>"
+or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>".
+         */
+        public static final int switchStyle=0x7f010078;
         /**  Present the text in ALL CAPS. This may use a small-caps form when available. 
          <p>May be a reference to another resource, in the form "<code>@[+][<i>package</i>:]<i>type</i>:<i>name</i></code>"
 or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>".
@@ -790,6 +864,22 @@ or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>na
 "<code>#<i>rrggbb</i></code>", or "<code>#<i>aarrggbb</i></code>".
          */
         public static final int textColorSearchUrl=0x7f010072;
+        /** <p>Must be a string value, using '\\;' to escape characters such as '\\n' or '\\uxxxx' for a unicode character.
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+         */
+        public static final int textLeft=0x7f010079;
+        /** <p>Must be a string value, using '\\;' to escape characters such as '\\n' or '\\uxxxx' for a unicode character.
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+         */
+        public static final int textRight=0x7f01007a;
         /** <p>Must be a string value, using '\\;' to escape characters such as '\\n' or '\\uxxxx' for a unicode character.
 <p>This may also be a reference to a resource (in the form
 "<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
@@ -1190,13 +1280,17 @@ containing a value of this type.
         public static final int station00005=0x7f0200a5;
         public static final int station_point=0x7f0200a6;
         public static final int station_point2=0x7f0200a7;
-        public static final int tab_indicator_ab_dbus=0x7f0200a8;
-        public static final int tab_selected_dbus=0x7f0200a9;
-        public static final int tab_selected_focused_dbus=0x7f0200aa;
-        public static final int tab_selected_pressed_dbus=0x7f0200ab;
-        public static final int tab_unselected_dbus=0x7f0200ac;
-        public static final int tab_unselected_focused_dbus=0x7f0200ad;
-        public static final int tab_unselected_pressed_dbus=0x7f0200ae;
+        public static final int switch_bg_holo_dark=0x7f0200a8;
+        public static final int switch_bg_holo_light=0x7f0200a9;
+        public static final int switch_thumb_activated_holo_dark=0x7f0200aa;
+        public static final int switch_thumb_activated_holo_light=0x7f0200ab;
+        public static final int tab_indicator_ab_dbus=0x7f0200ac;
+        public static final int tab_selected_dbus=0x7f0200ad;
+        public static final int tab_selected_focused_dbus=0x7f0200ae;
+        public static final int tab_selected_pressed_dbus=0x7f0200af;
+        public static final int tab_unselected_dbus=0x7f0200b0;
+        public static final int tab_unselected_focused_dbus=0x7f0200b1;
+        public static final int tab_unselected_pressed_dbus=0x7f0200b2;
     }
     public static final class id {
         public static final int action_bar=0x7f07001d;
@@ -1504,40 +1598,24 @@ containing a value of this type.
         public static final int hello_world=0x7f080028;
     }
     public static final class style {
-        public static final int ActionBar_Solid_Dbus=0x7f0c0082;
-        public static final int ActionBar_Transparent_Dbus=0x7f0c0083;
-        public static final int ActionBarTabStyle_Dbus=0x7f0c0086;
-        public static final int ActionButton_CloseMode_Dbus=0x7f0c0089;
+        public static final int ActionBar_Solid_Dbus=0x7f0c0083;
+        public static final int ActionBar_Transparent_Dbus=0x7f0c0084;
+        public static final int ActionBarTabStyle_Dbus=0x7f0c0087;
+        public static final int ActionButton_CloseMode_Dbus=0x7f0c008a;
         /** 
         Base application theme, dependent on API level. This theme is replaced
         by AppBaseTheme from res/values-vXX/styles.xml on newer devices.
     
-
-            Theme customizations available in newer API levels can go in
-            res/values-vXX/styles.xml, while customizations related to
-            backward-compatibility can go here.
-        
-
-        Base application theme for API 11+. This theme completely replaces
-        AppBaseTheme from res/values/styles.xml on API 11+ devices.
-    
- API 11 theme customizations can go here. 
-
-        Base application theme for API 14+. This theme completely replaces
-        AppBaseTheme from BOTH res/values/styles.xml and
-        res/values-v11/styles.xml on API 14+ devices.
-    
- API 14 theme customizations can go here. 
          */
         public static final int AppBaseTheme=0x7f0c007f;
         /**  Application theme. 
  All customizations that are NOT specific to a particular API-level can go here. 
          */
         public static final int AppTheme=0x7f0c0080;
-        public static final int DropDownListView_Dbus=0x7f0c0085;
-        public static final int DropDownNav_Dbus=0x7f0c0087;
-        public static final int PopupMenu_Dbus=0x7f0c0084;
-        public static final int ProgressBar_Dbus=0x7f0c0088;
+        public static final int DropDownListView_Dbus=0x7f0c0086;
+        public static final int DropDownNav_Dbus=0x7f0c0088;
+        public static final int PopupMenu_Dbus=0x7f0c0085;
+        public static final int ProgressBar_Dbus=0x7f0c0089;
         /**  Mimic text appearance in select_dialog_item.xml 
          */
         public static final int TextAppearance_AppCompat_Base_CompactMenu_Dialog=0x7f0c0061;
@@ -1631,11 +1709,11 @@ containing a value of this type.
         /**  Base platform-dependent theme providing a light-themed activity. 
          */
         public static final int Theme_Base_Light=0x7f0c0079;
-        public static final int Theme_Dbus=0x7f0c0081;
+        public static final int Theme_Dbus=0x7f0c0082;
         /**  this style is only referenced in a Light.DarkActionBar based theme 
  this style is only referenced in a Light.DarkActionBar based theme 
          */
-        public static final int Theme_Dbus_Widget=0x7f0c008a;
+        public static final int Theme_Dbus_Widget=0x7f0c008b;
         /**  Styles in here can be extended for customisation in your application. Each utilises
          one of the Base styles. If Holo themes are available on the current platform version
          they will be used instead of the compat styles. 
@@ -1726,6 +1804,7 @@ containing a value of this type.
         public static final int Widget_AppCompat_ProgressBar=0x7f0c000a;
         public static final int Widget_AppCompat_ProgressBar_Horizontal=0x7f0c0009;
         public static final int Widget_AppCompat_Spinner_DropDown_ActionBar=0x7f0c0022;
+        public static final int switch_dark=0x7f0c0081;
     }
     public static final class xml {
         public static final int bus_provider=0x7f050000;
@@ -3327,6 +3406,185 @@ or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>na
           @attr name com.zoeas.qdeagubus:spinnerMode
         */
         public static final int Spinner_spinnerMode = 7;
+        /** Attributes that can be used with a Switch.
+           <p>Includes the following attributes:</p>
+           <table>
+           <colgroup align="left" />
+           <colgroup align="left" />
+           <tr><th>Attribute</th><th>Description</th></tr>
+           <tr><td><code>{@link #Switch_backgroundDrawable com.zoeas.qdeagubus:backgroundDrawable}</code></td><td></td></tr>
+           <tr><td><code>{@link #Switch_colorChecked com.zoeas.qdeagubus:colorChecked}</code></td><td></td></tr>
+           <tr><td><code>{@link #Switch_colorUnChecked com.zoeas.qdeagubus:colorUnChecked}</code></td><td></td></tr>
+           <tr><td><code>{@link #Switch_innerPadding com.zoeas.qdeagubus:innerPadding}</code></td><td></td></tr>
+           <tr><td><code>{@link #Switch_isChecked com.zoeas.qdeagubus:isChecked}</code></td><td></td></tr>
+           <tr><td><code>{@link #Switch_switchDrawable com.zoeas.qdeagubus:switchDrawable}</code></td><td></td></tr>
+           <tr><td><code>{@link #Switch_switchMinWidth com.zoeas.qdeagubus:switchMinWidth}</code></td><td></td></tr>
+           <tr><td><code>{@link #Switch_switchPadding com.zoeas.qdeagubus:switchPadding}</code></td><td></td></tr>
+           <tr><td><code>{@link #Switch_textLeft com.zoeas.qdeagubus:textLeft}</code></td><td></td></tr>
+           <tr><td><code>{@link #Switch_textRight com.zoeas.qdeagubus:textRight}</code></td><td></td></tr>
+           </table>
+           @see #Switch_backgroundDrawable
+           @see #Switch_colorChecked
+           @see #Switch_colorUnChecked
+           @see #Switch_innerPadding
+           @see #Switch_isChecked
+           @see #Switch_switchDrawable
+           @see #Switch_switchMinWidth
+           @see #Switch_switchPadding
+           @see #Switch_textLeft
+           @see #Switch_textRight
+         */
+        public static final int[] Switch = {
+            0x7f010079, 0x7f01007a, 0x7f01007b, 0x7f01007c,
+            0x7f01007d, 0x7f01007e, 0x7f01007f, 0x7f010080,
+            0x7f010081, 0x7f010082
+        };
+        /**
+          <p>This symbol is the offset where the {@link com.zoeas.qdeagubus.R.attr#backgroundDrawable}
+          attribute's value can be found in the {@link #Switch} array.
+
+
+          <p>Must be a reference to another resource, in the form "<code>@[+][<i>package</i>:]<i>type</i>:<i>name</i></code>"
+or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>".
+          @attr name com.zoeas.qdeagubus:backgroundDrawable
+        */
+        public static final int Switch_backgroundDrawable = 6;
+        /**
+          <p>This symbol is the offset where the {@link com.zoeas.qdeagubus.R.attr#colorChecked}
+          attribute's value can be found in the {@link #Switch} array.
+
+
+          <p>Must be a color value, in the form of "<code>#<i>rgb</i></code>", "<code>#<i>argb</i></code>",
+"<code>#<i>rrggbb</i></code>", or "<code>#<i>aarrggbb</i></code>".
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+          @attr name com.zoeas.qdeagubus:colorChecked
+        */
+        public static final int Switch_colorChecked = 5;
+        /**
+          <p>This symbol is the offset where the {@link com.zoeas.qdeagubus.R.attr#colorUnChecked}
+          attribute's value can be found in the {@link #Switch} array.
+
+
+          <p>Must be a color value, in the form of "<code>#<i>rgb</i></code>", "<code>#<i>argb</i></code>",
+"<code>#<i>rrggbb</i></code>", or "<code>#<i>aarrggbb</i></code>".
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+          @attr name com.zoeas.qdeagubus:colorUnChecked
+        */
+        public static final int Switch_colorUnChecked = 4;
+        /**
+          <p>This symbol is the offset where the {@link com.zoeas.qdeagubus.R.attr#innerPadding}
+          attribute's value can be found in the {@link #Switch} array.
+
+
+          <p>Must be a dimension value, which is a floating point number appended with a unit such as "<code>14.5sp</code>".
+Available units are: px (pixels), dp (density-independent pixels), sp (scaled pixels based on preferred font size),
+in (inches), mm (millimeters).
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+          @attr name com.zoeas.qdeagubus:innerPadding
+        */
+        public static final int Switch_innerPadding = 8;
+        /**
+          <p>This symbol is the offset where the {@link com.zoeas.qdeagubus.R.attr#isChecked}
+          attribute's value can be found in the {@link #Switch} array.
+
+
+          <p>Must be a boolean value, either "<code>true</code>" or "<code>false</code>".
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+          @attr name com.zoeas.qdeagubus:isChecked
+        */
+        public static final int Switch_isChecked = 9;
+        /**
+          <p>This symbol is the offset where the {@link com.zoeas.qdeagubus.R.attr#switchDrawable}
+          attribute's value can be found in the {@link #Switch} array.
+
+
+          <p>Must be a dimension value, which is a floating point number appended with a unit such as "<code>14.5sp</code>".
+Available units are: px (pixels), dp (density-independent pixels), sp (scaled pixels based on preferred font size),
+in (inches), mm (millimeters).
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+          @attr name com.zoeas.qdeagubus:switchDrawable
+        */
+        public static final int Switch_switchDrawable = 7;
+        /**
+          <p>This symbol is the offset where the {@link com.zoeas.qdeagubus.R.attr#switchMinWidth}
+          attribute's value can be found in the {@link #Switch} array.
+
+
+          <p>Must be a dimension value, which is a floating point number appended with a unit such as "<code>14.5sp</code>".
+Available units are: px (pixels), dp (density-independent pixels), sp (scaled pixels based on preferred font size),
+in (inches), mm (millimeters).
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+          @attr name com.zoeas.qdeagubus:switchMinWidth
+        */
+        public static final int Switch_switchMinWidth = 2;
+        /**
+          <p>This symbol is the offset where the {@link com.zoeas.qdeagubus.R.attr#switchPadding}
+          attribute's value can be found in the {@link #Switch} array.
+
+
+          <p>Must be a dimension value, which is a floating point number appended with a unit such as "<code>14.5sp</code>".
+Available units are: px (pixels), dp (density-independent pixels), sp (scaled pixels based on preferred font size),
+in (inches), mm (millimeters).
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+          @attr name com.zoeas.qdeagubus:switchPadding
+        */
+        public static final int Switch_switchPadding = 3;
+        /**
+          <p>This symbol is the offset where the {@link com.zoeas.qdeagubus.R.attr#textLeft}
+          attribute's value can be found in the {@link #Switch} array.
+
+
+          <p>Must be a string value, using '\\;' to escape characters such as '\\n' or '\\uxxxx' for a unicode character.
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+          @attr name com.zoeas.qdeagubus:textLeft
+        */
+        public static final int Switch_textLeft = 0;
+        /**
+          <p>This symbol is the offset where the {@link com.zoeas.qdeagubus.R.attr#textRight}
+          attribute's value can be found in the {@link #Switch} array.
+
+
+          <p>Must be a string value, using '\\;' to escape characters such as '\\n' or '\\uxxxx' for a unicode character.
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+          @attr name com.zoeas.qdeagubus:textRight
+        */
+        public static final int Switch_textRight = 1;
         /**  These are the standard attributes that make up a complete theme. 
            <p>Includes the following attributes:</p>
            <table>

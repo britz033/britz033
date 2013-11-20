@@ -2,12 +2,13 @@ package adapter;
 
 import java.util.ArrayList;
 
+import android.app.AlertDialog;
+import android.content.Context;
 import android.graphics.Color;
 import android.util.Log;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -16,50 +17,73 @@ import com.google.android.gms.maps.model.PolylineOptions;
 public class ActionMap {
 	
 	private GoogleMap map;
+	private Context context;
 	private int colorIndex;
 	private LatLng prePoint;
 	private float density;
 	private int zIndex;
+	private ArrayList<LatLng> latLngList;
 	
-	public ActionMap(float density){
+	public ActionMap(Context context, float density){
 		if(map==null)
 			Log.d("맵액션클래스","현재 map이 null 입니다. 주의하세요");
-		this.density = density;
-		init();
+		init(context, density);
 	}
 	
-	public ActionMap(GoogleMap map, float density){
+	public ActionMap(Context context, GoogleMap map, float density){
 		if(map != null)
 			this.map = map;
 		else 
 			Log.d("맵액션클래스","map 이 Null 입니다");
-		this.density = density;
-		init();
+		
+		init(context, density);
 	}
 	
-	private void init(){
+	private void init(Context context,float density){
+		this.density = density;
+		this.context = context;
 		colorIndex = 120;
 		zIndex = 0;
+		latLngList = new ArrayList<LatLng>();
 	}
 	
 	public void setMap(GoogleMap map){
 		this.map = map;
 	}
 	
-	public void drawLine(LatLng point){
-		colorIndex -= 2;
-		colorIndex %= 360;
-		
+//	색이 다르게 할 수는 있지만 라인이 가닥가닥 따로 그리기에 끊김 현상이 발생
+//	public void drawLine(LatLng point){
+//		colorIndex -= 2;
+//		colorIndex %= 360;
+//		
+//		zIndex++;
+//		
+//		int depth = 1000; // 위선과 아랫선이 겹치지 않게
+//		
+//		int color = Color.HSVToColor(new float[]{colorIndex,1,1});
+//		if(prePoint != null){
+//			map.addPolyline((new PolylineOptions()).add(prePoint, point).width((int)(5*density)).color(Color.BLACK).zIndex(zIndex));
+//			map.addPolyline((new PolylineOptions()).add(prePoint, point).width((int)(3*density)).color(color).zIndex(zIndex+depth));
+//		}
+//		prePoint = point;
+//	}
+	
+	public void addLinePoint(LatLng point){
+		latLngList.add(point);
+	}
+	
+	public void drawLine(){
 		zIndex++;
 		
 		int depth = 1000; // 위선과 아랫선이 겹치지 않게
 		
 		int color = Color.HSVToColor(new float[]{colorIndex,1,1});
-		if(prePoint != null){
-			map.addPolyline((new PolylineOptions()).add(prePoint, point).width((int)(5*density)).color(Color.BLACK).zIndex(zIndex));
-			map.addPolyline((new PolylineOptions()).add(prePoint, point).width((int)(3*density)).color(color).zIndex(zIndex+depth));
+		if(latLngList.size() >2){
+			map.addPolyline((new PolylineOptions()).addAll(latLngList).width((int)(5*density)).color(Color.BLACK).zIndex(zIndex));
+			map.addPolyline((new PolylineOptions()).addAll(latLngList).width((int)(3*density)).color(color).zIndex(zIndex+depth));
+		} else {
+			new AlertDialog.Builder(context).setTitle("경로수가 2개 이하입니다").show();
 		}
-		prePoint = point;
 	}
 	
 	
