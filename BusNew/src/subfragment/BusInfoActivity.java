@@ -47,13 +47,14 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 	private ArrayList<String> pathForward;
 	private ArrayList<String> pathBackward;
 	private Cursor mcursor;
+	private int busDirection;
+	private int currentDirection;
 	private int loopIndex;
 	private int loopErrorCheck;
 	private ActionMap actionMapDirection;
 	private ActionMap actionMapForward;
 	private ActionMap actionMapBackward;
 	private String currentStationName;
-	private boolean directionFlag;
 	private TextView textDirection;
 	private boolean userControlAllowed;
 	private Switch pathSwitchWidget;
@@ -67,8 +68,7 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 		pathForward = new ArrayList<String>();
 		pathBackward = new ArrayList<String>();
 		loopIndex = 0;
-		loopErrorCheck = 0;
-		directionFlag = false;
+		busDirection = currentDirection = FORWARD;
 		userControlAllowed = false;
 
 		// 각정보를 넣을 곳을 기본 세팅하고 쿼리를 스타트
@@ -86,10 +86,11 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 				if (userControlAllowed) {
 					if (isChecked) {
-
+						currentDirection = FORWARD;
 					} else {
-
+						currentDirection = BACKWARD;
 					}
+					showInfo();
 				}
 			}
 		});
@@ -97,8 +98,6 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 		textBusNumber.setText(busNum);
 		if (currentStationName != null)
 			textStationName.setText(currentStationName);
-		if (currentStationName.equals(SearchBusNumberFragment.DEFAULT_STATION))
-			directionFlag = true;
 
 		// 정방향 역방향의 모든 버스정류장 이름을 추출
 		getSupportLoaderManager().initLoader(0, getIntent().getExtras(), this);
@@ -189,23 +188,19 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 
 	// 받은 버스번호를 토대로 경로를 뽑은데서 다시 각 경로마다의 버스정류장을 반복쿼리함, 반복 index는 loopIndex
 	public void loopQuery() {
-		loopErrorCheck++;
-		if (loopErrorCheck < 300) {
-			try {
-				Log.d("루프 스테이션 이름", pathDirection.get(loopIndex));
-				Bundle data = new Bundle();
-				data.putString(KEY_PATH_STATION, pathDirection.get(loopIndex));
-				loopIndex++;
-				getSupportLoaderManager().restartLoader(1, data, this);
-			} catch (Exception e) {
-				AlertDialog.Builder builder = new AlertDialog.Builder(this);
-				builder.setMessage("이 버스는 경로를 불러올 수 없습니다 : " + currentStationName);
-				builder.create().show();
-				// 버스 경로에서 불러온 이름으로 버스정류장을 다시 검색하였으나 존재치 않음
-				e.printStackTrace();
-			}
-		} else
-			Log.d("버스인포액티비티", "무한루프에러:" + currentStationName);
+		try {
+			Log.d("루프 스테이션 이름", pathDirection.get(loopIndex));
+			Bundle data = new Bundle();
+			data.putString(KEY_PATH_STATION, pathDirection.get(loopIndex));
+			loopIndex++;
+			getSupportLoaderManager().restartLoader(1, data, this);
+		} catch (Exception e) {
+			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			builder.setMessage("이 버스는 경로를 불러올 수 없습니다 : " + currentStationName);
+			builder.create().show();
+			// 버스 경로에서 불러온 이름으로 버스정류장을 다시 검색하였으나 존재치 않음
+			e.printStackTrace();
+		}
 	}
 
 	// 이 쿼리문 자체는 정방향, 역방향의 영향을 받지 않는 순수한 쿼리
@@ -251,44 +246,46 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 				// actionMap.addMarker(cursor.getString(1), latLng,
 				// R.drawable.station_point);
 
+				// 일단 양쪽 모두 돌리는데 정류장이 발견되면 현재 돌고 있는 방향을 저장
 				if (cursor.getString(1).equals(currentStationName)) {
-					Log.d("버스인포액티비티", "방향이 맞음");
+					Log.d("버스인포액티비티", "정류장 존재");
 					actionMapDirection.aniMap(latLng);
 					actionMapDirection.addMarkerAndShow(pathDirection.get(loopIndex - 1), latLng);
 					pathPager.setCurrentItem(loopIndex - 1);
-					Log.d("버스인포액티비티", pathDirection.get(loopIndex - 1) + latLng.toString());
-					directionFlag = true;
+					busDirection = currentDirection;
 				}
 				if (loopIndex < pathDirection.size()) {
 					loopQuery();
-				} else {
+				} else if (currentDirection != BACKWARD && pathBackward.size() != 0) {
 					loopIndex = 0;
-					if (!directionFlag) {
-						Log.d("버스인포액티비티", "역방향으로 체인지");
-						textDirection.setText("역방향");
-						settingSwitch(BACKWARD);
-						loopQuery();
-					} else {
-						finishLoading();
-					}
+					Log.d("버스인포액티비티", "역방향으로 체인지");
+					textDirection.setText("역방향");
+					currentDirection = BACKWARD;
+					settingSwitch(BACKWARD);
+					loopQuery();
+				} else {
+					finishLoading();
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
 				new AlertDialog.Builder(this).setTitle("경로데이터가 부족합니다").create().show();
-			} finally {
-				break;
-			}
+			} 
+			break;
 		}
 	}
 
 	private void finishLoading() {
+		currentDirection = busDirection;
 		showInfo();
 		userControlAllowed = true;
-		pathSwitchWidget.setStartWork();
+		if(pathBackward.size() != 0)
+			pathSwitchWidget.setStartWork();
+		else
+			textDirection.setText("단일방향");
 	}
-	
-	private void showInfo(){
-		settingSwitch(pathSwitch);
+
+	private void showInfo() {
+		settingSwitch(currentDirection);
 		actionMapDirection.drawLine();
 	}
 
