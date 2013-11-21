@@ -23,6 +23,7 @@ public class FavoritePreviewPagerAdatper extends PagerAdapter {
 	private Cursor cursor;
 	private Drawable img;
 	private LayoutInflater inflater;
+	private FavoriteDummyPagerAdapter dummy;
 
 	public FavoritePreviewPagerAdatper(Context context, Cursor c) {
 		this.context = context;
@@ -99,7 +100,12 @@ public class FavoritePreviewPagerAdatper extends PagerAdapter {
 		if (cursor != null)
 			Log.d("어뎁터에서 커서스왑, 커서 count", String.valueOf(cursor.getCount()));
 		this.cursor = cursor;
+		dummy.swapAdapter(this);
 		notifyDataSetChanged();
+	}
+	
+	public void setDummy(FavoriteDummyPagerAdapter dummy){
+		this.dummy = dummy;
 	}
 
 }

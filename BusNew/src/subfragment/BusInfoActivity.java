@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import util.Switch;
 import adapter.ActionMap;
 import adapter.PathPagerAdapter;
 import android.app.AlertDialog;
@@ -17,7 +18,10 @@ import android.support.v4.content.Loader;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.util.Log;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
@@ -51,6 +55,8 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 	private String currentStationName;
 	private boolean directionFlag;
 	private TextView textDirection;
+	private boolean userControlAllowed;
+	private Switch pathSwitchWidget;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +69,7 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 		loopIndex = 0;
 		loopErrorCheck = 0;
 		directionFlag = false;
+		userControlAllowed = false;
 
 		// 각정보를 넣을 곳을 기본 세팅하고 쿼리를 스타트
 		pathPager = (ViewPager) findViewById(R.id.viewpager_activity_businfo_path);
@@ -72,6 +79,21 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 		TextView textBusNumber = (TextView) findViewById(R.id.text_activity_businfo_number);
 		TextView textStationName = (TextView) findViewById(R.id.text_activity_businfo_stationname);
 		textDirection = (TextView) findViewById(R.id.text_activity_businfo_direction);
+		pathSwitchWidget = (Switch) findViewById(R.id.switch_path);
+
+		pathSwitchWidget.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+				if (userControlAllowed) {
+					if (isChecked) {
+
+					} else {
+
+					}
+				}
+			}
+		});
+
 		textBusNumber.setText(busNum);
 		if (currentStationName != null)
 			textStationName.setText(currentStationName);
@@ -161,7 +183,6 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 			actionMapDirection = actionMapBackward;
 			break;
 		}
-
 		pathPager.setAdapter(adapter);
 		pathPager.setOnPageChangeListener(this);
 	}
@@ -232,8 +253,9 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 
 				if (cursor.getString(1).equals(currentStationName)) {
 					Log.d("버스인포액티비티", "방향이 맞음");
-					actionMapDirection.moveMap(latLng);
-					actionMapDirection.addMarker(pathDirection.get(loopIndex - 1), latLng);
+					actionMapDirection.aniMap(latLng);
+					actionMapDirection.addMarkerAndShow(pathDirection.get(loopIndex - 1), latLng);
+					pathPager.setCurrentItem(loopIndex - 1);
 					Log.d("버스인포액티비티", pathDirection.get(loopIndex - 1) + latLng.toString());
 					directionFlag = true;
 				}
@@ -247,7 +269,7 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 						settingSwitch(BACKWARD);
 						loopQuery();
 					} else {
-						actionMapDirection.drawLine();
+						finishLoading();
 					}
 				}
 			} catch (Exception e) {
@@ -257,7 +279,17 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 				break;
 			}
 		}
+	}
 
+	private void finishLoading() {
+		showInfo();
+		userControlAllowed = true;
+		pathSwitchWidget.setStartWork();
+	}
+	
+	private void showInfo(){
+		settingSwitch(pathSwitch);
+		actionMapDirection.drawLine();
 	}
 
 	@Override
@@ -273,8 +305,11 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 
 	@Override
 	public void onPageSelected(int position) {
-		// TODO Auto-generated method stub
-
+		if (userControlAllowed) {
+			actionMapDirection.removeMarker();
+			actionMapDirection.aniMap(position);
+			actionMapDirection.addMarkerAndShow(position, pathDirection.get(position));
+		}
 	}
 
 	@Override

@@ -6,6 +6,7 @@ import internet.ResponseTask;
 
 import java.util.ArrayList;
 
+import adapter.FavoriteDummyPagerAdapter;
 import adapter.FavoritePreviewPagerAdatper;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -24,7 +25,9 @@ import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 
 import com.zoeas.qdeagubus.MyContentProvider;
@@ -78,10 +81,25 @@ public class FavoriteFragment extends Fragment implements ResponseTask, LoaderCa
 		pager = (ViewPager) view.findViewById(R.id.viewpager_favorite);
 		pager.setAdapter(adapter);
 
-		// 미리보기에 쓰일 쿼리를 가져온다 and 미리보기를 표시할 아탑터를 세팅한다
 
+		final ViewPager dummy = (ViewPager) view.findViewById(R.id.viewpager_favorite_preview_dummy);
+		FavoriteDummyPagerAdapter dummyAdapter = new FavoriteDummyPagerAdapter(adapter,context);
+		dummy.setAdapter(dummyAdapter);
+		dummy.setOffscreenPageLimit(7);
+		dummy.setOnTouchListener(new OnTouchListener() {
+			
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				return true;
+			}
+		});
+		
+		// 미리보기에 쓰일 쿼리를 가져온다 and 미리보기를 표시할 아탑터를 세팅한다
 		OnPageChangeListener onPageChangeListener = new OnPageChangeListener() {
 
+			private int currentPos;
+			
+			
 			@Override
 			public void onPageSelected(int position) {
 				// 페이지가 선택되면 선택된 번호로 커서를 이동시켜 정류소 번호를 가져온다음 showInfo로 보내준다
@@ -89,19 +107,17 @@ public class FavoriteFragment extends Fragment implements ResponseTask, LoaderCa
 				settingInfo();
 				Log.d("onPageSelected", "갱신");
 				showInfo(stationNum);
+				dummy.setCurrentItem(position,true);
 			}
 
-			@Override
-			public void onPageScrolled(int position, float arg1, int arg2) {
-				// TODO Auto-generated method stub
+			public void onPageScrolled(int position, float offset, int positionOffsetPixels) {
+//	            dummy.scrollTo((int)offset, 0);
+//	            currentPos = arg0;
+	        }
 
-			}
-
-			@Override
-			public void onPageScrollStateChanged(int arg0) {
-				// TODO Auto-generated method stub
-
-			}
+	        public void onPageScrollStateChanged(int arg0) {
+//	            dummy.setCurrentItem(currentPos,false);
+	        }
 		};
 
 		pager.setOnPageChangeListener(onPageChangeListener);
@@ -109,6 +125,8 @@ public class FavoriteFragment extends Fragment implements ResponseTask, LoaderCa
 		pager.setClipChildren(false);
 		pager.setCurrentItem(0);
 
+		adapter.setDummy(dummyAdapter);
+		
 		Log.d("즐겨찾기 미리보기", "페이저세팅 끝");
 	}
 
