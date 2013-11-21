@@ -21,7 +21,6 @@ import android.widget.TextView;
 
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
 import com.zoeas.qdeagubus.MyContentProvider;
 import com.zoeas.qdeagubus.R;
 
@@ -51,6 +50,7 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 	private ActionMap actionMapBackward;
 	private String currentStationName;
 	private boolean directionFlag;
+	private TextView textDirection;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -71,6 +71,7 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 		currentStationName = getIntent().getExtras().getString(KEY_CURRENT_STATION_NAME);
 		TextView textBusNumber = (TextView) findViewById(R.id.text_activity_businfo_number);
 		TextView textStationName = (TextView) findViewById(R.id.text_activity_businfo_stationname);
+		textDirection = (TextView) findViewById(R.id.text_activity_businfo_direction);
 		textBusNumber.setText(busNum);
 		if (currentStationName != null)
 			textStationName.setText(currentStationName);
@@ -242,6 +243,7 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 					loopIndex = 0;
 					if (!directionFlag) {
 						Log.d("버스인포액티비티", "역방향으로 체인지");
+						textDirection.setText("역방향");
 						settingSwitch(BACKWARD);
 						loopQuery();
 					} else {

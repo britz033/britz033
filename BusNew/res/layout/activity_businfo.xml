@@ -40,6 +40,16 @@
             android:paddingRight="10dp"
             android:text="전전 출발"
             android:textSize="22sp" />
+        
+        <TextView
+            android:id="@+id/text_activity_businfo_direction"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_below="@+id/text_activity_businfo_current"
+            android:paddingRight="10dp"
+            android:text="정방향"
+            android:textSize="22sp" />
 
 <!--         <com.zoeas.qdeagubus.Switch -->
 <!--             android:id="@+id/switch_path" -->
