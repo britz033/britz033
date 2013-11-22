@@ -58,6 +58,7 @@ public class Switch extends CompoundButton {
 	private OnClickListener onClickListener;
 
 	private boolean workOn;
+	private boolean onePath;
 
 	/**
 	 * Construct a new Switch with default styling
@@ -200,7 +201,7 @@ public class Switch extends CompoundButton {
 				this.drawableSwitch.getIntrinsicHeight());
 
 		this.width = actualWidth;
-		this.height = switchHeight;
+		this.height = 30;
 
 		// recalculate the width if there is a text
 		if (this.getText() != null)
@@ -240,12 +241,14 @@ public class Switch extends CompoundButton {
 		this.layoutLeft.draw(canvas);
 		canvas.restore();
 
-		// draw right text
-		this.getPaint().setColor(!this.isChecked() ? this.textColorChecked : this.textColorUnChecked);
-		canvas.translate(left + (this.width / 2 - this.layoutRight.getWidth()) / 2 + this.width / 2,
-				(this.height - this.layoutRight.getHeight()) / 2);
-		this.layoutRight.draw(canvas);
-		canvas.restore();
+		if (!onePath) {
+			// draw right text
+			this.getPaint().setColor(!this.isChecked() ? this.textColorChecked : this.textColorUnChecked);
+			canvas.translate(left + (this.width / 2 - this.layoutRight.getWidth()) / 2 + this.width / 2,
+					(this.height - this.layoutRight.getHeight()) / 2);
+			this.layoutRight.draw(canvas);
+			canvas.restore();
+		}
 	}
 
 	@Override
@@ -314,5 +317,10 @@ public class Switch extends CompoundButton {
 	
 	public void setStopWork(){
 		workOn = false;
+	}
+	
+	public void setOnePath(){
+		onePath = true;
+		invalidate();
 	}
 }

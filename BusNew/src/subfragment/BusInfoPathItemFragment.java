@@ -12,6 +12,7 @@ import android.widget.TextView;
 import com.zoeas.qdeagubus.R;
 
 public class BusInfoPathItemFragment extends Fragment{
+	
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -33,11 +34,11 @@ public class BusInfoPathItemFragment extends Fragment{
 				break;
 			case 2: break;
 			}
-			
 		}
 		else
 			view.setVisibility(View.INVISIBLE);
 		
 		return view;
 	}
+	
 }

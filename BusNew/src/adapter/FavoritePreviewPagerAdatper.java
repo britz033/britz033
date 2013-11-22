@@ -7,10 +7,13 @@ import android.support.v4.view.PagerAdapter;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
+import com.zoeas.qdeagubus.MainActivity;
 import com.zoeas.qdeagubus.R;
 
 /*
@@ -24,6 +27,7 @@ public class FavoritePreviewPagerAdatper extends PagerAdapter {
 	private Drawable img;
 	private LayoutInflater inflater;
 	private FavoriteDummyPagerAdapter dummy;
+	private boolean startSetting;
 
 	public FavoritePreviewPagerAdatper(Context context, Cursor c) {
 		this.context = context;
@@ -32,6 +36,7 @@ public class FavoritePreviewPagerAdatper extends PagerAdapter {
 		// cursor.moveToFirst(); // 바깥에서 이미 커서를 움직일지도 모르므로 그냥 무조건 첫번째로
 
 		inflater = LayoutInflater.from(context);
+		startSetting = false;
 
 	}
 
@@ -42,28 +47,44 @@ public class FavoritePreviewPagerAdatper extends PagerAdapter {
 
 	@Override
 	public Object instantiateItem(ViewGroup container, int position) {
-		Log.d("data","불려짐");
+		Log.d("data", "불려짐");
 		if (cursor == null)
 			return null;
 
 		RelativeLayout rl = (RelativeLayout) inflater.inflate(R.layout.viewpager_favorite_preview, null);
-		ImageView iv = (ImageView) rl.findViewById(R.id.img_favorite_preview);
-		int id = 0;
 		
-		cursor.moveToPosition(position);
 
-		StringBuilder sb = new StringBuilder("station");
-		sb.append(cursor.getString(0));
-		id = context.getResources().getIdentifier(sb.toString(), "drawable", context.getPackageName());
-		if (id == 0)
-			id = R.drawable.station00005;
+		if (!startSetting) {
+			int id = 0;
+			ImageView iv = (ImageView) rl.findViewById(R.id.img_favorite_preview);
+			
+			cursor.moveToPosition(position);
 
-		img = context.getResources().getDrawable(id);
-
-		iv.setImageDrawable(img);
-
+			StringBuilder sb = new StringBuilder("station");
+			sb.append(cursor.getString(0));
+			id = context.getResources().getIdentifier(sb.toString(), "drawable", context.getPackageName());
+			if (id == 0)
+				id = R.drawable.station00005;
+			
+			img = context.getResources().getDrawable(id);
+			iv.setImageDrawable(img);
+			
+		} else {
+			ImageButton ib = (ImageButton) rl.findViewById(R.id.imgbutton_favorite_preview);
+			ImageView iv = (ImageView) rl.findViewById(R.id.img_favorite_preview);
+			iv.setVisibility(View.INVISIBLE);
+			ib.setVisibility(View.VISIBLE);
+			
+			ib.setOnClickListener(new OnClickListener() {
+				OnCommunicationActivity activityCall;
+				@Override
+				public void onClick(View v) {
+					activityCall = (MainActivity) context;
+					activityCall.OnTabMove(MainActivity.MyTabs.STATION_LISTVIEW);
+				}
+			});
+		}
 		container.addView(rl, 0);
-
 		return rl;
 	}
 
@@ -71,9 +92,15 @@ public class FavoritePreviewPagerAdatper extends PagerAdapter {
 	public int getCount() {
 		if (cursor == null)
 			return 0;
+		if (cursor.getCount() == 0) {
+			startSetting = true;
+			return 1;
+		} else
+			startSetting = false;
+
 		return cursor.getCount();
 	}
-	
+
 	@Override
 	public int getItemPosition(Object object) {
 		return POSITION_NONE;
@@ -83,7 +110,7 @@ public class FavoritePreviewPagerAdatper extends PagerAdapter {
 	public CharSequence getPageTitle(int position) {
 		if (cursor == null)
 			return null;
-		if (cursor.getCount() == 0)
+		if (startSetting)
 			return "정류장 즐겨찾기를 추가하세요";
 		cursor.moveToPosition(position);
 		return cursor.getString(1);
@@ -95,7 +122,7 @@ public class FavoritePreviewPagerAdatper extends PagerAdapter {
 	}
 
 	public void swapCursor(Cursor cursor) {
-		if(this.cursor == cursor)
+		if (this.cursor == cursor)
 			return;
 		if (cursor != null)
 			Log.d("어뎁터에서 커서스왑, 커서 count", String.valueOf(cursor.getCount()));
@@ -103,8 +130,8 @@ public class FavoritePreviewPagerAdatper extends PagerAdapter {
 		dummy.swapAdapter(this);
 		notifyDataSetChanged();
 	}
-	
-	public void setDummy(FavoriteDummyPagerAdapter dummy){
+
+	public void setDummy(FavoriteDummyPagerAdapter dummy) {
 		this.dummy = dummy;
 	}
 

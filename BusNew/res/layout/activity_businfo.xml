@@ -23,6 +23,18 @@
             android:textColor="#ffffff"
             android:textSize="35sp"
             android:textStyle="bold" />
+        <TextView
+            android:layout_below="@+id/text_activity_businfo_number"
+            android:id="@+id/text_activity_businfo_option"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:textColor="#ffffff"
+            android:textSize="8sp"
+            />
+        
 
         <TextView
             android:id="@+id/text_activity_businfo_stationname"
@@ -30,7 +42,6 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:paddingRight="10dp"
-            android:text="한라타운건너"
             android:textSize="15sp" />
 
         <TextView
@@ -40,24 +51,19 @@
             android:layout_alignParentRight="true"
             android:layout_below="@+id/text_activity_businfo_stationname"
             android:paddingRight="10dp"
-            android:text="전전 출발"
-            android:textSize="22sp" />
+            android:textSize="15sp" />
         
-        <TextView
-            android:id="@+id/text_activity_businfo_direction"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_below="@+id/text_activity_businfo_current"
-            android:paddingRight="10dp"
-            android:text="정방향"
-            android:textSize="22sp" />
-
         <util.Switch
             android:id="@+id/switch_path"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/text_activity_businfo_current"
+            android:layout_alignParentRight="true"
+            android:layout_gravity="center"
+            android:textSize="12sp"
+            sw:switchMinWidth="30dp"
+            sw:switchPadding="22dp"
+            sw:innerPadding="34dp"
             sw:isChecked="true"
             sw:textLeft="정방향"
             sw:textRight="역방향" />

@@ -156,6 +156,7 @@ public class ActionMap {
 	public void aniMap(int position) {
 		try {
 			LatLng latLng = latLngList.get(position);
+			latLng = new LatLng(latLng.latitude +0.0025d,latLng.longitude);
 			
 			CameraPosition cp =  CameraPosition.builder().target(latLng).zoom(14).tilt(50).build();
 			map.animateCamera(CameraUpdateFactory.newCameraPosition(cp));

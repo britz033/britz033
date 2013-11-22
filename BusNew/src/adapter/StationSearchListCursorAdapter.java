@@ -27,10 +27,6 @@ public class StationSearchListCursorAdapter extends CursorAdapter implements OnT
 	private OnCommunicationActivity communication; // 즐겨찾기 되면 액티비티에 구현한 리스너가
 													// 자동호출
 
-	public interface OnCommunicationActivity {
-		public void OnFavoriteRefresh();
-	}
-
 	static class ViewHolder {
 		TextView tvNumber;
 		TextView tvName;

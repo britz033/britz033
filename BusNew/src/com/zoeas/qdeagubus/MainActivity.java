@@ -5,11 +5,17 @@ import java.util.ArrayList;
 import subfragment.FavoriteFragment;
 import subfragment.GMapFragment;
 import subfragment.OnSaveBusStationInfoListener;
-import adapter.StationSearchListCursorAdapter.OnCommunicationActivity;
+import adapter.OnCommunicationActivity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -24,6 +30,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
@@ -246,7 +253,34 @@ public class MainActivity extends ActionBarActivity implements TabListener,
 	public void OnFavoriteRefresh() {
 		((FavoriteFragment)flist.get(MyTabs.FAVORITE.getValue())).refreshPreview();
 	}
+
+	@Override
+	public void OnTabMove(MyTabs myTab) {
+		int index = myTab.STATION_LISTVIEW.getValue();
+		vp.setCurrentItem(index, true);
+	}
 	
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		
+		if(requestCode == 1001){
+			Uri selectImage = data.getData();
+			String[] projection = { MediaStore.Images.Media.DATA };
+			
+			Cursor cursor = getContentResolver().query(selectImage, projection, null, null, null);
+			cursor.moveToFirst();
+			
+			int index = cursor.getColumnIndex(projection[0]);
+			String picturePath = cursor.getString(index);
+			cursor.close();
+			
+			ImageView iv = new ImageView(this);
+			iv.setImageBitmap(BitmapFactory.decodeFile(picturePath));
+			
+			new AlertDialog.Builder(this).setView(iv).create().show();
+		}
+	}
 
 }
 

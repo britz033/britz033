@@ -25,6 +25,8 @@ public class PathPagerAdapter<T extends Fragment> extends FragmentStatePagerAdap
 		this.fragmentclass = fragmentclass;
 		this.station = path;
 	}
+	
+	
 
 	@Override
 	public T getItem(int position) {

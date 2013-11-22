@@ -17,7 +17,7 @@
      limitations under the License.
 -->
 
-<resources>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
 
     <style name="Theme.Qbus" parent="@style/Theme.AppCompat.Light">
         <item name="actionBarItemBackground">@drawable/selectable_background_qbus</item>
@@ -29,6 +29,7 @@
         <item name="actionModeBackground">@drawable/cab_background_top_qbus</item>
         <item name="actionModeSplitBackground">@drawable/cab_background_bottom_qbus</item>
         <item name="actionModeCloseButtonStyle">@style/ActionButton.CloseMode.Qbus</item>
+        <item name="android:textColor">#000000</item>
 
         <item name="com.zoeas.qdeagubus:switchStyle">@style/switch_light</item>
     </style>
