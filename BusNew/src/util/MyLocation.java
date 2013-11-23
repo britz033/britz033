@@ -33,8 +33,10 @@ public class MyLocation {
         try{network_enabled=lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER);}catch(Exception ex){}
 
         //don't start listeners if no provider is enabled
-        if(!gps_enabled && !network_enabled)
+        if(!gps_enabled && !network_enabled){
+        	Log.d("위치추적 클래스", "gps net 둘다 지원안함 크리");
             return false;
+        }
 
         if(gps_enabled)
             lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListenerGps);

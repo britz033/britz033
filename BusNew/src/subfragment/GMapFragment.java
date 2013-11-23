@@ -3,10 +3,7 @@ package subfragment;
 import util.MyLocation;
 import util.MyLocation.LocationResult;
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.DialogInterface.OnClickListener;
 import android.database.Cursor;
 import android.location.Location;
 import android.net.Uri;
@@ -22,7 +19,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
+import android.widget.LinearLayout;
 
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -46,7 +43,7 @@ public class GMapFragment extends Fragment implements CallFragmentMethod,
 	private GoogleMap map;
 	private float density;
 	private LatLng myLatLng;
-	private TextView tv;
+	private LinearLayout loadingLayout;
 
 	@Override
 	public void onAttach(Activity activity) {
@@ -61,7 +58,7 @@ public class GMapFragment extends Fragment implements CallFragmentMethod,
 		density = context.getResources().getDisplayMetrics().density;
 		
 		View view = inflater.inflate(R.layout.fragment_gmap_layout, null);
-		tv = (TextView) view.findViewById(R.id.text_map_loading);
+		loadingLayout = (LinearLayout) view.findViewById(R.id.layout_map_loading);
 		return view;
 	}
 
@@ -75,25 +72,28 @@ public class GMapFragment extends Fragment implements CallFragmentMethod,
 	// 맵 세팅
 	private void setupMapIfNeeded(){
 		if(map == null){
+			Log.d("G맵","불려짐");
 			FragmentManager fm = getChildFragmentManager();
-			SupportMapFragment mapFragment = (SupportMapFragment) fm.findFragmentById(R.id.map);
+			SupportMapFragment mapFragment = (SupportMapFragment) fm.findFragmentById(R.id.gmap);
 			if(mapFragment == null){
 				FragmentTransaction ft = fm.beginTransaction();
 				mapFragment = new SupportMapFragment();
-				ft.add(mapFragment, "myLocation");
+				ft.add(R.id.gmap, mapFragment, "myGmap");
 				ft.commit();
 			}
-			
 			map = mapFragment.getMap();
 		}
 		
 		if(map != null){
 			setUpMap();
+		} else {
+			Log.d("G맵","근데 맵은 없음");
 		}
 	}
 	
 	private void setUpMap(){
-		map.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(35.871942,128.601122), 11));
+		Log.d("G맵","셋업");
+		map.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(35.871942,128.601122)));
 	}
 
 	public void setGMap(String station_number, String station_name,
@@ -129,7 +129,9 @@ public class GMapFragment extends Fragment implements CallFragmentMethod,
 //		});
 //		wait.setMessage("위치정보를 가져오고 있습니다");
 //		wait.show();
-		tv.setVisibility(View.VISIBLE);
+		Log.d("G맵", "oncalled 인터페이스메소드 호출");
+		setupMapIfNeeded();
+		loadingLayout.setVisibility(View.VISIBLE);
 
 		// MyLocation 클래스 콜백 리스너. gps나 네트웤 위치 신호가 오기까지 기다리다가 onchange 리스너가 호출되면
 		// 그 결과값을 gotLocation 메소드로 리턴해준다.
@@ -139,7 +141,7 @@ public class GMapFragment extends Fragment implements CallFragmentMethod,
 
 				if (map != null && location != null) {
 //					wait.dismiss();
-					tv.setVisibility(View.INVISIBLE);
+					loadingLayout.setVisibility(View.INVISIBLE);
 					myLatLng = new LatLng(location.getLatitude(),
 							location.getLongitude());
 					map.animateCamera(CameraUpdateFactory.newLatLngZoom(

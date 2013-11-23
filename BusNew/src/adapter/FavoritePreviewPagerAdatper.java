@@ -9,7 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
@@ -70,12 +70,13 @@ public class FavoritePreviewPagerAdatper extends PagerAdapter {
 			iv.setImageDrawable(img);
 			
 		} else {
-			ImageButton ib = (ImageButton) rl.findViewById(R.id.imgbutton_favorite_preview);
+			Button btn = (Button) rl.findViewById(R.id.imgbutton_favorite_preview);
+			RelativeLayout inrl = (RelativeLayout) rl.findViewById(R.id.layout_favorite_preview_empty);
 			ImageView iv = (ImageView) rl.findViewById(R.id.img_favorite_preview);
 			iv.setVisibility(View.INVISIBLE);
-			ib.setVisibility(View.VISIBLE);
+			inrl.setVisibility(View.VISIBLE);
 			
-			ib.setOnClickListener(new OnClickListener() {
+			btn.setOnClickListener(new OnClickListener() {
 				OnCommunicationActivity activityCall;
 				@Override
 				public void onClick(View v) {

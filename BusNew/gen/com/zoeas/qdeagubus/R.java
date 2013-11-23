@@ -1312,7 +1312,7 @@ containing a value of this type.
         public static final int action_mode_bar=0x7f070032;
         public static final int action_mode_bar_stub=0x7f070031;
         public static final int action_mode_close_button=0x7f070025;
-        public static final int action_settings=0x7f070067;
+        public static final int action_settings=0x7f070068;
         public static final int activity_chooser_view_content=0x7f070026;
         public static final int always=0x7f07000f;
         public static final int beginning=0x7f070014;
@@ -1332,6 +1332,7 @@ containing a value of this type.
         public static final int expand_activities_button=0x7f070027;
         public static final int expanded_menu=0x7f07002d;
         public static final int fragment_favorite_buslist=0x7f070052;
+        public static final int gmap=0x7f070053;
         public static final int home=0x7f070017;
         public static final int homeAsUp=0x7f070009;
         public static final int hybrid=0x7f070004;
@@ -1340,13 +1341,13 @@ containing a value of this type.
         public static final int image=0x7f070028;
         public static final int img_favorite_preview=0x7f070060;
         public static final int img_path=0x7f07004d;
-        public static final int imgbutton_favorite_preview=0x7f070061;
+        public static final int imgbutton_favorite_preview=0x7f070062;
+        public static final int layout_favorite_preview_empty=0x7f070061;
         public static final int layout_map_loading=0x7f070054;
         public static final int left_icon=0x7f070034;
         public static final int listMode=0x7f070005;
         public static final int list_item=0x7f07002a;
         public static final int listtest=0x7f07005f;
-        public static final int map=0x7f070053;
         public static final int middle=0x7f070015;
         public static final int never=0x7f07000d;
         public static final int none=0x7f070000;
@@ -1397,11 +1398,11 @@ containing a value of this type.
         public static final int viewpager_favorite=0x7f07004f;
         public static final int viewpager_favorite_preview_dummy=0x7f070050;
         public static final int viewpager_main=0x7f07004c;
-        public static final int widget_busNum=0x7f070063;
-        public static final int widget_reflesh=0x7f070066;
-        public static final int widget_station=0x7f070062;
-        public static final int widget_time=0x7f070064;
-        public static final int widget_where=0x7f070065;
+        public static final int widget_busNum=0x7f070064;
+        public static final int widget_reflesh=0x7f070067;
+        public static final int widget_station=0x7f070063;
+        public static final int widget_time=0x7f070065;
+        public static final int widget_where=0x7f070066;
         public static final int withText=0x7f070010;
     }
     public static final class integer {

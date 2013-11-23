@@ -81,6 +81,7 @@ public class ActionMap {
 	}
 
 	public void drawLine() {
+		Log.d("드로우",latLngList.size()+"");
 		zIndex++;
 
 		int depth = 1000; // 위선과 아랫선이 겹치지 않게
@@ -154,6 +155,7 @@ public class ActionMap {
 	}
 
 	public void aniMap(int position) {
+		Log.d("사이즈",latLngList.size()+"");
 		try {
 			LatLng latLng = latLngList.get(position);
 			latLng = new LatLng(latLng.latitude +0.0025d,latLng.longitude);
@@ -164,6 +166,10 @@ public class ActionMap {
 			e.printStackTrace();
 			new AlertDialog.Builder(context).setTitle("맵 포인트로 이동중 문제가 발생하였습니다 죄송합니다").create().show();
 		}
+	}
+	
+	public void clearMap(){
+		map.clear();
 	}
 
 	// 맵객체 존재여부 검사 있으면 true

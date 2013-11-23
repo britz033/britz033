@@ -53,6 +53,7 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 	private int currentDirection;
 	private int loopIndex;
 	private int saveIndex;
+	private int prePosition;
 	private ActionMap actionMapDirection;
 	private ActionMap actionMapForward;
 	private ActionMap actionMapBackward;
@@ -72,6 +73,7 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 		pathBackward = new ArrayList<String>();
 		loopIndex = 0;
 		saveIndex = 0;
+		prePosition = 0;
 		busDirection = currentDirection = FORWARD;
 		userControlAllowed = false;
 		drawables = new Drawable[] { getResources().getDrawable(R.drawable.path),
@@ -84,25 +86,25 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 		pathPager = (ViewPager) findViewById(R.id.viewpager_activity_businfo_path);
 
 		String busNum = getIntent().getExtras().getString(KEY_BUS_INFO);
-		currentStationName = getIntent().getExtras().getString(KEY_CURRENT_STATION_NAME); 
+		currentStationName = getIntent().getExtras().getString(KEY_CURRENT_STATION_NAME);
 		TextView textBusNumber = (TextView) findViewById(R.id.text_activity_businfo_number);
 		TextView textStationName = (TextView) findViewById(R.id.text_activity_businfo_stationname);
 		TextView textOption = (TextView) findViewById(R.id.text_activity_businfo_option);
-		
+
 		String busOption = "";
 		Pattern pattern = Pattern.compile("^(.+) \\((.+)\\)$");
 		Matcher matcher = pattern.matcher(busNum);
-		if(matcher.find()){
+		if (matcher.find()) {
 			busNum = matcher.group(1);
 			busOption = matcher.group(2);
-		} 
-		
+		}
+
 		textBusNumber.setText(busNum);
 		textOption.setText(busOption);
-		
+
 		if (currentStationName != null)
 			textStationName.setText(currentStationName);
-		
+
 		pathSwitchWidget = (Switch) findViewById(R.id.switch_path);
 		pathSwitchWidget.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 			@Override
@@ -297,6 +299,7 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 		currentDirection = busDirection;
 		showInfo();
 		actionMapDirection.addMarkerAndShow(saveIndex, pathDirection.get(saveIndex));
+		prePosition = saveIndex;
 		pathPager.setCurrentItem(saveIndex);
 		if (pathBackward.size() != 0) {
 			pathSwitchWidget.setStartWork();
@@ -323,8 +326,6 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 		Log.d("로더리셋", "불려짐");
 	}
 
-	private int prePosition = 0;
-
 	@Override
 	public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
 	}
@@ -338,36 +339,43 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 		final int END_SELECTED = 3;
 		final int NOMAL = 0;
 		final int NOMAL_SELECTED = 1;
-		int positionEnd = pathDirection.size()-1;
+		int positionEnd = pathDirection.size() - 1;
 
+		
+		Log.d("에러검출-------------", "위치인덱스"+position);
+		// 주의점 : 종점에 갔을때 다시한번 밀면 position이 보이지 않는 놈의 번호로 바뀌는 경우가 있음. 이때 인덱스 오버해서 에러가 남 그것을 방지
+		position=(position>=pathDirection.size()?position-1:position); 
 		if (userControlAllowed) {
 			actionMapDirection.removeMarker();
 			actionMapDirection.aniMap(position);
 			actionMapDirection.addMarkerAndShow(position, pathDirection.get(position));
 		}
-
-		ImageView preImg = (ImageView) ((BusInfoPathItemFragment) pathPager.getAdapter().instantiateItem(pathPager,
-				prePosition + 2)).getView().findViewById(R.id.img_path);
-		ImageView curImg = (ImageView) ((BusInfoPathItemFragment) pathPager.getAdapter().instantiateItem(pathPager,
-				position + 2)).getView().findViewById(R.id.img_path);
-
-		if(position == 0){
-			curImg.setImageDrawable(drawables[START_SELECTED]);
-			preImg.setImageDrawable(drawables[NOMAL]);
-		} else if(position == positionEnd){
-			curImg.setImageDrawable(drawables[END_SELECTED]);
-			preImg.setImageDrawable(drawables[NOMAL]);
-		} else {
-			curImg.setImageDrawable(drawables[NOMAL_SELECTED]);
-			if(prePosition == 0){
-				preImg.setImageDrawable(drawables[START]);
-			} else if(prePosition == positionEnd){
-				preImg.setImageDrawable(drawables[END]);
-			} else
-				preImg.setImageDrawable(drawables[NOMAL]);
-		}
-			
 		
+
+		// 첫로딩시 가져오면 에러가 남.. instantiateItem 쪽 개념때문인듯. 이거 어떻게든 해야되는데..
+		if (position != prePosition) {
+			ImageView preImg = (ImageView) ((BusInfoPathItemFragment) pathPager.getAdapter().instantiateItem(pathPager,
+					prePosition + 2)).getView().findViewById(R.id.img_path);
+			ImageView curImg = (ImageView) ((BusInfoPathItemFragment) pathPager.getAdapter().instantiateItem(pathPager,
+					position + 2)).getView().findViewById(R.id.img_path);
+
+			if (position == 0) {
+				curImg.setImageDrawable(drawables[START_SELECTED]);
+				preImg.setImageDrawable(drawables[NOMAL]);
+			} else if (position == positionEnd) {
+				curImg.setImageDrawable(drawables[END_SELECTED]);
+				preImg.setImageDrawable(drawables[NOMAL]);
+			} else {
+				curImg.setImageDrawable(drawables[NOMAL_SELECTED]);
+				if (prePosition == 0) {
+					preImg.setImageDrawable(drawables[START]);
+				} else if (prePosition == positionEnd) {
+					preImg.setImageDrawable(drawables[END]);
+				} else
+					preImg.setImageDrawable(drawables[NOMAL]);
+			}
+		}
+
 		prePosition = position;
 	}
 
