@@ -35,6 +35,7 @@ public class ActionMap {
 	private int zIndex;
 	private ArrayList<LatLng> latLngList;
 	private Marker preMarker;
+	private MarkerOptions markerDefaultOptions;
 
 	public ActionMap(Context context, float density) {
 		if (map == null)
@@ -57,6 +58,7 @@ public class ActionMap {
 		colorIndex = 120;
 		zIndex = 0;
 		latLngList = new ArrayList<LatLng>();
+		markerDefaultOptions = new MarkerOptions().icon(BitmapDescriptorFactory.defaultMarker(220));
 	}
 
 	public void setMap(GoogleMap map) {
@@ -109,24 +111,21 @@ public class ActionMap {
 	}
 
 	public void addMarker(String title, LatLng latLng) {
-		MarkerOptions markerOptions = new MarkerOptions();
-		markerOptions.title(title).position(latLng);
-		preMarker = map.addMarker(markerOptions);
+		markerDefaultOptions.title(title).position(latLng);
+		preMarker = map.addMarker(markerDefaultOptions);
 	}
 
 	public void addMarkerAndShow(String title, LatLng latLng) {
-		MarkerOptions markerOptions = new MarkerOptions();
-		markerOptions.title(title).position(latLng);
-		preMarker = map.addMarker(markerOptions);
+		markerDefaultOptions.title(title).position(latLng);
+		preMarker = map.addMarker(markerDefaultOptions);
 		preMarker.showInfoWindow();
 	}
 
 	public void addMarkerAndShow(int position, String title) {
 		try {
 			LatLng latLng = latLngList.get(position);
-			MarkerOptions markerOptions = new MarkerOptions();
-			markerOptions.title(title).position(latLng);
-			preMarker = map.addMarker(markerOptions);
+			markerDefaultOptions.title(title).position(latLng);
+			preMarker = map.addMarker(markerDefaultOptions);
 			preMarker.showInfoWindow();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -135,21 +134,18 @@ public class ActionMap {
 	}
 
 	public void addMarker(String title, LatLng latLng, int icon) {
-		MarkerOptions markerOptions = new MarkerOptions();
-		markerOptions.title(title).position(latLng).icon(BitmapDescriptorFactory.fromResource(icon)).anchor(0.5f, 0.5f);
-		preMarker = map.addMarker(markerOptions);
+		markerDefaultOptions.title(title).position(latLng).icon(BitmapDescriptorFactory.fromResource(icon)).anchor(0.5f, 0.5f);
+		preMarker = map.addMarker(markerDefaultOptions);
 	}
 
 	public void addMarker(String title, String contents, LatLng latLng) {
-		MarkerOptions markerOptions = new MarkerOptions();
-		markerOptions.title(title).snippet(contents).position(latLng);
-		preMarker = map.addMarker(markerOptions);
+		markerDefaultOptions.title(title).snippet(contents).position(latLng);
+		preMarker = map.addMarker(markerDefaultOptions);
 	}
 
 	public void addMarker(String title, String contents, LatLng latLng, int icon) {
-		MarkerOptions markerOptions = new MarkerOptions();
-		markerOptions.title(title).snippet(contents).position(latLng).icon(BitmapDescriptorFactory.fromResource(icon));
-		preMarker = map.addMarker(markerOptions);
+		markerDefaultOptions.title(title).snippet(contents).position(latLng).icon(BitmapDescriptorFactory.fromResource(icon));
+		preMarker = map.addMarker(markerDefaultOptions);
 	}
 
 	public void moveMap(LatLng position) {

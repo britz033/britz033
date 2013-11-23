@@ -12,27 +12,39 @@
         android:hint="역 이름을 적으세요"
         android:textSize="20sp" />
 
-    <RelativeLayout android:id="@+id/layout_search_station_map"
+    <RelativeLayout
+        android:id="@+id/layout_search_station_map_container"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="3"
-        android:visibility="gone"
-        >
+        android:visibility="gone" >
+
+        <RelativeLayout
+            android:id="@+id/layout_search_station_map"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" >
+        </RelativeLayout>
+        
+        <Button
+            android:id="@+id/btn_search_station_widesearch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="주변검색"
+            android:textSize="12sp" />
     </RelativeLayout>
 
     <ListView
         android:id="@id/android:list"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="3"
-         />
+        android:layout_weight="3" />
 
     <TextView
         android:id="@id/android:empty"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="3"
         android:layout_gravity="center"
+        android:layout_weight="3"
         android:text="정류소명을 정확히 입력해주세요"
         android:textSize="20sp" />
 

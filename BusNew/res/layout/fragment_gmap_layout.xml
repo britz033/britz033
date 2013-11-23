@@ -17,7 +17,7 @@
         android:layout_weight="80" >
 
         <RelativeLayout
-            android:id="@+id/gmap"
+            android:id="@+id/layout_gmap"
             android:layout_width="match_parent"
             android:layout_height="match_parent" >
         </RelativeLayout>

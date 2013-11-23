@@ -80,7 +80,7 @@ public class GMapFragment extends Fragment implements CallFragmentMethod,
 			if (mapFragment == null) {
 				mapFragment = CustomMapFragment.newInstance();
 				FragmentTransaction ft = fm.beginTransaction();
-				ft.add(R.id.layout_search_station_map, mapFragment, TAG_MYLOCATION_MAP);
+				ft.add(R.id.layout_gmap, mapFragment, TAG_MYLOCATION_MAP);
 				ft.commit();
 			}
 		}

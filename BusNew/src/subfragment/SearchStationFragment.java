@@ -20,32 +20,37 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.View.OnKeyListener;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.maps.model.MarkerOptionsCreator;
-import com.zoeas.qdeagubus.Constant;
 import com.zoeas.qdeagubus.MyContentProvider;
 import com.zoeas.qdeagubus.R;
 
-public class SearchStationFragment extends ListFragment implements LoaderCallbacks<Cursor>, OnKeyListener,OnMapReadyListener {
+public class SearchStationFragment extends ListFragment implements LoaderCallbacks<Cursor>, OnKeyListener,
+		OnMapReadyListener, OnClickListener {
 
 	public static final String TAG_STATION_MAP = "stationMap";
+	public static final String KEY_SERARCH = "station";
+	public static final String KEY_WIDE_LATITUDE = "wideLatitude";
+	public static final String KEY_WIDE_LONGITUDE = "wideLongitude";
+	public static final int SEARCH_STATION = 0;
+	public static final int SEARCH_WIDE = 1;
+
 	private StationSearchListCursorAdapter madapter;
 	private EditText et;
 	private Context context;
-	private RelativeLayout mapLayout;
+	private RelativeLayout mapContainer;
 	private InputMethodManager imm;
 	private GoogleMap map;
 
@@ -62,7 +67,9 @@ public class SearchStationFragment extends ListFragment implements LoaderCallbac
 		et = (EditText) view.findViewById(R.id.edit_search_sub2fragment);
 		et.addTextChangedListener(new MyWatcher());
 		et.setOnKeyListener(this);
-		mapLayout = (RelativeLayout) view.findViewById(R.id.layout_search_station_map);
+		mapContainer = (RelativeLayout) view.findViewById(R.id.layout_search_station_map_container);
+		Button btn = (Button) view.findViewById(R.id.btn_search_station_widesearch);
+		btn.setOnClickListener(this);
 
 		return view;
 	}
@@ -76,7 +83,7 @@ public class SearchStationFragment extends ListFragment implements LoaderCallbac
 		setListAdapter(madapter);
 		getLoaderManager().initLoader(0, null, this);
 	}
-	
+
 	@Override
 	public void onResume() {
 		super.onResume();
@@ -95,7 +102,7 @@ public class SearchStationFragment extends ListFragment implements LoaderCallbac
 			}
 		}
 	}
-	
+
 	// 맵이 준비되면 자동호출
 	@Override
 	public void OnMapReady(GoogleMap map) {
@@ -118,9 +125,10 @@ public class SearchStationFragment extends ListFragment implements LoaderCallbac
 		OnSaveBusStationInfoListener saver = (OnSaveBusStationInfoListener) context;
 		saver.OnSaveBusStationInfo(stationNumber, stationName, stationPosition);
 
-		mapLayout.setVisibility(View.VISIBLE);
-		
-		MarkerOptions options = new MarkerOptions().position(stationPosition).title(stationName).icon(BitmapDescriptorFactory.defaultMarker(120));
+		mapContainer.setVisibility(View.VISIBLE);
+
+		MarkerOptions options = new MarkerOptions().position(stationPosition).title(stationName)
+				.icon(BitmapDescriptorFactory.defaultMarker(120));
 		map.addMarker(options).showInfoWindow();
 		map.animateCamera(CameraUpdateFactory.newLatLngZoom(stationPosition, ActionMap.ZOOM_IN));
 	}
@@ -139,8 +147,8 @@ public class SearchStationFragment extends ListFragment implements LoaderCallbac
 		public void onTextChanged(CharSequence s, int start, int before, int count) {
 			// 데이터베이스 검색 하여 리스트뷰 새로 뿌림
 			Bundle search = new Bundle();
-			search.putString("key", s.toString());
-			getLoaderManager().restartLoader(0, search, SearchStationFragment.this);
+			search.putString(KEY_SERARCH, s.toString());
+			getLoaderManager().restartLoader(SEARCH_STATION, search, SearchStationFragment.this);
 		}
 
 	}
@@ -148,13 +156,35 @@ public class SearchStationFragment extends ListFragment implements LoaderCallbac
 	@Override
 	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
 		Uri baseUri = MyContentProvider.CONTENT_URI_STATION;
-
-		// _id 안넣으면 에러 슈바
 		String[] projection = { "_id", "station_number", "station_name", "station_longitude", "station_latitude",
 				"station_favorite" };
+		;
 		String selection = null;
-		if (args != null) {
-			selection = "station_name like '%" + args.getString("key") + "%' OR station_number like '%" + args.getString("key") + "%'";
+
+		switch (id) {
+		// _id 안넣으면 에러 슈바
+		case SEARCH_STATION:
+			if (args != null) {
+				selection = "station_name like '%" + args.getString(KEY_SERARCH) + "%' OR station_number like '%"
+						+ args.getString(KEY_SERARCH) + "%'";
+			}
+			break;
+		case SEARCH_WIDE:
+			Log.d("정류소", "주변검색작동");
+			double latitude = args.getDouble(KEY_WIDE_LATITUDE);
+			double longitude = args.getDouble(KEY_WIDE_LONGITUDE);
+
+			double bound = 0.005;
+			double minLatitude = latitude - bound;
+			double maxLatitude = latitude + bound;
+			double minLongitude = longitude - bound;
+			double maxLongitude = longitude + bound;
+
+			if (args != null) {
+				selection = "(station_latitude BETWEEN " + minLatitude + " AND " + maxLatitude + ") AND ("
+						+ "station_longitude BETWEEN " + minLongitude + " AND " + maxLongitude + ")";
+			}
+			break;
 		}
 
 		return new CursorLoader(getActivity(), baseUri, projection, selection, null, null);
@@ -165,6 +195,18 @@ public class SearchStationFragment extends ListFragment implements LoaderCallbac
 		// 앞서 생성된 커서를 받아옴
 		madapter.swapCursor(cursor);
 
+		if (loader.getId() == SEARCH_WIDE) {
+			cursor.moveToFirst();
+			for (int i = 0; i < cursor.getCount(); i++) {
+				Log.d("좌표", cursor.getDouble(4) + "");
+				LatLng position = new LatLng(cursor.getDouble(4), cursor.getDouble(3));
+				MarkerOptions options = new MarkerOptions().position(position).title(cursor.getString(2))
+						.snippet(cursor.getString(1));
+				map.addMarker(options);
+				cursor.moveToNext();
+			}
+			map.animateCamera(CameraUpdateFactory.zoomTo(14));
+		}
 	}
 
 	@Override
@@ -180,6 +222,15 @@ public class SearchStationFragment extends ListFragment implements LoaderCallbac
 		}
 
 		return false;
+	}
+
+	// 주변검색
+	@Override
+	public void onClick(View v) {
+		Bundle mapCenterCoordinate = new Bundle();
+		mapCenterCoordinate.putDouble(KEY_WIDE_LATITUDE, map.getCameraPosition().target.latitude);
+		mapCenterCoordinate.putDouble(KEY_WIDE_LONGITUDE, map.getCameraPosition().target.longitude);
+		getLoaderManager().restartLoader(SEARCH_WIDE, mapCenterCoordinate, this);
 	}
 
 }
