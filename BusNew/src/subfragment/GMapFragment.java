@@ -1,7 +1,9 @@
 package subfragment;
 
+import subfragment.CustomMapFragment.OnMapReadyListener;
 import util.MyLocation;
 import util.MyLocation.LocationResult;
+import adapter.ActionMap;
 import android.app.Activity;
 import android.content.Context;
 import android.database.Cursor;
@@ -31,14 +33,15 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.zoeas.qdeagubus.Constant;
 import com.zoeas.qdeagubus.MainActivity.CallFragmentMethod;
 import com.zoeas.qdeagubus.MyContentProvider;
 import com.zoeas.qdeagubus.R;
 
 public class GMapFragment extends Fragment implements CallFragmentMethod,
-		LoaderCallbacks<Cursor>, OnMarkerClickListener {
+		LoaderCallbacks<Cursor>, OnMarkerClickListener,OnMapReadyListener {
 
-	private SupportMapFragment mapFragment;
+	public static final String TAG_MYLOCATION_MAP = "myLocation";
 	private Context context;
 	private GoogleMap map;
 	private float density;
@@ -70,30 +73,24 @@ public class GMapFragment extends Fragment implements CallFragmentMethod,
 	}
 	
 	// 맵 세팅
-	private void setupMapIfNeeded(){
-		if(map == null){
-			Log.d("G맵","불려짐");
+	private void setupMapIfNeeded() {
+		if (map == null) {
 			FragmentManager fm = getChildFragmentManager();
-			SupportMapFragment mapFragment = (SupportMapFragment) fm.findFragmentById(R.id.gmap);
-			if(mapFragment == null){
+			CustomMapFragment mapFragment = (CustomMapFragment) fm.findFragmentByTag(TAG_MYLOCATION_MAP);
+			if (mapFragment == null) {
+				mapFragment = CustomMapFragment.newInstance();
 				FragmentTransaction ft = fm.beginTransaction();
-				mapFragment = new SupportMapFragment();
-				ft.add(R.id.gmap, mapFragment, "myGmap");
+				ft.add(R.id.layout_search_station_map, mapFragment, TAG_MYLOCATION_MAP);
 				ft.commit();
 			}
-			map = mapFragment.getMap();
-		}
-		
-		if(map != null){
-			setUpMap();
-		} else {
-			Log.d("G맵","근데 맵은 없음");
 		}
 	}
 	
-	private void setUpMap(){
-		Log.d("G맵","셋업");
-		map.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(35.871942,128.601122)));
+	// 맵이 준비되면 자동호출
+	@Override
+	public void OnMapReady(GoogleMap map) {
+		this.map = map;
+		this.map.moveCamera(CameraUpdateFactory.newLatLngZoom(ActionMap.DEAGU_LATLNG, ActionMap.ZOOM_OUT));
 	}
 
 	public void setGMap(String station_number, String station_name,

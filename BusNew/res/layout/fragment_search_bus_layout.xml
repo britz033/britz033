@@ -8,6 +8,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:hint="버스번호를 입력하세요"
+        android:background="@drawable/edittext_back"
         />
     <ListView 
         android:id="@id/android:list"

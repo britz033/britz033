@@ -21,6 +21,12 @@ import com.google.android.gms.maps.model.PolylineOptions;
 
 public class ActionMap {
 
+	public static final LatLng DEAGU_LATLNG = new LatLng(35.871942,128.601122); 
+	
+	public static final int ZOOM_NOMAL = 14;
+	public static final int ZOOM_IN = 16;
+	public static final int ZOOM_OUT = 11;
+	
 	private GoogleMap map;
 	private Context context;
 	private int colorIndex;
@@ -147,11 +153,11 @@ public class ActionMap {
 	}
 
 	public void moveMap(LatLng position) {
-		map.moveCamera(CameraUpdateFactory.newLatLngZoom(position, 11));
+		map.moveCamera(CameraUpdateFactory.newLatLngZoom(position, ZOOM_OUT));
 	}
 
 	public void aniMap(LatLng latLng) {
-		map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 11));
+		map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, ZOOM_OUT));
 	}
 
 	public void aniMap(int position) {
@@ -160,7 +166,7 @@ public class ActionMap {
 			LatLng latLng = latLngList.get(position);
 			latLng = new LatLng(latLng.latitude +0.0025d,latLng.longitude);
 			
-			CameraPosition cp =  CameraPosition.builder().target(latLng).zoom(14).tilt(50).build();
+			CameraPosition cp =  CameraPosition.builder().target(latLng).zoom(ZOOM_NOMAL).tilt(50).build();
 			map.animateCamera(CameraUpdateFactory.newCameraPosition(cp));
 		} catch (Exception e) {
 			e.printStackTrace();
