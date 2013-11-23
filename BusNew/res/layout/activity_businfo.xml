@@ -3,9 +3,8 @@
     xmlns:sw="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:background="#416092"
-    >
+    android:orientation="vertical" >
 
     <RelativeLayout
         android:layout_width="wrap_content"
@@ -23,18 +22,17 @@
             android:textColor="#ffffff"
             android:textSize="35sp"
             android:textStyle="bold" />
+
         <TextView
-            android:layout_below="@+id/text_activity_businfo_number"
             android:id="@+id/text_activity_businfo_option"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_below="@+id/text_activity_businfo_number"
             android:gravity="center"
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
             android:textColor="#ffffff"
-            android:textSize="8sp"
-            />
-        
+            android:textSize="8sp" />
 
         <TextView
             android:id="@+id/text_activity_businfo_stationname"
@@ -52,29 +50,42 @@
             android:layout_below="@+id/text_activity_businfo_stationname"
             android:paddingRight="10dp"
             android:textSize="15sp" />
-        
+
         <util.Switch
             android:id="@+id/switch_path"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/text_activity_businfo_current"
             android:layout_alignParentRight="true"
+            android:layout_below="@+id/text_activity_businfo_current"
             android:layout_gravity="center"
             android:textSize="12sp"
-            sw:switchMinWidth="30dp"
-            sw:switchPadding="22dp"
             sw:innerPadding="34dp"
             sw:isChecked="true"
+            sw:switchMinWidth="30dp"
+            sw:switchPadding="22dp"
             sw:textLeft="정방향"
             sw:textRight="역방향" />
     </RelativeLayout>
 
-    <fragment
-        android:id="@+id/busmap"
-        android:name="com.google.android.gms.maps.SupportMapFragment"
+    <RelativeLayout
+        android:id="@+id/layout_activity_businfo_map_container"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="40" />
+        android:layout_weight="40" >
+        <fragment
+            android:id="@+id/busmap"
+            android:name="com.google.android.gms.maps.SupportMapFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            />
+        <Button 
+            android:id="@+id/btn_activity_businfo_pathsearch"
+            android:layout_alignParentRight="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="검색"
+            />
+    </RelativeLayout>
 
     <android.support.v4.view.ViewPager
         android:id="@+id/viewpager_activity_businfo_path"

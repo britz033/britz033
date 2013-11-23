@@ -18,12 +18,21 @@ import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
+import android.view.KeyEvent;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.View.OnKeyListener;
+import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
@@ -36,7 +45,7 @@ import com.zoeas.qdeagubus.R;
  * 쿼리시 에러가 나면 try문으로 캐취해서 경고문 띄움
  */
 
-public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks<Cursor>, OnPageChangeListener {
+public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks<Cursor>, OnPageChangeListener, OnClickListener {
 
 	public static final String KEY_BUS_INFO = "BUSNUM";
 	public static final String KEY_CURRENT_STATION_NAME = "STATION";
@@ -61,7 +70,6 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 	private boolean userControlAllowed;
 	private Switch pathSwitchWidget;
 	private Drawable[] drawables;
-	String[] a;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -90,6 +98,8 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 		TextView textBusNumber = (TextView) findViewById(R.id.text_activity_businfo_number);
 		TextView textStationName = (TextView) findViewById(R.id.text_activity_businfo_stationname);
 		TextView textOption = (TextView) findViewById(R.id.text_activity_businfo_option);
+		Button btn = (Button) findViewById(R.id.btn_activity_businfo_pathsearch);
+		btn.setOnClickListener(this);
 
 		String busOption = "";
 		Pattern pattern = Pattern.compile("^(.+) \\((.+)\\)$");
@@ -383,6 +393,49 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 	public void onPageScrollStateChanged(int state) {
 		// TODO Auto-generated method stub
 
+	}
+
+	int searchCount_imsi = 0;
+	@Override
+	public void onClick(View v) {
+		LayoutInflater inflater = getLayoutInflater().from(this);
+		LinearLayout ll = (LinearLayout) inflater.inflate(R.layout.edittext_businfo_search, null);
+		new AlertDialog.Builder(this).setView(ll).create().show();
+		
+		EditText et = (EditText) ll.findViewById(R.id.edittext_activity_businfo_search);
+		searchCount_imsi = 0;
+		
+		
+		et.addTextChangedListener(new TextWatcher() {
+			
+			@Override
+			public void onTextChanged(CharSequence s, int start, int before, int count) {
+				
+			}
+			
+			@Override
+			public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+				for(int i=0; i<pathDirection.size(); i++){
+					if(pathDirection.get(i).contains(s)){
+						searchCount_imsi++;
+					}
+				}
+			}
+			
+			@Override
+			public void afterTextChanged(Editable s) {
+			}
+		});
+		
+		et.setOnKeyListener(new OnKeyListener() {
+			@Override
+			public boolean onKey(View v, int keyCode, KeyEvent event) {
+				if(event.getAction() == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER){
+					new AlertDialog.Builder(BusInfoActivity.this).setTitle(String.valueOf(searchCount_imsi)).create().show();
+				}
+				return false;
+			}
+		});
 	}
 
 }
