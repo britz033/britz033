@@ -48,7 +48,8 @@ public class MainActivity extends ActionBarActivity implements TabListener,
 		STATION_LISTVIEW(1, "정류소", "subfragment.SearchStationFragment"), 
 		BUS_LISTVIEW(2, "버스", "subfragment.SearchBusNumberFragment"), 
 		GMAP(3, "주변맵", "subfragment.GMapFragment"),
-		DUMMY(4, "설정", "subfragment.SettingFragment");
+		DUMMY(4, "설정", "subfragment.SettingFragment"),
+		TEST(5, "test", "subfragment.Test");
 		private final String name;
 		private final String fragmentName;
 		private final int num;

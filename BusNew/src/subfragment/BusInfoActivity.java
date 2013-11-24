@@ -125,7 +125,7 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 					} else {
 						currentDirection = BACKWARD;
 					}
-					actionMapDirection.removeMarker();
+					actionMapDirection.clearMap();
 					prePosition = 0;
 					showInfo();
 				}
@@ -395,43 +395,36 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 
 	}
 
-	int searchCount_imsi = 0;
 	@Override
 	public void onClick(View v) {
-		LayoutInflater inflater = getLayoutInflater().from(this);
+		LayoutInflater inflater = LayoutInflater.from(this);
 		LinearLayout ll = (LinearLayout) inflater.inflate(R.layout.edittext_businfo_search, null);
 		new AlertDialog.Builder(this).setView(ll).create().show();
 		
 		EditText et = (EditText) ll.findViewById(R.id.edittext_activity_businfo_search);
-		searchCount_imsi = 0;
 		
-		
-		et.addTextChangedListener(new TextWatcher() {
-			
-			@Override
-			public void onTextChanged(CharSequence s, int start, int before, int count) {
-				
-			}
-			
-			@Override
-			public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-				for(int i=0; i<pathDirection.size(); i++){
-					if(pathDirection.get(i).contains(s)){
-						searchCount_imsi++;
-					}
-				}
-			}
-			
-			@Override
-			public void afterTextChanged(Editable s) {
-			}
-		});
 		
 		et.setOnKeyListener(new OnKeyListener() {
 			@Override
 			public boolean onKey(View v, int keyCode, KeyEvent event) {
+				actionMapDirection.clearMap();
+				String s = ((EditText)v).getText().toString();
+				int saveSearchPoint[] = new int[pathDirection.size()];
+				int searchIndex = 0;
+				
+				for(int i=0; i<pathDirection.size(); i++){
+					if(pathDirection.get(i).contains(s)){
+						saveSearchPoint[searchIndex++] = i;
+					}
+				}
+				
 				if(event.getAction() == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER){
-					new AlertDialog.Builder(BusInfoActivity.this).setTitle(String.valueOf(searchCount_imsi)).create().show();
+					StringBuilder sb = new StringBuilder();
+					for(int i=0; i<saveSearchPoint.length; i++){
+						actionMapDirection.addMarkerAndShow(saveSearchPoint[i], pathDirection.get(saveSearchPoint[i]));
+					}
+//					new AlertDialog.Builder(BusInfoActivity.this).setTitle(sb.toString()).create().show();
+					actionMapDirection.aniMap(null, ActionMap.ZOOM_OUT);
 				}
 				return false;
 			}

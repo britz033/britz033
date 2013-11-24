@@ -3,10 +3,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" >
-
         <ImageView
             android:id="@+id/img_favorite_preview"
             android:layout_width="wrap_content"
@@ -16,7 +12,7 @@
             android:layout_gravity="center"
             android:adjustViewBounds="true"
             android:background="#ffffff"
-            android:padding="3dp" />
+            />
 
         <RelativeLayout
             android:id="@+id/layout_favorite_preview_empty"
@@ -26,19 +22,13 @@
 
             <Button
                 android:id="@+id/imgbutton_favorite_preview"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:layout_gravity="center"
                 android:adjustViewBounds="true"
                 android:text="정류장 즐겨찾기가 없네요. 여기를 누르세요"
                 android:textColor="#ffffff"
                 android:background="@android:color/transparent" />
-
-<!--             <ImageView -->
-<!--                 android:id="@+id/img_favorite_preview_empty" -->
-<!--                 android:layout_width="wrap_content" -->
-<!--                 android:layout_height="wrap_content" /> -->
         </RelativeLayout>
-    </FrameLayout>
 
 </RelativeLayout>

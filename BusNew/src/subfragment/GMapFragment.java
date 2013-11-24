@@ -7,6 +7,7 @@ import adapter.ActionMap;
 import android.app.Activity;
 import android.content.Context;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
@@ -27,56 +28,60 @@ import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener;
-import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.Circle;
+import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.zoeas.qdeagubus.Constant;
 import com.zoeas.qdeagubus.MainActivity.CallFragmentMethod;
 import com.zoeas.qdeagubus.MyContentProvider;
 import com.zoeas.qdeagubus.R;
 
 public class GMapFragment extends Fragment implements CallFragmentMethod,
-		LoaderCallbacks<Cursor>, OnMarkerClickListener,OnMapReadyListener {
+		LoaderCallbacks<Cursor>, OnMarkerClickListener, OnMapReadyListener {
 
 	public static final String TAG_MYLOCATION_MAP = "myLocation";
+	public static final double DEFAULT_BOUND = 0.005; // 검색범위
 	private Context context;
 	private GoogleMap map;
 	private float density;
 	private LatLng myLatLng;
 	private LinearLayout loadingLayout;
+	private double radius;
+	private Circle circle;
 
 	@Override
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
 		context = activity;
-		
+
 	}
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		density = context.getResources().getDisplayMetrics().density;
-		
+
 		View view = inflater.inflate(R.layout.fragment_gmap_layout, null);
-		loadingLayout = (LinearLayout) view.findViewById(R.id.layout_map_loading);
+		loadingLayout = (LinearLayout) view
+				.findViewById(R.id.layout_map_loading);
 		return view;
 	}
 
-	
 	@Override
 	public void onResume() {
 		super.onResume();
 		setupMapIfNeeded();
 	}
-	
+
 	// 맵 세팅
 	private void setupMapIfNeeded() {
 		if (map == null) {
 			FragmentManager fm = getChildFragmentManager();
-			CustomMapFragment mapFragment = (CustomMapFragment) fm.findFragmentByTag(TAG_MYLOCATION_MAP);
+			CustomMapFragment mapFragment = (CustomMapFragment) fm
+					.findFragmentByTag(TAG_MYLOCATION_MAP);
 			if (mapFragment == null) {
 				mapFragment = CustomMapFragment.newInstance();
 				FragmentTransaction ft = fm.beginTransaction();
@@ -85,12 +90,14 @@ public class GMapFragment extends Fragment implements CallFragmentMethod,
 			}
 		}
 	}
-	
+
 	// 맵이 준비되면 자동호출
 	@Override
 	public void OnMapReady(GoogleMap map) {
 		this.map = map;
-		this.map.moveCamera(CameraUpdateFactory.newLatLngZoom(ActionMap.DEAGU_LATLNG, ActionMap.ZOOM_OUT));
+		this.map.moveCamera(CameraUpdateFactory.newLatLngZoom(
+				ActionMap.DEAGU_LATLNG, ActionMap.ZOOM_OUT));
+		this.map.setMyLocationEnabled(true);
 	}
 
 	public void setGMap(String station_number, String station_name,
@@ -104,28 +111,14 @@ public class GMapFragment extends Fragment implements CallFragmentMethod,
 				.rotation(0));
 		map.setPadding(0, 0, 0, (int) (100 * density));
 		Log.d("latLng", latLng.toString());
-		CameraUpdate c = CameraUpdateFactory.newLatLngZoom(latLng, 15);
+		CameraUpdate c = CameraUpdateFactory.newLatLngZoom(latLng, 14);
 		map.animateCamera(c);
-
 	}
 
 	// 생성될때가 아니라 자신이 선택될때 불려진다.
 	// 인터페이스로 메인 ViewPager의 OnPageChangeListener 에서 호출한다.
 	@Override
 	public void OnCalled() {
-//		cancle = false; // 취소를 누르면 위치추적장소로 자동이동을 하지 않는다. 
-		
-//		final ProgressDialog wait = new ProgressDialog(context); 
-//		wait.setButton(DialogInterface.BUTTON_NEGATIVE,"취소", new OnClickListener() {
-//			@Override
-//			public void onClick(DialogInterface dialog, int which) {
-//				cancle = true;
-//				dialog.dismiss();
-//				tv.setVisibility(View.INVISIBLE);
-//			}
-//		});
-//		wait.setMessage("위치정보를 가져오고 있습니다");
-//		wait.show();
 		Log.d("G맵", "oncalled 인터페이스메소드 호출");
 		setupMapIfNeeded();
 		loadingLayout.setVisibility(View.VISIBLE);
@@ -137,12 +130,23 @@ public class GMapFragment extends Fragment implements CallFragmentMethod,
 			public void gotLocation(Location location) {
 
 				if (map != null && location != null) {
-//					wait.dismiss();
+					map.clear();
+					
 					loadingLayout.setVisibility(View.INVISIBLE);
 					myLatLng = new LatLng(location.getLatitude(),
 							location.getLongitude());
 					map.animateCamera(CameraUpdateFactory.newLatLngZoom(
-							myLatLng, 17));
+							myLatLng, 15));
+
+					radius = ActionMap.getRadius(DEFAULT_BOUND);
+					circle = map.addCircle(new CircleOptions()
+							.center(myLatLng)
+							.radius(radius)
+							.strokeWidth(density * 2)
+							.strokeColor(Color.argb(100, 0x4b, 0x4b, 0x4b))
+							.fillColor(
+									Color.HSVToColor(30, new float[] { 150, 1,
+											1 })));
 
 					getLoaderManager().initLoader(0, null, GMapFragment.this);
 				}
@@ -158,14 +162,13 @@ public class GMapFragment extends Fragment implements CallFragmentMethod,
 
 		Uri uri = MyContentProvider.CONTENT_URI_STATION;
 
-		final double bound = 0.005;
-		double maxlat = myLatLng.latitude + bound;
-		double minlat = myLatLng.latitude - bound;
-		double maxlnt = myLatLng.longitude + bound;
-		double minlnt = myLatLng.longitude - bound;
+		double maxlat = myLatLng.latitude + DEFAULT_BOUND;
+		double minlat = myLatLng.latitude - DEFAULT_BOUND;
+		double maxlnt = myLatLng.longitude + DEFAULT_BOUND;
+		double minlnt = myLatLng.longitude - DEFAULT_BOUND;
 
-		String[] projection = { "_id", "station_number", "station_name",  "station_longitude",
-				"station_latitude" };
+		String[] projection = { "_id", "station_number", "station_name",
+				"station_longitude", "station_latitude" };
 		String selection = "(station_latitude BETWEEN " + minlat + " AND "
 				+ maxlat + ") AND (station_longitude BETWEEN " + minlnt
 				+ " AND " + maxlnt + ")";
@@ -180,7 +183,7 @@ public class GMapFragment extends Fragment implements CallFragmentMethod,
 		Handler handler = new Handler();
 		// 기존의 cursor를 그대로 불러오기 때문에 시작시 반드시 커서위치를 처음으로 되돌려줘야함
 		c.moveToFirst();
-		Log.d("counter", String.valueOf(c.getCount()));
+
 		for (int i = 0; i < c.getCount(); i++) {
 			String station_number = c.getString(1);
 			String station_name = c.getString(2);
@@ -188,19 +191,21 @@ public class GMapFragment extends Fragment implements CallFragmentMethod,
 			double station_latitude = c.getDouble(4);
 			LatLng boundLatLng = new LatLng(station_latitude, station_longitude);
 			c.moveToNext();
-			
-			final MarkerOptions op = new MarkerOptions();
-			op.title(station_name).snippet(station_number).position(boundLatLng);
-			handler.postDelayed(new Runnable() {
-				
-				@Override
-				public void run() {
-					map.addMarker(op);
-					map.setOnMarkerClickListener(GMapFragment.this);
-				}
-			},1200);
-			
+
+			if (ActionMap.isInsideCircle(circle, boundLatLng)) {
+				final MarkerOptions op = new MarkerOptions();
+				op.title(station_name).snippet(station_number)
+						.position(boundLatLng);
+				handler.postDelayed(new Runnable() {
+					@Override
+					public void run() {
+						map.addMarker(op);
+						map.setOnMarkerClickListener(GMapFragment.this);
+					}
+				}, 1200);
+			}
 		}
+
 	}
 
 	@Override

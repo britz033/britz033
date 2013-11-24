@@ -69,6 +69,7 @@ public class FavoritePreviewPagerAdatper extends PagerAdapter {
 			img = context.getResources().getDrawable(id);
 			iv.setImageDrawable(img);
 			
+			
 		} else {
 			Button btn = (Button) rl.findViewById(R.id.imgbutton_favorite_preview);
 			RelativeLayout inrl = (RelativeLayout) rl.findViewById(R.id.layout_favorite_preview_empty);
