@@ -1,5 +1,6 @@
 package adapter;
 
+import subfragment.SearchStationFragment;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
@@ -50,8 +51,8 @@ public class StationSearchListCursorAdapter extends CursorAdapter implements OnT
 			mcursor.moveToPosition(position);
 
 			// 그 위치의 아이템이 즐겨찿기가 되어 있는 여부를 저장한다
-			int favorite = mcursor.getInt(MyContentProvider.STATION_FAVORITE_INDEX);
-			int id = mcursor.getInt(MyContentProvider.STATION_ID_INDEX);
+			int favorite = mcursor.getInt(SearchStationFragment.STATION_FAVORITE_INDEX);
+			int id = mcursor.getInt(SearchStationFragment.STATION_ID_INDEX);
 
 			updateFavorite(favorite, id);
 			communication.OnFavoriteRefresh();
@@ -63,9 +64,9 @@ public class StationSearchListCursorAdapter extends CursorAdapter implements OnT
 		ContentValues value = new ContentValues();
 
 		if (favorite == 0) {
-			value.put("station_favorite", String.valueOf(1));
+			value.put("station_favorite", 1);
 		} else {
-			value.put("station_favorite", String.valueOf(0));
+			value.put("station_favorite", 0);
 		}
 
 		// 아이디 값을 기준으로 업데이트
@@ -81,10 +82,10 @@ public class StationSearchListCursorAdapter extends CursorAdapter implements OnT
 		ViewHolder holder = (ViewHolder) view.getTag();
 
 		holder.ibFavorite.setOnClickListener(listener);
-		holder.tvNumber.setText(cursor.getString(MyContentProvider.STATION_NUMBER_INDEX));
-		holder.tvName.setText(cursor.getString(MyContentProvider.STATION_NAME_INDEX));
+		holder.tvNumber.setText(cursor.getString(SearchStationFragment.STATION_NUMBER_INDEX));
+		holder.tvName.setText(cursor.getString(SearchStationFragment.STATION_NAME_INDEX));
 
-		if (cursor.getInt(MyContentProvider.STATION_FAVORITE_INDEX) == 0) {
+		if (cursor.getInt(SearchStationFragment.STATION_FAVORITE_INDEX) == 0) {
 			holder.ibFavorite.setImageResource(R.drawable.btn_station_list_item_off_selector);
 		} else {
 			holder.ibFavorite.setImageResource(R.drawable.btn_station_list_item_on_selector);

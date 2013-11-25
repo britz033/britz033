@@ -45,11 +45,13 @@ public class ConnectTask extends AsyncTask<String, Integer, ArrayList<BusInfo>> 
 
 		InputStream is = null;
 		try {
-			is = new BackHttpConnection(context, BUS_URL + stationNumber)
-					.getInputStream();
-			XmlPullParser parser = new BackXmlParser(is, "euc-kr").getParser();
-			BusStationParsing parsingWork = new BusStationParsing(parser,
-					busInfoList);
+			if (!stationNumber.equals("0")) {
+				is = new BackHttpConnection(context, BUS_URL + stationNumber).getInputStream();
+				XmlPullParser parser = new BackXmlParser(is, "euc-kr").getParser();
+				BusStationParsing parsingWork = new BusStationParsing(parser, busInfoList);
+			} else {
+				errorMessage = "0번 정류장은 전광판정보가 제공되지 않습니다";
+			}
 		} catch (Exception e) {
 			errorMessage = e.getMessage();
 		} finally {

@@ -96,7 +96,7 @@ public class BusStationParsing {
 							parser.next(); // 영대병원역
 							busStation = parser.getText();
 						} else if (parser.getAttributeValue(0).equals("png")) {
-							throw new Exception("입력하신 정류소가 존재하지 않습니다");
+							throw new Exception("입력하신 정류소정보가 없습니다");
 						}
 					}
 				}

@@ -30,14 +30,6 @@ public class MyContentProvider extends ContentProvider{
 	public static final String BUS_BACKWARD = "bus_backward";
 	public static final String BUS_FAVORITE = "bus_favorite";
 	
-	// 이거 개실수. projection을 어떻게 구성하느냐에 따라 이 인덱스는 죄다 틀려질 수 있음. 일단은 놔둠
-	public static final int STATION_ID_INDEX = 0;
-	public static final int STATION_NUMBER_INDEX = 1;
-	public static final int STATION_NAME_INDEX = 2;
-	public static final int STATION_LONGITUDE_INDEX = 3;
-	public static final int STATION_LATITUDE_INDEX = 4;
-	public static final int STATION_FAVORITE_INDEX = 5;
-	
 	// db는 이미 openhelper에서 DB이름으로 열었으니 여기선 테이블 네임을 중심으로 하면됨.
 	public static final String TABLE_NAME_STATION = "stationInfo";
 	public static final String TABLE_NAME_BUS = "busInfo";
@@ -52,8 +44,8 @@ public class MyContentProvider extends ContentProvider{
 	
 	public static final String CONTENT_TYPE_BUS = "vnd.android.curosr.dir/stationInfo";
 	public static final String CONTENT_ITEM_TYPE_BUS = "vnd.android.curosr.item/stationInfo";
-	public static final int BUS_COLLECTION = 1;
-	public static final int SINGLE_BUS = 2;
+	public static final int BUS_COLLECTION = 3;
+	public static final int SINGLE_BUS = 4;
 	public static final int TABLE_STATION = 1001;
 	public static final int TABLE_BUS = 1002;
 	
@@ -145,17 +137,34 @@ public class MyContentProvider extends ContentProvider{
 			String[] selectionArgs) {
 		
 		int rows = 0;
-		if(matcher.match(uri) == STATION_COLLECTION){
+		String id = null;
+		
+		switch(matcher.match(uri)){
+		case STATION_COLLECTION : 
 			rows = db.update("stationInfo", values, selection, selectionArgs);
-		} else if(matcher.match(uri) == SINGLE_STATION){
-			String id = uri.getLastPathSegment();
+			break;
+		case SINGLE_STATION :
+			id = uri.getLastPathSegment();
 			if(TextUtils.isEmpty(selection) == true){
 				rows = db.update("stationInfo", values, "_id=" + id, null);
 			} else {
-				rows = db.update("stationInfo", values, selection + " AND" + "_id=" + id, selectionArgs);
+				rows = db.update("stationInfo", values, selection + " AND " + "_id=" + id, selectionArgs);
 			}
+			break;
+		case BUS_COLLECTION :
+			rows = db.update("busInfo", values, selection, selectionArgs);
+			break;
+		case SINGLE_BUS :
+			id = uri.getLastPathSegment();
+			if(TextUtils.isEmpty(selection) == true){
+				rows = db.update("busInfo", values, "_id=" + id, null);
+			} else {
+				rows = db.update("busInfo", values, selection + " AND " + "_id=" + id, selectionArgs);
+			}
+			break;
 		}
 		
+		// 데이터가 바뀌었다고 부른곳에 통지한다. Loader 가 있다면 onLoaderFinished가 불려짐
 		getContext().getContentResolver().notifyChange(uri, null);
 		return rows;
 	}
