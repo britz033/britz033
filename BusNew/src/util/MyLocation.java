@@ -50,7 +50,7 @@ public class MyLocation {
 
     LocationListener locationListenerGps = new LocationListener() {
         public void onLocationChanged(Location location) {
-        	Log.d("gps","called");
+        	Log.d("MyLocation","gps 불려짐");
             timer1.cancel();
             locationResult.gotLocation(location);
             lm.removeUpdates(this);
@@ -63,7 +63,7 @@ public class MyLocation {
 
     LocationListener locationListenerNetwork = new LocationListener() {
         public void onLocationChanged(Location location) {
-        	Log.d("net","called");
+        	Log.d("MyLocation","net 불려짐");
             timer1.cancel();
             locationResult.gotLocation(location);
             lm.removeUpdates(this);
@@ -74,9 +74,11 @@ public class MyLocation {
         public void onStatusChanged(String provider, int status, Bundle extras) {}
     };
 
+    // 타임오버
     class GetLastLocation extends TimerTask {
         @Override
         public void run() {
+        	Log.d("MyLocation","타임오버 불려짐");
              lm.removeUpdates(locationListenerGps);
              lm.removeUpdates(locationListenerNetwork);
 

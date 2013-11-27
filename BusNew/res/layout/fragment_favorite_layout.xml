@@ -5,13 +5,25 @@
     android:layout_height="match_parent"
     android:orientation="vertical" >
 
-    <android.support.v4.view.ViewPager
-        android:id="@+id/viewpager_favorite"
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="40"
-        android:background="@drawable/preview_back3" >
-    </android.support.v4.view.ViewPager>
+        android:layout_weight="40" >
+
+        <android.support.v4.view.ViewPager
+            android:id="@+id/viewpager_favorite"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/preview_back3" >
+        </android.support.v4.view.ViewPager>
+
+        <Button
+            android:id="@+id/btn_testreflash" 
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="text버튼"
+            />
+    </FrameLayout>
 
     <android.support.v4.view.ViewPager
         android:id="@+id/viewpager_favorite_preview_dummy"
@@ -34,11 +46,34 @@
             android:textStyle="bold" />
     </android.support.v4.view.ViewPager>
 
-    <LinearLayout
-        android:id="@+id/fragment_favorite_buslist"
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="45"
-        android:orientation="vertical" />
+        android:layout_weight="45" >
+
+        <LinearLayout
+            android:id="@+id/fragment_favorite_buslist"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical" />
+
+        <RelativeLayout
+            android:id="@+id/layout_favorite_buslist_loadingcontainer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" >
+
+            <ProgressBar
+                android:id="@+id/progressbar_favorite_buslist_loading"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:id="@+id/text_favorite_busList_loading"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@+id/progressbar_favorite_buslist_loading"
+                android:text="홈페이지에서 전광판정보를 읽어오는 중입니다" />
+        </RelativeLayout>
+    </FrameLayout>
 
 </LinearLayout>
