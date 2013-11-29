@@ -36,11 +36,12 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.zoeas.qdeagubus.MainActivity.CallFragmentMethod;
+import com.zoeas.qdeagubus.MainActivity.OnBackAction;
 import com.zoeas.qdeagubus.MyContentProvider;
 import com.zoeas.qdeagubus.R;
 
 public class GMapFragment extends Fragment implements CallFragmentMethod,
-		LoaderCallbacks<Cursor>, OnMarkerClickListener, OnMapReadyListener {
+		LoaderCallbacks<Cursor>, OnMarkerClickListener, OnMapReadyListener, OnBackAction {
 
 	public static final String TAG_MYLOCATION_MAP = "myLocation";
 	public static final double DEFAULT_BOUND = 0.005; // 검색범위
@@ -219,5 +220,17 @@ public class GMapFragment extends Fragment implements CallFragmentMethod,
 		saver.OnSaveBusStationInfo(marker.getSnippet(), marker.getTitle(),
 				new LatLng(0, 0));
 		return false;
+	}
+
+	@Override
+	public void onBackPressed() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onClear() {
+		// TODO Auto-generated method stub
+		
 	}
 }

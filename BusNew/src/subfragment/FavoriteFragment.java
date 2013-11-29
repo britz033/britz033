@@ -33,6 +33,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 
+import com.zoeas.qdeagubus.MainActivity.OnBackAction;
 import com.zoeas.qdeagubus.MyContentProvider;
 import com.zoeas.qdeagubus.R;
 
@@ -40,7 +41,7 @@ import com.zoeas.qdeagubus.R;
  * 그것을 전광판에 뿌림. 시작시는 가장 처음것(이후 다시 수정)을 뿌림
  */
 
-public class FavoriteFragment extends Fragment implements ResponseTask, LoaderCallbacks<Cursor> {
+public class FavoriteFragment extends Fragment implements ResponseTask, LoaderCallbacks<Cursor>,OnBackAction {
 
 	public static final String KEY_BUSINFO_LIST = "buslist";
 	public static final String KEY_STATION_NAME = "station";
@@ -297,5 +298,17 @@ public class FavoriteFragment extends Fragment implements ResponseTask, LoaderCa
 	@Override
 	public void onLoaderReset(Loader<Cursor> arg0) {
 		adapter.swapCursor(null);
+	}
+
+	@Override
+	public void onBackPressed() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onClear() {
+		// TODO Auto-generated method stub
+		
 	}
 }

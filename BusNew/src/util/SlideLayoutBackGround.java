@@ -11,21 +11,22 @@ import android.graphics.drawable.BitmapDrawable;
 import android.os.Build.VERSION;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.widget.LinearLayout;
 
-public class SlideLayout extends LinearLayout{
+public class SlideLayoutBackGround extends LinearLayout{
 	
 	private int mHeight,mWidth;
 	private Bitmap blurBitmap;
 	private Context context;
 
-	public SlideLayout(Context context) {
+	public SlideLayoutBackGround(Context context) {
 		super(context);
 		this.context = context;
 		
 		init();
 	}
-	public SlideLayout(Context context, AttributeSet attrs) {
+	public SlideLayoutBackGround(Context context, AttributeSet attrs) {
 		super(context, attrs);
 		this.context = context;
 		
@@ -60,6 +61,11 @@ public class SlideLayout extends LinearLayout{
 	
 	public void setBlurBitmap(Bitmap bitmap){
 		blurBitmap = bitmap;
+	}
+	
+	@Override
+	public boolean onTouchEvent(MotionEvent event) {
+		return true;
 	}
 
 }

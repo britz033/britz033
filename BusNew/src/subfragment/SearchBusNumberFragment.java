@@ -10,7 +10,6 @@ import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
-import android.support.v4.widget.CursorAdapter;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
@@ -23,6 +22,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ListView;
 
+import com.zoeas.qdeagubus.MainActivity.OnBackAction;
 import com.zoeas.qdeagubus.MyContentProvider;
 import com.zoeas.qdeagubus.R;
 
@@ -43,7 +43,7 @@ import com.zoeas.qdeagubus.R;
 
  */
 
-public class SearchBusNumberFragment extends ListFragment implements LoaderCallbacks<Cursor>, TextWatcher,OnKeyListener {
+public class SearchBusNumberFragment extends ListFragment implements LoaderCallbacks<Cursor>, TextWatcher,OnKeyListener, OnBackAction {
 
 	private Context context;
 	private BusSearchListCursorAdapter busAdapter;
@@ -139,6 +139,18 @@ public class SearchBusNumberFragment extends ListFragment implements LoaderCallb
 		intent.putExtra(BusInfoActivity.KEY_BUS_INFO, busNum);
 		intent.putExtra(BusInfoActivity.KEY_CURRENT_STATION_NAME, DEFAULT_STATION);
 		startActivity(intent);
+	}
+
+	@Override
+	public void onBackPressed() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onClear() {
+		// TODO Auto-generated method stub
+		
 	}
 	
 	

@@ -12,10 +12,11 @@ import android.widget.ExpandableListView;
 import android.widget.ExpandableListView.OnChildClickListener;
 import android.widget.TextView;
 
+import com.zoeas.qdeagubus.MainActivity.OnBackAction;
 import com.zoeas.qdeagubus.R;
 
 
-public class SettingFragment extends Fragment{
+public class SettingFragment extends Fragment implements OnBackAction{
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -32,6 +33,18 @@ public class SettingFragment extends Fragment{
 			}
 		});
 		return view;
+	}
+
+	@Override
+	public void onBackPressed() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onClear() {
+		// TODO Auto-generated method stub
+		
 	}
 }
 

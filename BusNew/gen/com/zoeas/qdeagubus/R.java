@@ -1483,15 +1483,16 @@ containing a value of this type.
         public static final int fragment_gmap_layout=0x7f03001d;
         public static final int fragment_search_bus_layout=0x7f03001e;
         public static final int fragment_search_station_layout=0x7f03001f;
-        public static final int list_bus_search_item=0x7f030020;
-        public static final int list_favorite_bus_item=0x7f030021;
-        public static final int list_favorite_station_item=0x7f030022;
-        public static final int support_simple_spinner_dropdown_item=0x7f030023;
-        public static final int temp=0x7f030024;
-        public static final int test=0x7f030025;
-        public static final int test_sliding=0x7f030026;
-        public static final int viewpager_favorite_preview=0x7f030027;
-        public static final int widget_layout=0x7f030028;
+        public static final int layout_sliding_menu=0x7f030020;
+        public static final int list_bus_search_item=0x7f030021;
+        public static final int list_favorite_bus_item=0x7f030022;
+        public static final int list_favorite_station_item=0x7f030023;
+        public static final int support_simple_spinner_dropdown_item=0x7f030024;
+        public static final int temp=0x7f030025;
+        public static final int test=0x7f030026;
+        public static final int test_sliding=0x7f030027;
+        public static final int viewpager_favorite_preview=0x7f030028;
+        public static final int widget_layout=0x7f030029;
     }
     public static final class menu {
         public static final int main=0x7f0e0000;

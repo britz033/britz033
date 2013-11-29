@@ -24,24 +24,23 @@ public class BackPressStack {
 	public static final int FINISH_READY = 1000;
 	public static final int DO_SOMETHING = 1001;
 
-	private MainActivity.MyTabs sub;
-
 	LinkedList<Integer> backId = new LinkedList<Integer>();
 
 	public BackPressStack() {
-		push(null);
+		onlyFirstPush();
 	}
 
 	// 암것도 없으면 finish_ready를 무조건 젤 첨에 넣는다
-	public void push(MainActivity.MyTabs tab) {
+	public void push() {
 		if(backId.size() == 0) {
 			backId.addFirst(FINISH_READY);
 		}
-		
-		if(tab != null){
-			backId.addFirst(DO_SOMETHING);
-			sub = tab;
-		}
+		backId.addFirst(DO_SOMETHING);
+	}
+	
+	private void onlyFirstPush(){
+		if(backId.size() == 0)
+			backId.addFirst(FINISH_READY);
 	}
 
 	// 암것도 없으면 FINISH 날림, 1개만 있으면 2초후 finish_ready를 맨앞에 추가
@@ -56,15 +55,11 @@ public class BackPressStack {
 				
 				@Override
 				public void onFinish() {
-					push(null);
+					onlyFirstPush();
 				}
 			}.start();
 		}
 		return backId.removeFirst();
-	}
-
-	public MainActivity.MyTabs getMyTab() {
-		return sub;
 	}
 	
 	// 메뉴를 옮길때 호출

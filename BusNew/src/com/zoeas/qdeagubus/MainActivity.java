@@ -44,9 +44,11 @@ public class MainActivity extends ActionBarActivity implements TabListener,
 	public interface CallFragmentMethod{public void OnCalled();}
 	public static final String PREF_NAME = "save_station_num";	// SharedPreferance 키값
 	public static final BackPressStack backAction = new BackPressStack();
+	private OnBackAction subFragment;
 	
 	public interface OnBackAction{
 		public void onBackPressed();
+		public void onClear();
 	}
 	
 	public enum MyTabs {
@@ -142,6 +144,10 @@ public class MainActivity extends ActionBarActivity implements TabListener,
 
 			@Override
 			public void onPageSelected(int position) {
+				backAction.init();
+				subFragment = (OnBackAction) flist.get(position);
+				subFragment.onClear();
+					
 				getSupportActionBar().setSelectedNavigationItem(position);
 				if(MyTabs.GMAP.getValue() == position){
 					CallFragmentMethod call = (CallFragmentMethod)flist.get(position);
@@ -241,17 +247,9 @@ public class MainActivity extends ActionBarActivity implements TabListener,
 			super.onBackPressed();
 			break;
 		case BackPressStack.FINISH_READY :
-			Toast.makeText(this, "뒤로가기를 한번 더 누르시면 종료됩니다", Toast.LENGTH_LONG).show();
-//			Handler handler = new Handler();
-//			handler.postDelayed(new Runnable() {
-//				@Override
-//				public void run() {
-//					backAction.push(BackPressStack.FINISH_READY,null);
-//				}
-//			}, 2000);
+			Toast.makeText(this, "뒤로가기를 한번 더 누르시면 종료됩니다", Toast.LENGTH_SHORT).show();
 			break;
 		case BackPressStack.DO_SOMETHING :
-			OnBackAction subFragment = (OnBackAction) flist.get(backAction.getMyTab().getValue());
 			subFragment.onBackPressed();
 			break;
 		}

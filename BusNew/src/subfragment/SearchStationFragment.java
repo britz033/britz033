@@ -42,11 +42,12 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.zoeas.qdeagubus.MainActivity.OnBackAction;
 import com.zoeas.qdeagubus.MyContentProvider;
 import com.zoeas.qdeagubus.R;
 
 public class SearchStationFragment extends ListFragment implements LoaderCallbacks<Cursor>, OnKeyListener,
-		OnMapReadyListener, OnClickListener {
+		OnMapReadyListener, OnClickListener, OnBackAction {
 
 	public static final String TAG_STATION_MAP = "stationMap";
 	public static final String KEY_SERARCH = "station";
@@ -337,6 +338,18 @@ public class SearchStationFragment extends ListFragment implements LoaderCallbac
 		mapCenterCoordinate.putDouble(KEY_WIDE_LONGITUDE, map.getCameraPosition().target.longitude);
 		map.clear();
 		getLoaderManager().restartLoader(SEARCH_WIDE, mapCenterCoordinate, this);
+	}
+
+	@Override
+	public void onBackPressed() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onClear() {
+		// TODO Auto-generated method stub
+		
 	}
 
 }
