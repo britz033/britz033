@@ -1,6 +1,7 @@
 package subfragment;
 
 import util.SlideLayoutBackGround;
+import util.SlideLayoutMenu;
 import util.StackBlurManager;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -14,14 +15,17 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.Animation;
+import android.view.animation.AnimationSet;
 import android.view.animation.BounceInterpolator;
 import android.view.animation.TranslateAnimation;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 
 import com.nineoldandroids.animation.Animator;
 import com.nineoldandroids.animation.Animator.AnimatorListener;
+import com.nineoldandroids.animation.AnimatorSet;
 import com.nineoldandroids.animation.ArgbEvaluator;
 import com.nineoldandroids.animation.ObjectAnimator;
 import com.nineoldandroids.animation.ValueAnimator;
@@ -34,6 +38,7 @@ public class Test extends Fragment implements OnBackAction{
 	private View view;
 	private ImageView iv;
 	private SlideLayoutBackGround slideLayout;
+	private LinearLayout slideLayoutMenu;
 	private boolean first_flag;
 	
 	
@@ -55,12 +60,19 @@ public class Test extends Fragment implements OnBackAction{
 		
 		FrameLayout fl = (FrameLayout) view.findViewById(R.id.source);
 		slideLayout = new SlideLayoutBackGround(getActivity());
+		slideLayoutMenu = new SlideLayoutMenu(getActivity());
+		
 		fl.addView(slideLayout);
+		fl.addView(slideLayoutMenu);
 		
-		final ValueAnimator slideAnim = ObjectAnimator.ofInt(slideLayout, "width", 0, 300);
+		// 참고로 300은 픽셀임
+		ValueAnimator slideAnim = ObjectAnimator.ofInt(slideLayout, "width", 0, 300);
+		ValueAnimator slideAnim2 = ObjectAnimator.ofInt(slideLayoutMenu, "rightPosition", -300, 0);
 		
-		slideAnim.setDuration(1000);
-		slideAnim.setInterpolator(new BounceInterpolator());
+		final AnimatorSet aniSet = new AnimatorSet();
+		aniSet.playTogether(slideAnim, slideAnim2);
+		aniSet.setDuration(1000);
+		aniSet.setInterpolator(new BounceInterpolator());
 		
 		Button btn = (Button) view.findViewById(R.id.btn_test);
 		btn.setOnClickListener(new OnClickListener() {
@@ -68,6 +80,7 @@ public class Test extends Fragment implements OnBackAction{
 			@Override
 			public void onClick(View v) {
 				slideLayout.setVisibility(View.VISIBLE);
+				slideLayoutMenu.setVisibility(View.VISIBLE);
 				if(first_flag){
 					MainActivity.backAction.push();
 					first_flag = false;
@@ -77,8 +90,8 @@ public class Test extends Fragment implements OnBackAction{
 				StackBlurManager blurImage = new StackBlurManager(all);
 				blurImage.process(50);
 				slideLayout.setBlurBitmap(blurImage.returnBlurredImage());
-				slideAnim.start();				
-				slideLayout.startAnimation(move());
+				
+				aniSet.start();				
 			}
 		});
 
@@ -99,10 +112,15 @@ public class Test extends Fragment implements OnBackAction{
 
 	@Override
 	public void onBackPressed() {
-		ValueAnimator backSlideAnim = ObjectAnimator.ofInt(slideLayout, "width", 300, 0);
-		backSlideAnim.setDuration(500);
-		backSlideAnim.setInterpolator(new AccelerateInterpolator());
-		backSlideAnim.addListener(new AnimatorListener() {
+		ValueAnimator backSlideBackgroundAnim = ObjectAnimator.ofInt(slideLayout, "width", 300, 0);
+		ValueAnimator backSlideMenuAnim2 = ObjectAnimator.ofInt(slideLayoutMenu, "rightPosition", 0, -300);
+		
+		AnimatorSet backSet = new AnimatorSet();
+		
+		backSet.playTogether(backSlideBackgroundAnim,backSlideMenuAnim2);
+		backSet.setDuration(500);
+		backSet.setInterpolator(new AccelerateInterpolator());
+		backSet.addListener(new AnimatorListener() {
 			@Override
 			public void onAnimationStart(Animator animation) {
 			}
@@ -117,7 +135,8 @@ public class Test extends Fragment implements OnBackAction{
 			public void onAnimationCancel(Animator animation) {
 			}
 		});
-		backSlideAnim.start();
+		
+		backSet.start();
 		
 		first_flag = true;
 	}
@@ -132,6 +151,7 @@ public class Test extends Fragment implements OnBackAction{
 	@Override
 	public void onClear() {
 		slideLayout.setVisibility(View.GONE);
+		slideLayoutMenu.setVisibility(View.GONE);
 		first_flag = true;
 	}
 	

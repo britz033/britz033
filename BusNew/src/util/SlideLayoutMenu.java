@@ -1,7 +1,11 @@
 package util;
 
+import com.zoeas.qdeagubus.R;
+
 import android.content.Context;
 import android.util.AttributeSet;
+import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.LinearLayout;
 
 public class SlideLayoutMenu extends LinearLayout{
@@ -20,21 +24,15 @@ public class SlideLayoutMenu extends LinearLayout{
 	}
 	
 	private void init(){
+		LayoutInflater.from(context).inflate(R.layout.layout_sliding_menu, this);
 		setOrientation(LinearLayout.VERTICAL);
-		
+		setVisibility(View.GONE);
 	}
 	
 	
 	public void setRightPosition(int right){
-		
-	}
-	
-	@Override
-	protected void onLayout(boolean changed, int l, int t, int r, int b) {
-		super.onLayout(changed, l, t, r, b);
-		if(changed){
-			
-		}
+		setPadding(right, 0, 0, 0);
+		requestLayout();
 	}
 
 }
