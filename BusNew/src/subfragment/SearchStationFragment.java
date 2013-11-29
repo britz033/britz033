@@ -2,8 +2,9 @@ package subfragment;
 
 import subfragment.CustomMapFragment.OnMapReadyListener;
 import com.nineoldandroids.animation.*;
+
+import util.ActionMap;
 import util.AnimationRelativeLayout;
-import adapter.ActionMap;
 import adapter.StationSearchListCursorAdapter;
 import android.app.Activity;
 import android.app.ActionBar.LayoutParams;

@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import util.ActionMap;
 import util.Switch;
-import adapter.ActionMap;
 import adapter.PathPagerAdapter;
 import android.app.AlertDialog;
 import android.content.ContentUris;

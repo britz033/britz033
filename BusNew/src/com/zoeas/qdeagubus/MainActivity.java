@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import subfragment.FavoriteFragment;
 import subfragment.GMapFragment;
 import subfragment.OnSaveBusStationInfoListener;
+import util.BackPressStack;
 import adapter.OnCommunicationActivity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -42,6 +43,11 @@ public class MainActivity extends ActionBarActivity implements TabListener,
 	private ArrayList<Fragment> flist; 			// 액티비티가 관리하는 애들
 	public interface CallFragmentMethod{public void OnCalled();}
 	public static final String PREF_NAME = "save_station_num";	// SharedPreferance 키값
+	public static final BackPressStack backAction = new BackPressStack();
+	
+	public interface OnBackAction{
+		public void onBackPressed();
+	}
 	
 	public enum MyTabs {
 		FAVORITE(0, "즐겨찾기", "subfragment.FavoriteFragment"), 
@@ -85,7 +91,6 @@ public class MainActivity extends ActionBarActivity implements TabListener,
 		
 		viewPagerSetting();
 		actionBarSetting();
-		
 
 	}
 
@@ -231,22 +236,25 @@ public class MainActivity extends ActionBarActivity implements TabListener,
 
 	@Override
 	public void onBackPressed() {
-		if(!mflag){
-			Toast.makeText(this, "뒤로가기를 한번 더 누르시면 종료됩니다", Toast.LENGTH_LONG).show();
-			mflag = true;
-			
-			Handler handler = new Handler();
-			handler.postDelayed(new Runnable() {
-				
-				@Override
-				public void run() {
-					mflag = false;
-				}
-			}, 2000);
-			
-			
-		} else
+		switch(backAction.pop()){
+		case BackPressStack.FINISH :
 			super.onBackPressed();
+			break;
+		case BackPressStack.FINISH_READY :
+			Toast.makeText(this, "뒤로가기를 한번 더 누르시면 종료됩니다", Toast.LENGTH_LONG).show();
+//			Handler handler = new Handler();
+//			handler.postDelayed(new Runnable() {
+//				@Override
+//				public void run() {
+//					backAction.push(BackPressStack.FINISH_READY,null);
+//				}
+//			}, 2000);
+			break;
+		case BackPressStack.DO_SOMETHING :
+			OnBackAction subFragment = (OnBackAction) flist.get(backAction.getMyTab().getValue());
+			subFragment.onBackPressed();
+			break;
+		}
 	}
 
 	// 정류장 검색에서 리스트뷰 즐겨찾기 추가시 불러짐

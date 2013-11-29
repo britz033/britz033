@@ -1,9 +1,9 @@
 package subfragment;
 
 import subfragment.CustomMapFragment.OnMapReadyListener;
+import util.ActionMap;
 import util.MyLocation;
 import util.MyLocation.LocationResult;
-import adapter.ActionMap;
 import android.app.Activity;
 import android.content.Context;
 import android.database.Cursor;

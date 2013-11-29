@@ -1,8 +1,8 @@
 package subfragment;
 
+import util.BackPressStack;
+import util.SlideLayout;
 import util.StackBlurManager;
-import android.animation.LayoutTransition;
-import android.animation.ObjectAnimator;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -13,72 +13,69 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.view.animation.BounceInterpolator;
+import android.view.animation.Interpolator;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 
+import com.nineoldandroids.animation.ArgbEvaluator;
+import com.nineoldandroids.animation.ObjectAnimator;
+import com.nineoldandroids.animation.ValueAnimator;
+import static com.nineoldandroids.view.ViewPropertyAnimator.animate;
+
+import com.zoeas.qdeagubus.MainActivity;
+import com.zoeas.qdeagubus.MainActivity.OnBackAction;
 import com.zoeas.qdeagubus.R;
 
-public class Test extends Fragment {
+public class Test extends Fragment implements OnBackAction{
 	
 	private View view;
 	private ImageView iv;
+	private SlideLayout slideLayout;
+	private boolean first_flag;
+	
+	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
 		view = inflater.inflate(R.layout.test, null);
-		iv = (ImageView) view.findViewById(R.id.img_test);
+		first_flag = true;
 		
-//		ValueAnimator colorAnim = ObjectAnimator.ofInt(this, "backgroundColor", /* Red */0xFFFF8080, /* Blue */
-//				0xFF8080FF);
-//		colorAnim.setDuration(3000);
-//		colorAnim.setEvaluator(new ArgbEvaluator());
-//		colorAnim.setRepeatCount(ValueAnimator.INFINITE);
-//		colorAnim.setRepeatMode(ValueAnimator.REVERSE);
-//		colorAnim.start();
-		
-		LayoutTransition layoutTransition = new LayoutTransition();
-		
-		ObjectAnimator transX = ObjectAnimator.ofInt(iv, "left", 0, 200).setDuration(5000);
-		layoutTransition.setAnimator(LayoutTransition.APPEARING, transX);
-		((LinearLayout)view).setLayoutTransition(layoutTransition);
+		ValueAnimator colorAnim = ObjectAnimator.ofInt(view, "backgroundColor", /* Red */0xFFFF8080, /* Blue */
+				0xFF8080FF);
+		colorAnim.setDuration(3000);
+		colorAnim.setEvaluator(new ArgbEvaluator());
+		colorAnim.setRepeatCount(ValueAnimator.INFINITE);
+		colorAnim.setRepeatMode(ValueAnimator.REVERSE);
+		colorAnim.start();
 		
 		
 		
-
-
-//		WindowManager.LayoutParams lp = dialog.getWindow().getAttributes();  
-//		lp.dimAmount=0.0f;  
-//		dialog.getWindow().setAttributes(lp);  
-//		dialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_BLUR_BEHIND);  
+		FrameLayout fl = (FrameLayout) view.findViewById(R.id.source);
+		slideLayout = new SlideLayout(getActivity());
+		fl.addView(slideLayout);
 		
+		final ValueAnimator slideAnim = ObjectAnimator.ofInt(slideLayout, "width", 0, 300);
+		slideAnim.setDuration(1000);
+		slideAnim.setInterpolator(new BounceInterpolator());
 		
-		
-		// BitmapFactory.Options options = new BitmapFactory.Options();
-		// options.inSampleSize = 1;
-		//
-		// Bitmap image = BitmapFactory.decodeResource(getResources(),
-		// R.drawable.station00005, options);
-		// StackBlurManager blurImage = new StackBlurManager(image);
-		// blurImage.process(20);
-		//
-		//
-		// ImageView iv = (ImageView) view.findViewById(R.id.test1);
-		// iv.setImageBitmap(blurImage.returnBlurredImage());
 		Button btn = (Button) view.findViewById(R.id.btn_test);
 		btn.setOnClickListener(new OnClickListener() {
 			
 			@Override
 			public void onClick(View v) {
+				if(first_flag){
+					MainActivity.backAction.push(MainActivity.MyTabs.TEST);
+					first_flag = false;
+				}
 				Bitmap all = getBitmapFromView(view);
 				
+				slideLayout.setVisibility(View.VISIBLE);
 				StackBlurManager blurImage = new StackBlurManager(all);
-				blurImage.process(20);
-				iv.setImageBitmap(blurImage.returnBlurredImage());
-				
-				iv.setVisibility(View.VISIBLE);
-				
+				blurImage.process(50);
+				slideLayout.setBlurBitmap(blurImage.returnBlurredImage());
+				slideAnim.start();
 				
 			}
 		});
@@ -97,4 +94,11 @@ public class Test extends Fragment {
 	    view.draw(canvas);
 	    return returnedBitmap;
 	}
+
+	@Override
+	public void onBackPressed() {
+		slideLayout.setVisibility(View.GONE);
+		first_flag = true;
+	}
+	
 }
