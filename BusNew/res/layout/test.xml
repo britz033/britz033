@@ -3,8 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent" 
     android:background="#ff00ff"
+    android:orientation="vertical"
     >
-
     <FrameLayout
         android:id="@+id/source"
         android:layout_width="match_parent"
@@ -14,7 +14,8 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="200dp"
-            android:background="@drawable/preview_back2" >
+            android:background="@drawable/preview_back2" 
+            >
 
             <ImageView
                 android:id="@+id/test1"
@@ -23,41 +24,7 @@
                 android:adjustViewBounds="true"
                 android:background="#ffffff"
                 android:src="@drawable/station00005" />
-            <!-- <RelativeLayout -->
-            <!-- android:layout_width="match_parent" -->
-            <!-- android:layout_height="match_parent" > -->
-
-
-            <!-- <ImageView -->
-            <!-- android:id="@+id/test1" -->
-            <!-- android:layout_width="match_parent" -->
-            <!-- android:layout_height="wrap_content" -->
-            <!-- android:layout_centerHorizontal="true" -->
-            <!-- android:layout_centerVertical="true" -->
-            <!-- android:layout_gravity="center" -->
-            <!-- android:adjustViewBounds="true" -->
-            <!-- android:background="#ffffff" -->
-            <!-- android:src="@drawable/station00005" /> -->
-
-
-            <!-- <RelativeLayout -->
-            <!-- android:id="@+id/test2" -->
-            <!-- android:layout_width="match_parent" -->
-            <!-- android:layout_height="match_parent" -->
-            <!-- android:visibility="invisible" > -->
-
-
-            <!-- <Button -->
-            <!-- android:id="@+id/test3" -->
-            <!-- android:layout_width="match_parent" -->
-            <!-- android:layout_height="match_parent" -->
-            <!-- android:layout_gravity="center" -->
-            <!-- android:adjustViewBounds="true" -->
-            <!-- android:background="@android:color/transparent" -->
-            <!-- android:text="정류장 즐겨찾기가 없네요. 여기를 누르세요" -->
-            <!-- android:textColor="#ffffff" /> -->
-            <!-- </RelativeLayout> -->
-            <!-- </RelativeLayout> -->
+         
         </RelativeLayout>
         <Button
             android:id="@+id/btn_test"
@@ -66,5 +33,11 @@
             android:text="capture"
             />
     </FrameLayout>
+    <ImageView 
+        android:id="@+id/img_test"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        />
 
 </LinearLayout>

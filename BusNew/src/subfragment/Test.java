@@ -1,7 +1,8 @@
 package subfragment;
 
 import util.StackBlurManager;
-import android.app.AlertDialog;
+import android.animation.LayoutTransition;
+import android.animation.ObjectAnimator;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -12,30 +13,39 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.view.ViewGroup.LayoutParams;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 
-import com.nineoldandroids.animation.ArgbEvaluator;
-import com.nineoldandroids.animation.ObjectAnimator;
-import com.nineoldandroids.animation.ValueAnimator;
 import com.zoeas.qdeagubus.R;
 
 public class Test extends Fragment {
 	
 	private View view;
+	private ImageView iv;
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
 		view = inflater.inflate(R.layout.test, null);
-
-		ValueAnimator colorAnim = ObjectAnimator.ofInt(this, "backgroundColor", /* Red */0xFFFF8080, /* Blue */
-				0xFF8080FF);
-		colorAnim.setDuration(3000);
-		colorAnim.setEvaluator(new ArgbEvaluator());
-		colorAnim.setRepeatCount(ValueAnimator.INFINITE);
-		colorAnim.setRepeatMode(ValueAnimator.REVERSE);
-		colorAnim.start();
+		iv = (ImageView) view.findViewById(R.id.img_test);
+		
+//		ValueAnimator colorAnim = ObjectAnimator.ofInt(this, "backgroundColor", /* Red */0xFFFF8080, /* Blue */
+//				0xFF8080FF);
+//		colorAnim.setDuration(3000);
+//		colorAnim.setEvaluator(new ArgbEvaluator());
+//		colorAnim.setRepeatCount(ValueAnimator.INFINITE);
+//		colorAnim.setRepeatMode(ValueAnimator.REVERSE);
+//		colorAnim.start();
+		
+		LayoutTransition layoutTransition = new LayoutTransition();
+		
+		ObjectAnimator transX = ObjectAnimator.ofInt(iv, "left", 0, 200).setDuration(5000);
+		layoutTransition.setAnimator(LayoutTransition.APPEARING, transX);
+		((LinearLayout)view).setLayoutTransition(layoutTransition);
+		
+		
+		
 
 
 //		WindowManager.LayoutParams lp = dialog.getWindow().getAttributes();  
@@ -65,11 +75,10 @@ public class Test extends Fragment {
 				
 				StackBlurManager blurImage = new StackBlurManager(all);
 				blurImage.process(20);
-				ImageView iv = new ImageView(getActivity());
-//				iv.setLayoutParams(new LayoutParams(300, 300));
 				iv.setImageBitmap(blurImage.returnBlurredImage());
 				
-				new AlertDialog.Builder(getActivity()).setView(iv).create().show();
+				iv.setVisibility(View.VISIBLE);
+				
 				
 			}
 		});
