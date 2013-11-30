@@ -268,7 +268,7 @@ public class SearchStationFragment extends ListFragment implements LoaderCallbac
 		String selection = null;
 
 		switch (id) {
-		// _id 안넣으면 에러 슈바
+		// 커서어뎁터의 경우_id 안넣으면 에러 슈바
 		case SEARCH_STATION:
 			if (args != null) {
 				selection = "station_name like '%" + args.getString(KEY_SERARCH) + "%' OR station_number like '%"
@@ -300,7 +300,7 @@ public class SearchStationFragment extends ListFragment implements LoaderCallbac
 	public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
 		// 앞서 생성된 커서를 받아옴
 		madapter.swapCursor(cursor);
-
+		
 		if (loader.getId() == SEARCH_WIDE) {
 			cursor.moveToFirst();
 			for (int i = 0; i < cursor.getCount(); i++) {

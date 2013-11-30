@@ -26,12 +26,6 @@ public class SlideLayoutBackGround extends LinearLayout{
 		
 		init();
 	}
-	public SlideLayoutBackGround(Context context, AttributeSet attrs) {
-		super(context, attrs);
-		this.context = context;
-		
-		init();
-	}
 	
 	private void init(){
 		mWidth = 0;
@@ -48,7 +42,7 @@ public class SlideLayoutBackGround extends LinearLayout{
 	
 	@SuppressLint("NewApi")
 	public void setWidth(int width){
-		mWidth = width;
+		mWidth = (int)(width);
 		Bitmap piece = Bitmap.createBitmap(blurBitmap, 0, 0, mWidth, mHeight);
 		BitmapDrawable background = new BitmapDrawable(context.getResources(), piece);
 		
