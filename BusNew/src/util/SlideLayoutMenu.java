@@ -20,23 +20,17 @@ public class SlideLayoutMenu extends LinearLayout{
 		init();
 	}
 	
+	// 패딩으로 내용을 이동시키는 개념이라 실제 레이아웃은 처음부터 그대로 존재함
+	// 고로 여기서 백컬러를 설정하면 전체를 뒤덮게됨 (onMeasure를 오버라이딩해서 크기를 설정안한 커스텀 레이아웃클래스기 땜시)
 	private void init(){
 		LayoutInflater.from(context).inflate(R.layout.layout_sliding_menu, this);
 		setOrientation(LinearLayout.VERTICAL);
 		setVisibility(View.GONE);
-		setBackgroundColor(Color.argb(120, 255, 255, 255));
-	}
-	
-	@Override
-	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-		super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-		
-		setMeasuredDimension(mright, MeasureSpec.getSize(heightMeasureSpec));
+//		setBackgroundColor(Color.argb(120, 255, 255, 255));
 	}
 	
 	
 	public void setRightPosition(int right){
-		mright = -right;
 		setPadding((int)(right), 0, 0, 0);
 		requestLayout();
 	}

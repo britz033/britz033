@@ -1,13 +1,11 @@
 package subfragment;
 
 import subfragment.CustomMapFragment.OnMapReadyListener;
-import com.nineoldandroids.animation.*;
-
 import util.ActionMap;
 import util.AnimationRelativeLayout;
 import adapter.StationSearchListCursorAdapter;
 import android.app.Activity;
-import android.app.ActionBar.LayoutParams;
+import android.app.PendingIntent.CanceledException;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
@@ -27,15 +25,15 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnKeyListener;
 import android.view.ViewGroup;
+import android.view.ViewStub;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.view.animation.ScaleAnimation;
 import android.view.animation.Transformation;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -55,8 +53,9 @@ public class SearchStationFragment extends ListFragment implements LoaderCallbac
 	public static final String KEY_WIDE_LONGITUDE = "wideLongitude";
 	public static final int SEARCH_STATION = 0;
 	public static final int SEARCH_WIDE = 1;
-	
-	// "_id", "station_number", "station_name", "station_longitude", "station_latitude", "station_favorite"
+
+	// "_id", "station_number", "station_name", "station_longitude",
+	// "station_latitude", "station_favorite"
 	public static final int STATION_ID_INDEX = 0;
 	public static final int STATION_NUMBER_INDEX = 1;
 	public static final int STATION_NAME_INDEX = 2;
@@ -71,6 +70,7 @@ public class SearchStationFragment extends ListFragment implements LoaderCallbac
 	private InputMethodManager imm;
 	private GoogleMap map;
 	private View view;
+	private ActionMap actionMap;
 
 	@Override
 	public void onAttach(Activity activity) {
@@ -85,6 +85,7 @@ public class SearchStationFragment extends ListFragment implements LoaderCallbac
 		et = (EditText) view.findViewById(R.id.edit_search_sub2fragment);
 		et.addTextChangedListener(new MyWatcher());
 		et.setOnKeyListener(this);
+		actionMap = new ActionMap(context);
 		mapContainer = (AnimationRelativeLayout) view.findViewById(R.id.layout_search_station_map_container);
 		mapContainer.setInAnimation((Animation) AnimationUtils.loadAnimation(context, R.animator.in_ani));
 		Button btn = (Button) view.findViewById(R.id.btn_search_station_widesearch);
@@ -106,7 +107,11 @@ public class SearchStationFragment extends ListFragment implements LoaderCallbac
 	@Override
 	public void onResume() {
 		super.onResume();
-		setupMapIfNeeded();
+		if (actionMap.checkGoogleService())
+			setupMapIfNeeded();
+		else {
+			
+		}
 	}
 
 	private void setupMapIfNeeded() {
@@ -159,12 +164,17 @@ public class SearchStationFragment extends ListFragment implements LoaderCallbac
 		// flag = true;
 		// }
 
-		mapContainer.show();
+		if (map != null) {
+			mapContainer.show();
 
-		MarkerOptions options = new MarkerOptions().position(stationPosition).title(stationName)
-				.icon(BitmapDescriptorFactory.defaultMarker(120));
-		map.addMarker(options).showInfoWindow();
-		map.animateCamera(CameraUpdateFactory.newLatLngZoom(stationPosition, ActionMap.ZOOM_IN));
+			MarkerOptions options = new MarkerOptions().position(stationPosition).title(stationName)
+					.icon(BitmapDescriptorFactory.defaultMarker(120));
+			map.addMarker(options).showInfoWindow();
+			map.animateCamera(CameraUpdateFactory.newLatLngZoom(stationPosition, ActionMap.ZOOM_IN));
+		} else {
+			View msgView = ((ViewStub)view.findViewById(R.id.viewstub_search_station_map_fail)).inflate();
+			actionMap.setGoogleFailLayout(msgView);
+		}
 	}
 
 	public class DropDownAnim extends Animation {
@@ -261,8 +271,8 @@ public class SearchStationFragment extends ListFragment implements LoaderCallbac
 	@Override
 	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
 		Uri baseUri = MyContentProvider.CONTENT_URI_STATION;
-		
-		// 이것의 순서를 바꿔줄시 반드시 위의 상수인덱스 값도 변경해줘야함 
+
+		// 이것의 순서를 바꿔줄시 반드시 위의 상수인덱스 값도 변경해줘야함
 		String[] projection = { "_id", "station_number", "station_name", "station_longitude", "station_latitude",
 				"station_favorite" };
 		String selection = null;
@@ -300,7 +310,7 @@ public class SearchStationFragment extends ListFragment implements LoaderCallbac
 	public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
 		// 앞서 생성된 커서를 받아옴
 		madapter.swapCursor(cursor);
-		
+
 		if (loader.getId() == SEARCH_WIDE) {
 			cursor.moveToFirst();
 			for (int i = 0; i < cursor.getCount(); i++) {
@@ -343,13 +353,13 @@ public class SearchStationFragment extends ListFragment implements LoaderCallbac
 	@Override
 	public void onBackPressed() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void onClear() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 }

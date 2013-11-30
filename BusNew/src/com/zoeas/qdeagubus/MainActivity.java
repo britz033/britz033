@@ -34,30 +34,36 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.maps.model.LatLng;
 
-public class MainActivity extends ActionBarActivity implements TabListener,
-		OnSaveBusStationInfoListener, OnCommunicationActivity {
-	
-	private boolean mflag = false; // 뒤로가기 버튼 두번으로 종료 플레그 
-	private ArrayList<Fragment> flist; 			// 액티비티가 관리하는 애들
-	public interface CallFragmentMethod{public void OnCalled();}
-	public static final String PREF_NAME = "save_station_num";	// SharedPreferance 키값
+public class MainActivity extends ActionBarActivity implements TabListener, OnSaveBusStationInfoListener,
+		OnCommunicationActivity {
+
+	private boolean mflag = false; // 뒤로가기 버튼 두번으로 종료 플레그
+	private ArrayList<Fragment> flist; // 액티비티가 관리하는 애들
+
+	public interface CallFragmentMethod {
+		public void OnCalled();
+	}
+
+	public static final String PREF_NAME = "save_station_num"; // SharedPreferance
+																// 키값
 	public static final BackPressStack backAction = new BackPressStack();
 	private OnBackAction subFragment;
-	
-	public interface OnBackAction{
+
+	public interface OnBackAction {
 		public void onBackPressed();
+
 		public void onClear();
 	}
-	
+
 	public enum MyTabs {
-		FAVORITE(0, "즐겨찾기", "subfragment.FavoriteFragment"), 
-		STATION_LISTVIEW(1, "정류소", "subfragment.SearchStationFragment"), 
-		BUS_LISTVIEW(2, "버스", "subfragment.SearchBusNumberFragment"), 
-		GMAP(3, "주변맵", "subfragment.GMapFragment"),
-		DUMMY(4, "설정", "subfragment.SettingFragment"),
-		TEST(5, "test", "subfragment.Test");
+		FAVORITE(0, "즐겨찾기", "subfragment.FavoriteFragment"), STATION_LISTVIEW(1, "정류소",
+				"subfragment.SearchStationFragment"), BUS_LISTVIEW(2, "버스", "subfragment.SearchBusNumberFragment"), GMAP(
+				3, "주변맵", "subfragment.GMapFragment"), DUMMY(4, "설정", "subfragment.SettingFragment"), TEST(5, "test",
+				"subfragment.Test");
 		private final String name;
 		private final String fragmentName;
 		private final int num;
@@ -75,8 +81,8 @@ public class MainActivity extends ActionBarActivity implements TabListener,
 		String getName() {
 			return name;
 		}
-		
-		String getFragmentName(){
+
+		String getFragmentName() {
 			return fragmentName;
 		}
 	}
@@ -90,7 +96,7 @@ public class MainActivity extends ActionBarActivity implements TabListener,
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-		
+
 		viewPagerSetting();
 		actionBarSetting();
 
@@ -101,23 +107,22 @@ public class MainActivity extends ActionBarActivity implements TabListener,
 	 * dbhelper도 호출 덕분에 이 코드는 망함. 그래서 dbhelper 쪽으로 이사감
 	 */
 
-	
-	//  commitAllowingStateLoss 를 사용해야 에러가 안난다. 이부분 주의
+	// commitAllowingStateLoss 를 사용해야 에러가 안난다. 이부분 주의
 	// http://stackoverflow.com/questions/7469082/getting-exception-illegalstateexception-can-not-perform-this-action-after-onsa
 	@Override
 	protected void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
 	}
-	
+
 	private void viewPagerSetting() {
 		vp = (MainViewPager) findViewById(R.id.viewpager_main);
 		FragmentManager fm = getSupportFragmentManager();
 		flist = new ArrayList<Fragment>();
 		Fragment addFragment = null;
-		
-		MyTabs[] mytabs = MyTabs.values(); 
+
+		MyTabs[] mytabs = MyTabs.values();
 		try {
-			for(MyTabs mytab : mytabs){
+			for (MyTabs mytab : mytabs) {
 				addFragment = (Fragment) Class.forName(mytab.getFragmentName()).newInstance();
 				flist.add(addFragment);
 			}
@@ -137,7 +142,7 @@ public class MainActivity extends ActionBarActivity implements TabListener,
 				return flist.get(position);
 			}
 		});
-		
+
 		vp.requestTransparentRegion(vp);
 
 		vp.setOnPageChangeListener(new OnPageChangeListener() {
@@ -147,20 +152,20 @@ public class MainActivity extends ActionBarActivity implements TabListener,
 				backAction.init();
 				subFragment = (OnBackAction) flist.get(position);
 				subFragment.onClear();
-					
+
 				getSupportActionBar().setSelectedNavigationItem(position);
-				if(MyTabs.GMAP.getValue() == position){
-					CallFragmentMethod call = (CallFragmentMethod)flist.get(position);
+				if (MyTabs.GMAP.getValue() == position) {
+					CallFragmentMethod call = (CallFragmentMethod) flist.get(position);
 					call.OnCalled();
 				}
-				
+
 				InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
 				imm.hideSoftInputFromWindow(vp.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
 			}
 
 			@Override
 			public void onPageScrolled(int arg0, float arg1, int arg2) {
-				
+
 			}
 
 			@Override
@@ -176,8 +181,7 @@ public class MainActivity extends ActionBarActivity implements TabListener,
 
 		MyTabs[] mytabs = MyTabs.values();
 		for (MyTabs mytab : mytabs) {
-			Tab tab = actionbar.newTab().setText(mytab.getName())
-					.setTabListener(this);
+			Tab tab = actionbar.newTab().setText(mytab.getName()).setTabListener(this);
 			actionbar.addTab(tab);
 		}
 	}
@@ -190,8 +194,7 @@ public class MainActivity extends ActionBarActivity implements TabListener,
 	}
 
 	@Override
-	public void OnSaveBusStationInfo(String station_number, String station_name,
-			LatLng latLng) {
+	public void OnSaveBusStationInfo(String station_number, String station_name, LatLng latLng) {
 
 		SharedPreferences setting = getSharedPreferences(PREF_NAME, 0);
 		SharedPreferences.Editor editor = setting.edit();
@@ -205,8 +208,8 @@ public class MainActivity extends ActionBarActivity implements TabListener,
 		this.stationNumber = station_number;
 		this.stationName = station_name;
 		this.latlng = latLng;
-		
-		Toast.makeText(this, latLng.toString() +" 저장되었습니다", 0).show();
+
+		Toast.makeText(this, latLng.toString() + " 저장되었습니다", 0).show();
 	}
 
 	@Override
@@ -230,26 +233,17 @@ public class MainActivity extends ActionBarActivity implements TabListener,
 
 	}
 
-	//StationSearchFragment 의 버튼
-	// gmap 탭 호출
-	public void btnOnclick(View view) {
-		int index = MyTabs.GMAP.getValue();		// gmap탭의 번호를 가져온다
-		vp.setCurrentItem(index, true);
-		((GMapFragment) flist.get(index)).setGMap(stationNumber, stationName,
-				latlng);
-		vp.requestTransparentRegion(vp);
-	}
 
 	@Override
 	public void onBackPressed() {
-		switch(backAction.pop()){
-		case BackPressStack.FINISH :
+		switch (backAction.pop()) {
+		case BackPressStack.FINISH:
 			super.onBackPressed();
 			break;
-		case BackPressStack.FINISH_READY :
+		case BackPressStack.FINISH_READY:
 			Toast.makeText(this, "뒤로가기를 한번 더 누르시면 종료됩니다", Toast.LENGTH_SHORT).show();
 			break;
-		case BackPressStack.DO_SOMETHING :
+		case BackPressStack.DO_SOMETHING:
 			subFragment.onBackPressed();
 			break;
 		}
@@ -258,7 +252,7 @@ public class MainActivity extends ActionBarActivity implements TabListener,
 	// 정류장 검색에서 리스트뷰 즐겨찾기 추가시 불러짐
 	@Override
 	public void OnFavoriteRefresh() {
-		((FavoriteFragment)flist.get(MyTabs.FAVORITE.getValue())).refreshPreview();
+		((FavoriteFragment) flist.get(MyTabs.FAVORITE.getValue())).refreshPreview();
 	}
 
 	@Override
@@ -266,29 +260,27 @@ public class MainActivity extends ActionBarActivity implements TabListener,
 		int index = myTab.STATION_LISTVIEW.getValue();
 		vp.setCurrentItem(index, true);
 	}
-	
+
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
-		
-		if(requestCode == 1001){
+
+		if (requestCode == 1001) {
 			Uri selectImage = data.getData();
 			String[] projection = { MediaStore.Images.Media.DATA };
-			
+
 			Cursor cursor = getContentResolver().query(selectImage, projection, null, null, null);
 			cursor.moveToFirst();
-			
+
 			int index = cursor.getColumnIndex(projection[0]);
 			String picturePath = cursor.getString(index);
 			cursor.close();
-			
+
 			ImageView iv = new ImageView(this);
 			iv.setImageBitmap(BitmapFactory.decodeFile(picturePath));
-			
+
 			new AlertDialog.Builder(this).setView(iv).create().show();
 		}
 	}
 
 }
-
-

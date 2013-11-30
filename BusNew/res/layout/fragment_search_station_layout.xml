@@ -32,6 +32,15 @@
             android:text="주변검색"
             android:textSize="12sp" />
     </util.AnimationRelativeLayout>
+    
+<!--     inflate 되면 다른레이아웃으로 교체 그 레이아웃의 id를 override 해주는게 inflateid -->
+    <ViewStub 
+        android:id="@+id/viewstub_search_station_map_fail"
+        android:inflatedId="@+id/layout_google_fail"
+        android:layout="@layout/viewstub_google_fail"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        />
 
     <ListView
         android:id="@id/android:list"

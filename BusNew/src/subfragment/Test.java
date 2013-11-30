@@ -1,8 +1,10 @@
 package subfragment;
 
+import util.Blur;
 import util.SlideLayoutBackGround;
 import util.SlideLayoutMenu;
 import util.StackBlurManager;
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -17,7 +19,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.view.ViewGroup.LayoutParams;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.Animation;
 import android.view.animation.BounceInterpolator;
@@ -96,7 +97,7 @@ public class Test extends Fragment implements OnBackAction {
 					first_flag = false;
 				}
 
-				CaptureTask capture = new CaptureTask(view, slideLayout, aniSet, moveDistance, slideLayoutMenu);
+				CaptureTask capture = new CaptureTask(getActivity(), view, slideLayout, aniSet, moveDistance, slideLayoutMenu);
 				capture.execute();
 			}
 		});
@@ -162,13 +163,15 @@ class CaptureTask extends AsyncTask<Void, Void, Bitmap> {
 	private AnimatorSet aniSet;
 	private View[] above;
 	private int moveDistance;
+	private Context context;
 	
-	public CaptureTask(View targetView, SlideLayoutBackGround slideLayout, AnimatorSet aniSet, int moveDistance, View ... above){
+	public CaptureTask(Context context,View targetView, SlideLayoutBackGround slideLayout, AnimatorSet aniSet, int moveDistance, View ... above){
 		this.targetView = targetView;
 		this.slideLayout = slideLayout;
 		this.aniSet = aniSet;
 		this.above = above;
 		this.moveDistance = moveDistance;
+		this.context = context;
 	}
 
 	@Override
@@ -177,11 +180,16 @@ class CaptureTask extends AsyncTask<Void, Void, Bitmap> {
 		Bitmap all = getBitmapFromView(targetView);
 		Bitmap crop = Bitmap.createBitmap(all, 0,0,moveDistance, targetView.getHeight());
 		timing.addSplit("캡쳐종료");
-		StackBlurManager blurImage = new StackBlurManager(crop);
-		blurImage.process(100);
+		crop = Blur.fastblur(context, crop, 20);
 		timing.addSplit("이미지블러처리종료");
 		timing.dumpToLog();
-		return blurImage.returnBlurredImage();
+		
+		return crop;
+		
+//		StackBlurManager blurImage = new StackBlurManager(crop);
+//		blurImage.process(210);
+//		return blurImage.returnBlurredImage();
+		
 	}
 
 	public Bitmap getBitmapFromView(View targetView) {

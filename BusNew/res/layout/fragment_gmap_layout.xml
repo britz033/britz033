@@ -40,6 +40,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
         </LinearLayout>
+        
+        <ViewStub 
+            android:id="@+id/viewstub_gmap_google_fail"
+            android:inflatedId="@+id/layout_gmap_google_fail"
+            android:layout="@layout/viewstub_google_fail"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            />
 
         <View
             android:layout_width="match_parent"

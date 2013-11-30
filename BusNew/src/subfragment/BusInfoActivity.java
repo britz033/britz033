@@ -82,8 +82,8 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_businfo);
-		actionMapForward = new ActionMap(this, getResources().getDisplayMetrics().density);
-		actionMapBackward = new ActionMap(this, getResources().getDisplayMetrics().density);
+		actionMapForward = new ActionMap(this);
+		actionMapBackward = new ActionMap(this);
 		pathForward = new ArrayList<String>();
 		pathBackward = new ArrayList<String>();
 		loopIndex = 0;
@@ -150,10 +150,15 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 	@Override
 	protected void onResume() {
 		super.onResume();
-		mapSetIfNeeded();
+		if(actionMapForward.checkGoogleService())
+			mapSetIfNeeded();
+		else {
+			
+		}
 
 	}
 
+	// 액티비티니까 null 걱정없이 바로 xml에서 map 가져옴
 	private void mapSetIfNeeded() {
 		if (!actionMapForward.isMap() || !actionMapBackward.isMap()) {
 			actionMapForward.setMap(((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.busmap))
@@ -361,7 +366,7 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 
 	private void showInfo() {
 		settingSwitch(currentDirection);
-		actionMapDirection.drawLine();
+		actionMapDirection.drawLine(getResources().getDisplayMetrics().density);
 	}
 
 	@Override
