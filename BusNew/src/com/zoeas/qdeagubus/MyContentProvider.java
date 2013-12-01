@@ -130,6 +130,7 @@ public class MyContentProvider extends ContentProvider{
 		// 리졸버랑 매우 닮았다. 그대로 넣어주고 나머지 group by니 having 이니는 입맛대로. 여기선 null
 		Cursor c = qb.query(db, projection, selection, selectionArgs, null, null, sortOrder);
 		//데이터 변경시 컨텐트리졸버의 리스너가 통보받을 수 있도록 해준다
+		Log.d("컨텐츠프로바이더","setNotification 호출됨");
 		c.setNotificationUri(getContext().getContentResolver(), uri);
 		return c;
 	}
@@ -166,7 +167,7 @@ public class MyContentProvider extends ContentProvider{
 			break;
 		}
 		
-		// 데이터가 바뀌었다고 부른곳에 통지한다. Loader 가 있다면 onLoaderFinished가 불려짐
+		// 데이터가 바뀌었다고 부른곳에 통지한다. Loader 가 있다면 onLoaderFinished가 불려짐, 단 이때 이 uri에 속한 모든 로더가 다불려짐
 		getContext().getContentResolver().notifyChange(uri, null);
 		return rows;
 	}

@@ -72,6 +72,7 @@ public class StationSearchListCursorAdapter extends CursorAdapter implements OnT
 		// 아이디 값을 기준으로 업데이트
 		Uri singleUri = ContentUris.withAppendedId(MyContentProvider.CONTENT_URI_STATION, id);
 
+		Log.d("정류장검색 커서어뎁터","즐겨찾기 업데이트 호출됨");
 		mcontext.getContentResolver().update(singleUri, value, null, null);
 
 	}

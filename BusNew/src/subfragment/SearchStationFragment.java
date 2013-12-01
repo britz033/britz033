@@ -72,6 +72,7 @@ public class SearchStationFragment extends ListFragment implements LoaderCallbac
 	private View view;
 	private ActionMap actionMap;
 	private boolean isGoogleServiceInstalled;
+	private int currentCursorId;
 
 	@Override
 	public void onAttach(Activity activity) {
@@ -86,6 +87,19 @@ public class SearchStationFragment extends ListFragment implements LoaderCallbac
 		et = (EditText) view.findViewById(R.id.edit_search_sub2fragment);
 		et.addTextChangedListener(new MyWatcher());
 		et.setOnKeyListener(this);
+		et.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				if(mapContainer != null)
+					mapContainer.hide();
+				if(map != null)
+					map.clear();
+				Bundle search = new Bundle();
+				search.putString(KEY_SERARCH, et.getText().toString());
+				getLoaderManager().restartLoader(SEARCH_STATION, search, SearchStationFragment.this);
+				
+			}
+		});
 		actionMap = new ActionMap(context);
 		mapContainer = (AnimationRelativeLayout) view.findViewById(R.id.layout_search_station_map_container);
 		mapContainer.setInAnimation((Animation) AnimationUtils.loadAnimation(context, R.animator.in_ani));
@@ -107,7 +121,7 @@ public class SearchStationFragment extends ListFragment implements LoaderCallbac
 		// 어뎁터 생성등록 커서는 없음.. 로더에서 추가
 		madapter = new StationSearchListCursorAdapter(context, null, 0);
 		setListAdapter(madapter);
-		getLoaderManager().initLoader(0, null, this);
+		getLoaderManager().initLoader(SEARCH_STATION, null, this);
 	}
 
 	@Override
@@ -270,8 +284,10 @@ public class SearchStationFragment extends ListFragment implements LoaderCallbac
 
 	@Override
 	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+		Log.d("정류장검색","로더 생성자 호출됨");
 		Uri baseUri = MyContentProvider.CONTENT_URI_STATION;
 
+		currentCursorId = id;
 		// 이것의 순서를 바꿔줄시 반드시 위의 상수인덱스 값도 변경해줘야함
 		String[] projection = { "_id", "station_number", "station_name", "station_longitude", "station_latitude",
 				"station_favorite" };
@@ -308,13 +324,14 @@ public class SearchStationFragment extends ListFragment implements LoaderCallbac
 
 	@Override
 	public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
+		Log.d("정류장검색","로더 finish 호출됨");
 		// 앞서 생성된 커서를 받아옴
-		madapter.swapCursor(cursor);
+		if(currentCursorId == loader.getId())
+			madapter.swapCursor(cursor);
 
 		if (loader.getId() == SEARCH_WIDE) {
 			cursor.moveToFirst();
 			for (int i = 0; i < cursor.getCount(); i++) {
-				Log.d("좌표", cursor.getDouble(4) + "");
 				LatLng position = new LatLng(cursor.getDouble(4), cursor.getDouble(3));
 				MarkerOptions options = new MarkerOptions().position(position).title(cursor.getString(2))
 						.snippet(cursor.getString(1));

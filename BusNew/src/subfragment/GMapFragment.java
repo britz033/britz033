@@ -7,6 +7,7 @@ import util.MyLocation.LocationResult;
 import android.app.Activity;
 import android.content.Context;
 import android.database.Cursor;
+import android.graphics.BitmapShader;
 import android.graphics.Color;
 import android.location.Location;
 import android.net.Uri;
@@ -180,6 +181,7 @@ public class GMapFragment extends Fragment implements CallFragmentMethod, Loader
 			double station_latitude = c.getDouble(4);
 			LatLng boundLatLng = new LatLng(station_latitude, station_longitude);
 			c.moveToNext();
+			
 
 			if (ActionMap.isInsideCircle(circle, boundLatLng)) {
 				final MarkerOptions op = new MarkerOptions();
