@@ -93,8 +93,7 @@ public class ActionMap {
 			return false;
 		}
 		
-		// 초기화중에 map관련 변수가 있으면 Serivce가 없을땐 에러뜸
-		markerDefaultOptions = new MarkerOptions().icon(BitmapDescriptorFactory.defaultMarker(220));
+		// 초기화중에 map관련 변수가 있으면 Serivce가 없을땐 에러뜸 그리고 여기서도 뜨네..;;
 		
 		return true;
 	}
@@ -115,6 +114,7 @@ public class ActionMap {
 
 	public void setMap(GoogleMap map) {
 		this.map = map;
+		markerDefaultOptions = new MarkerOptions().icon(BitmapDescriptorFactory.defaultMarker(220));
 	}
 
 	// 색이 다르게 할 수는 있지만 라인이 가닥가닥 따로 그리기에 끊김 현상이 발생

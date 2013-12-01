@@ -44,7 +44,7 @@ public class MyLocation {
             lm.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListenerNetwork);
         
         timer1=new Timer();
-        timer1.schedule(new GetLastLocation(), 3000);
+        timer1.schedule(new GetLastLocation(), 8000);
         return true;
     }
 
@@ -118,5 +118,13 @@ public class MyLocation {
 
     public static abstract class LocationResult{
         public abstract void gotLocation(Location location);
+    }
+    
+    public void cancle(){
+    	if(timer1 != null){
+    		timer1.cancel();
+    		lm.removeUpdates(locationListenerNetwork);
+    		lm.removeUpdates(locationListenerGps);
+    	}
     }
 }

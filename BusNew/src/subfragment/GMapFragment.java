@@ -54,8 +54,8 @@ public class GMapFragment extends Fragment implements CallFragmentMethod, Loader
 	private LinearLayout loadingLayout;
 	private double radius;
 	private Circle circle;
+	private MyLocation myLocation;
 	private boolean isGoogleServiceInstalled;
-	private ViewStub googleFail;
 
 	@Override
 	public void onAttach(Activity activity) {
@@ -70,20 +70,23 @@ public class GMapFragment extends Fragment implements CallFragmentMethod, Loader
 		density = context.getResources().getDisplayMetrics().density;
 
 		View view = inflater.inflate(R.layout.fragment_gmap_layout, null);
-		googleFail = (ViewStub) view.findViewById(R.id.viewstub_gmap_google_fail);
+		
 		loadingLayout = (LinearLayout) view.findViewById(R.id.layout_map_loading);
+		
+		if(!(isGoogleServiceInstalled = actionMap.checkGoogleService())){
+			View googleFail = ((ViewStub) view.findViewById(R.id.viewstub_gmap_google_fail)).inflate();
+			actionMap.setGoogleFailLayout(googleFail);
+		}
+		
 		return view;
 	}
 
 	@Override
 	public void onResume() {
 		super.onResume();
-		if (actionMap.checkGoogleService()) {
+		if (isGoogleServiceInstalled) {
 			setupMapIfNeeded();
-			isGoogleServiceInstalled = true;
-		} else {
-			isGoogleServiceInstalled = false;
-		}
+		} 
 	}
 
 	// 맵 세팅
@@ -139,10 +142,8 @@ public class GMapFragment extends Fragment implements CallFragmentMethod, Loader
 					}
 				}
 			};
-			MyLocation myLocation = new MyLocation();
+			myLocation = new MyLocation();
 			myLocation.getLocation(context, locationResult, new Handler());
-		} else {
-			actionMap.setGoogleFailLayout(googleFail.inflate());
 		}
 	}
 
@@ -216,6 +217,13 @@ public class GMapFragment extends Fragment implements CallFragmentMethod, Loader
 	@Override
 	public void onClear() {
 		// TODO Auto-generated method stub
-
+	}
+	
+	@Override
+	public void onPause() {
+		super.onPause();
+		if(myLocation != null)
+			myLocation.cancle();
+		
 	}
 }

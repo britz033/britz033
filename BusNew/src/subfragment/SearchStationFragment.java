@@ -71,6 +71,7 @@ public class SearchStationFragment extends ListFragment implements LoaderCallbac
 	private GoogleMap map;
 	private View view;
 	private ActionMap actionMap;
+	private boolean isGoogleServiceInstalled;
 
 	@Override
 	public void onAttach(Activity activity) {
@@ -90,6 +91,11 @@ public class SearchStationFragment extends ListFragment implements LoaderCallbac
 		mapContainer.setInAnimation((Animation) AnimationUtils.loadAnimation(context, R.animator.in_ani));
 		Button btn = (Button) view.findViewById(R.id.btn_search_station_widesearch);
 		btn.setOnClickListener(this);
+		
+		if (!(isGoogleServiceInstalled = actionMap.checkGoogleService())){
+			View msgView = ((ViewStub)view.findViewById(R.id.viewstub_search_station_map_fail)).inflate();
+			actionMap.setGoogleFailLayout(msgView);
+		}
 
 		return view;
 	}
@@ -107,11 +113,8 @@ public class SearchStationFragment extends ListFragment implements LoaderCallbac
 	@Override
 	public void onResume() {
 		super.onResume();
-		if (actionMap.checkGoogleService())
+		if (isGoogleServiceInstalled)
 			setupMapIfNeeded();
-		else {
-			
-		}
 	}
 
 	private void setupMapIfNeeded() {
@@ -171,10 +174,7 @@ public class SearchStationFragment extends ListFragment implements LoaderCallbac
 					.icon(BitmapDescriptorFactory.defaultMarker(120));
 			map.addMarker(options).showInfoWindow();
 			map.animateCamera(CameraUpdateFactory.newLatLngZoom(stationPosition, ActionMap.ZOOM_IN));
-		} else {
-			View msgView = ((ViewStub)view.findViewById(R.id.viewstub_search_station_map_fail)).inflate();
-			actionMap.setGoogleFailLayout(msgView);
-		}
+		} 
 	}
 
 	public class DropDownAnim extends Animation {
