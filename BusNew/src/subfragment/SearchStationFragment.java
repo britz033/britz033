@@ -153,6 +153,7 @@ public class SearchStationFragment extends ListFragment implements
 	@Override
 	public void onResume() {
 		super.onResume();
+		view.removeView(slidingBusListView);
 		isMarkerClick = false;
 		if (isGoogleServiceInstalled)
 			setupMapIfNeeded();
@@ -514,8 +515,7 @@ public class SearchStationFragment extends ListFragment implements
 
 	@Override
 	public void onClear() {
-		Toast.makeText(context, "onClear 불려짐", 0).show();
-		view.removeView(slidingBusListView);
+		view.removeView(slidingBusListView);	// 만약 탭을 2단계 이상 즉시 이동할 경우 removeView는 동작치 않음
 	}
 
 	@Override

@@ -101,7 +101,7 @@ public class StationSearchListCursorAdapter extends CursorAdapter implements OnT
         }
         bindView(v, mContext, mCursor);
         
-        if(lastAnimatedPosition <= position){
+        if(lastAnimatedPosition < position){
         	Animator a = new ObjectAnimator().ofFloat(v,"alpha",0,1);
     		a.setDuration(1000);
     		a.start();
