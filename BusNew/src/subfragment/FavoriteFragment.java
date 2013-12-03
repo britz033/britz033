@@ -39,10 +39,17 @@ import com.zoeas.qdeagubus.R;
 
 /* 뷰페이저에 있는 미리 저장된 즐겨찾기중 하나를 선택하면
  * 그것을 전광판에 뿌림. 시작시는 가장 처음것(이후 다시 수정)을 뿌림
+ * 
+ * 전광판과 번호+옵션이 일치하면 그대로 뿌리고 
+ * 일치하지 않을 경우 번호만 취해서 
+ * 버스검색으로 날려버림
+ * 
+ * 버스즐겨찾기의 경우 
+ * 대표즐겨찾기 (그 번호의 모든 방면)
+ * 상세즐겨찾기
  */
 
-public class FavoriteFragment extends Fragment implements ResponseTask,
-		LoaderCallbacks<Cursor>, OnBackAction {
+public class FavoriteFragment extends Fragment implements ResponseTask, LoaderCallbacks<Cursor>, OnBackAction {
 
 	public static final String KEY_BUSINFO_LIST = "buslist";
 	public static final String KEY_STATION_NAME = "station";
@@ -72,13 +79,11 @@ public class FavoriteFragment extends Fragment implements ResponseTask,
 	}
 
 	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container,
-			Bundle savedInstanceState) {
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		data = new Bundle(); // 걍 데이터 재사용 번들
-		view = inflater.inflate(R.layout.fragment_favorite_layout, null);
+		view = inflater.inflate(R.layout.fragment_favorite_layout, container,false);
 		getLoaderManager().initLoader(0, null, this);
-		loadingContainer = (RelativeLayout) view
-				.findViewById(R.id.layout_favorite_buslist_loadingcontainer);
+		loadingContainer = (RelativeLayout) view.findViewById(R.id.layout_favorite_buslist_loadingcontainer);
 		Button btn = (Button) view.findViewById(R.id.btn_testreflash);
 		btn.setOnClickListener(new OnClickListener() {
 
@@ -89,9 +94,10 @@ public class FavoriteFragment extends Fragment implements ResponseTask,
 			}
 		});
 		loopIndex = 0;
+		Log.d("컨테이너크기", container.toString());
 
 		viewPagerSetting(view);
-
+		
 		return view;
 	}
 
@@ -102,18 +108,15 @@ public class FavoriteFragment extends Fragment implements ResponseTask,
 		float density = context.getResources().getDisplayMetrics().density;
 		int dip = (int) (density * 30);
 
-		PagerTitleStrip titlepager = (PagerTitleStrip) view
-				.findViewById(R.id.pager_title_strip);
+		PagerTitleStrip titlepager = (PagerTitleStrip) view.findViewById(R.id.pager_title_strip);
 		titlepager.setTextSpacing(dip);
 
 		adapter = new FavoritePreviewPagerAdatper(context, null);
 		pager = (ViewPager) view.findViewById(R.id.viewpager_favorite);
 		pager.setAdapter(adapter);
 
-		final ViewPager dummy = (ViewPager) view
-				.findViewById(R.id.viewpager_favorite_preview_dummy);
-		FavoriteDummyPagerAdapter dummyAdapter = new FavoriteDummyPagerAdapter(
-				adapter, context);
+		final ViewPager dummy = (ViewPager) view.findViewById(R.id.viewpager_favorite_preview_dummy);
+		FavoriteDummyPagerAdapter dummyAdapter = new FavoriteDummyPagerAdapter(adapter, context);
 		dummy.setAdapter(dummyAdapter);
 		dummy.setOffscreenPageLimit(7);
 		dummy.setOnTouchListener(new OnTouchListener() {
@@ -138,8 +141,7 @@ public class FavoriteFragment extends Fragment implements ResponseTask,
 				dummy.setCurrentItem(position, true);
 			}
 
-			public void onPageScrolled(int position, float offset,
-					int positionOffsetPixels) {
+			public void onPageScrolled(int position, float offset, int positionOffsetPixels) {
 				// dummy.scrollTo((int)offset, 0);
 				// currentPos = arg0;
 			}
@@ -218,14 +220,16 @@ public class FavoriteFragment extends Fragment implements ResponseTask,
 			stationName = cursor.getString(1);
 			stationPass = cursor.getString(2);
 		} else {
-			new AlertDialog.Builder(context).setTitle("정보 갱신에 문제가 있습니다")
-					.setIcon(android.R.drawable.ic_dialog_alert).create()
-					.show();
+			new AlertDialog.Builder(context).setTitle("정보 갱신에 문제가 있습니다").setIcon(android.R.drawable.ic_dialog_alert)
+					.create().show();
 		}
+
 		// 모든 버스 id는 10자리 쉼표포함해서 11자리, 마지막은 쉼표가 없으니 + 1, 해서 모든 버스id에서 버스정보를 추출한다
 		if (stationPass.length() != 0) {
 			passBus = stationPass.split(",");
 			busCount = (stationPass.length() + 1) / 11;
+
+			Log.d("즐겨찾기", "버스숫자" + busCount);
 			busNum = new String[busCount];
 			busFavorite = new Integer[busCount];
 
@@ -240,7 +244,7 @@ public class FavoriteFragment extends Fragment implements ResponseTask,
 	// 즐겨찾기 미리보기를 할 즐겨찾기된 스테이션을 모두 검색, 이름,번호, 그리고 등록된 버스들
 	@Override
 	public Loader<Cursor> onCreateLoader(int id, Bundle data) {
-//		Log.d("즐겨찾기 미리보기", "로더생성");
+		// Log.d("즐겨찾기 미리보기", "로더생성");
 		Uri uri = null;
 		String[] projection = null;
 		String selection = null;
@@ -249,25 +253,20 @@ public class FavoriteFragment extends Fragment implements ResponseTask,
 		switch (id) {
 		case 0:
 			uri = MyContentProvider.CONTENT_URI_STATION;
-			projection = new String[] { MyContentProvider.STATION_NUMBER,
-					MyContentProvider.STATION_NAME,
+			projection = new String[] { MyContentProvider.STATION_NUMBER, MyContentProvider.STATION_NAME,
 					MyContentProvider.STATION_PASS };
 			selection = MyContentProvider.STATION_FAVORITE + "=?";
 			selectionArgs = new String[] { "1" };
 			break;
 		case 1:
 			uri = MyContentProvider.CONTENT_URI_BUS;
-			projection = new String[] { MyContentProvider.BUS_NUMBER,
-					MyContentProvider.BUS_FAVORITE };
-			selection = MyContentProvider.BUS_ID + "="
-					+ data.getString(KEY_STATION_PASS);
+			projection = new String[] { MyContentProvider.BUS_NUMBER, MyContentProvider.BUS_FAVORITE };
+			selection = MyContentProvider.BUS_ID + "=" + data.getString(KEY_STATION_PASS);
 			break;
 		}
 
-		return new CursorLoader(context, uri, projection, selection,
-				selectionArgs, null);
+		return new CursorLoader(context, uri, projection, selection, selectionArgs, null);
 	}
-
 
 	// 검색이 끝나면 settingInfo에서 찾은 정보를 세팅하고 그것들을 showInfo에서 보여줌
 	@Override
@@ -292,14 +291,24 @@ public class FavoriteFragment extends Fragment implements ResponseTask,
 			 * restartLoader를 단번에 같은 id로 여러개를 호출하면 무한로딩에 들어감..;;
 			 */
 			// 결국.. 쿼리가 끝나면 하나 다시 restart 하고 하는 수밖에..ㅠㅠ;;
-			if (loopIndex < busCount) {
-				cursor.moveToFirst();
-				busNum[loopIndex] = cursor.getString(0);
-				Log.d("즐겨찾기", "버스id:"+passBus[loopIndex]);
-				Log.d("즐겨찾기", "버스번호:"+busNum[loopIndex]);
-				busFavorite[loopIndex] = cursor.getInt(1);
-				data.putString(KEY_STATION_PASS, passBus[loopIndex]);
+			
+			// 버스번호가 신세계가 검색이 안될때는 건너뜀
+			// 현재 한개가 덜 들어옴.. 이후 수정!!!!!!!!!!!!!!!!!!!!!!!!!
+			if (loopIndex + 1 < busCount) {
+				if (cursor.getCount() != 0) {
+					cursor.moveToFirst();
+					busNum[loopIndex] = cursor.getString(0);
+					busFavorite[loopIndex] = cursor.getInt(1);
+					Log.d("즐겨찾기",busNum[loopIndex]);
+				} else {
+					busNum[loopIndex] = null;
+					busFavorite[loopIndex] = 0;
+				}
+				
+				
+
 				loopIndex++;
+				data.putString(KEY_STATION_PASS, passBus[loopIndex]);
 				getLoaderManager().restartLoader(1, data, this);
 			} else {
 				showInfo(stationNum);

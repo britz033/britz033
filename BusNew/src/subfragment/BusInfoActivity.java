@@ -5,6 +5,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import util.ActionMap;
+import util.ActionMap.OnActionInfoWindowClickListener;
 import util.Switch;
 import adapter.PathPagerAdapter;
 import android.app.AlertDialog;
@@ -39,6 +40,7 @@ import android.widget.TextView;
 
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.zoeas.qdeagubus.MyContentProvider;
 import com.zoeas.qdeagubus.R;
 
@@ -49,7 +51,7 @@ import com.zoeas.qdeagubus.R;
  */
 
 public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks<Cursor>, OnPageChangeListener,
-		OnClickListener {
+		OnClickListener, OnActionInfoWindowClickListener<Integer> {
 
 	public static final String KEY_BUS_INFO = "BUSNUM";
 	public static final String KEY_CURRENT_STATION_NAME = "STATION";
@@ -61,15 +63,18 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 	private ArrayList<String> pathDirection;
 	private ArrayList<String> pathForward;
 	private ArrayList<String> pathBackward;
+	private int[] stationIdDirection;
+	private int[] stationIdForward;
+	private int[] stationIdBackward;
 	private Cursor mcursor;
 	private int busDirection;
 	private int currentDirection;
 	private int loopIndex;
 	private int saveIndex;
 	private int prePosition;
-	private ActionMap actionMapDirection;
-	private ActionMap actionMapForward;
-	private ActionMap actionMapBackward;
+	private ActionMap<Integer> actionMapDirection;
+	private ActionMap<Integer> actionMapForward;
+	private ActionMap<Integer> actionMapBackward;
 	private String currentStationName;
 	private boolean userControlAllowed;
 	private Switch pathSwitchWidget;
@@ -82,8 +87,10 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_businfo);
-		actionMapForward = new ActionMap(this);
-		actionMapBackward = new ActionMap(this);
+		actionMapForward = new ActionMap<Integer>(this);
+		actionMapBackward = new ActionMap<Integer>(this);
+		actionMapForward.setOnActionInfoWindowClickListener(this);
+		actionMapBackward.setOnActionInfoWindowClickListener(this);
 		pathForward = new ArrayList<String>();
 		pathBackward = new ArrayList<String>();
 		loopIndex = 0;
@@ -209,6 +216,10 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 				station = matcherBackward.group(1).replace(" ()", "");
 				pathBackward.add(station);
 			}
+			
+			// 마커의 스테이션 정보를 가져오는데 필요한 id
+			stationIdForward = new int[pathForward.size()];
+			stationIdBackward = new int[pathBackward.size()];
 
 			TextView textBusInterval = (TextView) findViewById(R.id.text_activity_businfo_current);
 			textBusInterval.setText(busInterval);
@@ -234,6 +245,7 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 					BusInfoPathItemFragment.class);
 			pathDirection = pathForward;
 			actionMapDirection = actionMapForward;
+			stationIdDirection = stationIdForward;
 			break;
 
 		case BACKWARD:
@@ -241,6 +253,7 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 					BusInfoPathItemFragment.class);
 			pathDirection = pathBackward;
 			actionMapDirection = actionMapBackward;
+			stationIdDirection = stationIdBackward;
 			break;
 		}
 		pathPager.setAdapter(adapter);
@@ -313,6 +326,7 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 				// 상태
 				cursor.moveToNext();
 				LatLng latLng = new LatLng(cursor.getDouble(2), cursor.getDouble(3));
+				stationIdDirection[loopIndex - 1] = cursor.getInt(0);
 				actionMapDirection.addLinePoint(latLng);
 				// actionMap.addMarker(cursor.getString(1), latLng,
 				// R.drawable.station_point);
@@ -346,7 +360,7 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 	private void finishLoading() {
 		currentDirection = busDirection;
 		showInfo();
-		actionMapDirection.addMarkerAndShow(saveIndex, pathDirection.get(saveIndex));
+		actionMapDirection.addMarkerAndShow(saveIndex, pathDirection.get(saveIndex), stationIdDirection[1]);
 		prePosition = saveIndex;
 		pathPager.setCurrentItem(saveIndex);
 		if (pathBackward.size() != 0) {
@@ -389,14 +403,13 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 		final int NOMAL_SELECTED = 1;
 		int positionEnd = pathDirection.size() - 1;
 
-		Log.d("에러검출-------------", "위치인덱스" + position);
 		// 주의점 : 종점에 갔을때 다시한번 밀면 position이 보이지 않는 놈의 번호로 바뀌는 경우가 있음. 이때 인덱스 오버해서
 		// 에러가 남 그것을 방지
 		position = (position >= pathDirection.size() ? position - 1 : position);
 		if (userControlAllowed) {
 			actionMapDirection.removeMarker();
 			actionMapDirection.aniMap(position);
-			actionMapDirection.addMarkerAndShow(position, pathDirection.get(position));
+			actionMapDirection.addMarkerAndShow(position, pathDirection.get(position), stationIdDirection[position]);
 		}
 
 		// 첫로딩시 가져오면 에러가 남.. instantiateItem 쪽 개념때문인듯. 이거 어떻게든 해야되는데..
@@ -473,8 +486,7 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 					if (event.getAction() == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER) {
 						StringBuilder sb = new StringBuilder();
 						for (int i = 0; i < saveSearchPoint.length; i++) {
-							actionMapDirection.addMarkerAndShow(saveSearchPoint[i],
-									pathDirection.get(saveSearchPoint[i]));
+							actionMapDirection.addMarkerAndShow(saveSearchPoint[i],pathDirection.get(saveSearchPoint[i]),stationIdDirection[i]);
 						}
 						// new
 						// AlertDialog.Builder(BusInfoActivity.this).setTitle(sb.toString()).create().show();
@@ -485,7 +497,13 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 			});
 			break;
 		}
+	}
 
+
+	@Override
+	public void onInfoWindowClick(Marker marker, Integer markerAdditionalinfo) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

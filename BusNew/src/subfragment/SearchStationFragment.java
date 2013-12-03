@@ -2,12 +2,15 @@ package subfragment;
 
 import subfragment.CustomMapFragment.OnMapReadyListener;
 import util.ActionMap;
+import util.ActionMap.OnActionInfoWindowClickListener;
 import util.AnimationRelativeLayout;
+import util.LoopQuery;
+import adapter.SlidingMenuAdapter;
 import adapter.StationSearchListCursorAdapter;
 import android.app.Activity;
-import android.app.PendingIntent.CanceledException;
 import android.content.Context;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
@@ -32,27 +35,36 @@ import android.view.animation.Transformation;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
+import android.widget.FrameLayout.LayoutParams;
 import android.widget.ListView;
-import android.widget.TextView;
 
-import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.nineoldandroids.animation.Animator;
+import com.nineoldandroids.animation.Animator.AnimatorListener;
+import com.nineoldandroids.animation.ObjectAnimator;
+import com.zoeas.qdeagubus.MainActivity;
 import com.zoeas.qdeagubus.MainActivity.OnBackAction;
 import com.zoeas.qdeagubus.MyContentProvider;
 import com.zoeas.qdeagubus.R;
 
 public class SearchStationFragment extends ListFragment implements LoaderCallbacks<Cursor>, OnKeyListener,
-		OnMapReadyListener, OnClickListener, OnBackAction {
+		OnMapReadyListener, OnClickListener, OnBackAction, OnActionInfoWindowClickListener<Integer> {
 
 	public static final String TAG_STATION_MAP = "stationMap";
 	public static final String KEY_SERARCH = "station";
+	public static final String KEY_STATION_ID = "stationID";
 	public static final String KEY_WIDE_LATITUDE = "wideLatitude";
 	public static final String KEY_WIDE_LONGITUDE = "wideLongitude";
+	public static final String KEY_BUS_ID = "BUSID";
+
 	public static final int SEARCH_STATION = 0;
 	public static final int SEARCH_WIDE = 1;
+	public static final int SEARCH_STATION_PASSBUS = 2;
 
 	// "_id", "station_number", "station_name", "station_longitude",
 	// "station_latitude", "station_favorite"
@@ -64,15 +76,15 @@ public class SearchStationFragment extends ListFragment implements LoaderCallbac
 	public static final int STATION_FAVORITE_INDEX = 5;
 
 	private StationSearchListCursorAdapter madapter;
+	private ListView slidingBusListView;
+	private LoopQuery<String> busNumloopQuery;
 	private EditText et;
 	private Context context;
 	private AnimationRelativeLayout mapContainer;
 	private InputMethodManager imm;
-	private GoogleMap map;
-	private View view;
-	private ActionMap actionMap;
+	private FrameLayout view;
+	private ActionMap<Integer> actionMap;
 	private boolean isGoogleServiceInstalled;
-	private int currentCursorId;
 
 	@Override
 	public void onAttach(Activity activity) {
@@ -83,31 +95,31 @@ public class SearchStationFragment extends ListFragment implements LoaderCallbac
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		view = inflater.inflate(R.layout.fragment_search_station_layout, null);
+		view = (FrameLayout) inflater.inflate(R.layout.fragment_search_station_layout, null);
 		et = (EditText) view.findViewById(R.id.edit_search_sub2fragment);
 		et.addTextChangedListener(new MyWatcher());
 		et.setOnKeyListener(this);
 		et.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				if(mapContainer != null)
+				if (mapContainer != null)
 					mapContainer.hide();
-				if(map != null)
-					map.clear();
+				if (actionMap.isMap())
+					actionMap.clearMap();
 				Bundle search = new Bundle();
 				search.putString(KEY_SERARCH, et.getText().toString());
 				getLoaderManager().restartLoader(SEARCH_STATION, search, SearchStationFragment.this);
-				
 			}
 		});
-		actionMap = new ActionMap(context);
+		actionMap = new ActionMap<Integer>(context);
+		actionMap.setOnActionInfoWindowClickListener(this);
 		mapContainer = (AnimationRelativeLayout) view.findViewById(R.id.layout_search_station_map_container);
 		mapContainer.setInAnimation((Animation) AnimationUtils.loadAnimation(context, R.animator.in_ani));
 		Button btn = (Button) view.findViewById(R.id.btn_search_station_widesearch);
 		btn.setOnClickListener(this);
-		
-		if (!(isGoogleServiceInstalled = actionMap.checkGoogleService())){
-			View msgView = ((ViewStub)view.findViewById(R.id.viewstub_search_station_map_fail)).inflate();
+
+		if (!(isGoogleServiceInstalled = actionMap.checkGoogleService())) {
+			View msgView = ((ViewStub) view.findViewById(R.id.viewstub_search_station_map_fail)).inflate();
 			actionMap.setGoogleFailLayout(msgView);
 		}
 
@@ -132,7 +144,7 @@ public class SearchStationFragment extends ListFragment implements LoaderCallbac
 	}
 
 	private void setupMapIfNeeded() {
-		if (map == null) {
+		if (!actionMap.isMap()) {
 			FragmentManager fm = getChildFragmentManager();
 			CustomMapFragment mapFragment = (CustomMapFragment) fm.findFragmentByTag(TAG_STATION_MAP);
 			if (mapFragment == null) {
@@ -147,8 +159,8 @@ public class SearchStationFragment extends ListFragment implements LoaderCallbac
 	// 맵이 준비되면 자동호출
 	@Override
 	public void OnMapReady(GoogleMap map) {
-		this.map = map;
-		this.map.moveCamera(CameraUpdateFactory.newLatLngZoom(ActionMap.DEAGU_LATLNG, ActionMap.ZOOM_OUT));
+		actionMap.setMap(map);
+		actionMap.moveMap(ActionMap.DEAGU_LATLNG);
 	}
 
 	// boolean flag = true;
@@ -159,6 +171,7 @@ public class SearchStationFragment extends ListFragment implements LoaderCallbac
 		Cursor c = madapter.getCursor();
 		c.moveToPosition(position);
 
+		int stationId = c.getInt(STATION_ID_INDEX);
 		String stationNumber = c.getString(STATION_NUMBER_INDEX);
 		String stationName = c.getString(STATION_NAME_INDEX);
 		double stationLongitude = c.getDouble(STATION_LONGITUDE_INDEX);
@@ -181,14 +194,14 @@ public class SearchStationFragment extends ListFragment implements LoaderCallbac
 		// flag = true;
 		// }
 
-		if (map != null) {
+		if (actionMap.isMap()) {
 			mapContainer.show();
 
 			MarkerOptions options = new MarkerOptions().position(stationPosition).title(stationName)
 					.icon(BitmapDescriptorFactory.defaultMarker(120));
-			map.addMarker(options).showInfoWindow();
-			map.animateCamera(CameraUpdateFactory.newLatLngZoom(stationPosition, ActionMap.ZOOM_IN));
-		} 
+			actionMap.addMarkerAndShow(options, stationId);
+			actionMap.aniMap(stationPosition, ActionMap.ZOOM_IN);
+		}
 	}
 
 	public class DropDownAnim extends Animation {
@@ -284,10 +297,9 @@ public class SearchStationFragment extends ListFragment implements LoaderCallbac
 
 	@Override
 	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-		Log.d("정류장검색","로더 생성자 호출됨");
+		Log.d("정류장검색", "로더 생성자 호출됨");
 		Uri baseUri = MyContentProvider.CONTENT_URI_STATION;
 
-		currentCursorId = id;
 		// 이것의 순서를 바꿔줄시 반드시 위의 상수인덱스 값도 변경해줘야함
 		String[] projection = { "_id", "station_number", "station_name", "station_longitude", "station_latitude",
 				"station_favorite" };
@@ -296,12 +308,14 @@ public class SearchStationFragment extends ListFragment implements LoaderCallbac
 		switch (id) {
 		// 커서어뎁터의 경우_id 안넣으면 에러 슈바
 		case SEARCH_STATION:
+			madapter.resetAnimatedPosition();
 			if (args != null) {
 				selection = "station_name like '%" + args.getString(KEY_SERARCH) + "%' OR station_number like '%"
 						+ args.getString(KEY_SERARCH) + "%'";
 			}
 			break;
 		case SEARCH_WIDE:
+			madapter.resetAnimatedPosition();
 			Log.d("정류소", "주변검색작동");
 			double latitude = args.getDouble(KEY_WIDE_LATITUDE);
 			double longitude = args.getDouble(KEY_WIDE_LONGITUDE);
@@ -317,6 +331,15 @@ public class SearchStationFragment extends ListFragment implements LoaderCallbac
 						+ "station_longitude BETWEEN " + minLongitude + " AND " + maxLongitude + ")";
 			}
 			break;
+		case SEARCH_STATION_PASSBUS:
+			projection = new String[] { "_id", "station_pass" };
+			selection = "_id=" + args.getInt(KEY_STATION_ID);
+			break;
+		case LoopQuery.LOOP_QUERY:
+			baseUri = MyContentProvider.CONTENT_URI_BUS;
+			projection = new String[] { "_id", MyContentProvider.BUS_NUMBER, MyContentProvider.BUS_ID };
+			selection = "bus_id=" + busNumloopQuery.getBundleData();
+			break;
 		}
 
 		return new CursorLoader(getActivity(), baseUri, projection, selection, null, null);
@@ -324,22 +347,63 @@ public class SearchStationFragment extends ListFragment implements LoaderCallbac
 
 	@Override
 	public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
-		Log.d("정류장검색","로더 finish 호출됨");
 		// 앞서 생성된 커서를 받아옴
-		if(currentCursorId == loader.getId())
-			madapter.swapCursor(cursor);
 
-		if (loader.getId() == SEARCH_WIDE) {
+		switch (loader.getId()) {
+		case SEARCH_STATION:
+			madapter.swapCursor(cursor);
+			break;
+		case SEARCH_WIDE:
+			madapter.swapCursor(cursor);
 			cursor.moveToFirst();
 			for (int i = 0; i < cursor.getCount(); i++) {
 				LatLng position = new LatLng(cursor.getDouble(4), cursor.getDouble(3));
 				MarkerOptions options = new MarkerOptions().position(position).title(cursor.getString(2))
 						.snippet(cursor.getString(1));
-				map.addMarker(options);
+				actionMap.addMarker(options, cursor.getInt(0));
 				cursor.moveToNext();
 			}
-			map.animateCamera(CameraUpdateFactory.zoomTo(14));
+			actionMap.aniMap(null, ActionMap.ZOOM_NOMAL);
+			break;
+		case SEARCH_STATION_PASSBUS:
+			cursor.moveToFirst();
+			settingSlidingMenuQuery(cursor.getString(1));
+			break;
+		case LoopQuery.LOOP_QUERY:
+			if (cursor.getCount() != 0) { // 대구버스통계가 뭐 같아서.. 아직 만들지도 않은 버스를 미리
+											// 넣어놨을 경우 없다고 뜸 ㅡ,.ㅡ;;;
+				cursor.moveToFirst();
+				busNumloopQuery.addResultData(cursor.getString(1), cursor.getString(2)); // number,
+																							// id
+																							// 순서
+			}
+			if (!busNumloopQuery.isEnd()) {
+				busNumloopQuery.restart();
+			} else {
+				finishSlidingMenuQuery();
+			}
+			break;
 		}
+
+	}
+
+	private void settingSlidingMenuQuery(String passBusId) {
+		String[] arrayBusId = passBusId.split(",");
+
+		busNumloopQuery = new LoopQuery<String>(getLoaderManager(), arrayBusId, this);
+		busNumloopQuery.start();
+	}
+
+	private void finishSlidingMenuQuery() {
+		MainActivity.backAction.push();
+		slidingBusListView = new ListView(context);
+		slidingBusListView.setLayoutParams(new LayoutParams(300, LayoutParams.WRAP_CONTENT));
+		slidingBusListView.setAdapter(new SlidingMenuAdapter(context, busNumloopQuery.getResultData()));
+		slidingBusListView.setBackgroundColor(Color.argb(130, 255, 255, 255));
+		view.addView(slidingBusListView);
+		Animator ani = ObjectAnimator.ofFloat(slidingBusListView, "translationX", -300, 0);
+		ani.setDuration(300);
+		ani.start();
 	}
 
 	@Override
@@ -360,23 +424,52 @@ public class SearchStationFragment extends ListFragment implements LoaderCallbac
 	// 주변검색
 	@Override
 	public void onClick(View v) {
+		// 리스트 맨앞으로 돌림
+		getListView().setSelectionAfterHeaderView();
 		Bundle mapCenterCoordinate = new Bundle();
-		mapCenterCoordinate.putDouble(KEY_WIDE_LATITUDE, map.getCameraPosition().target.latitude);
-		mapCenterCoordinate.putDouble(KEY_WIDE_LONGITUDE, map.getCameraPosition().target.longitude);
-		map.clear();
+		LatLng centerLatLng = actionMap.getCenterOfMap();
+		mapCenterCoordinate.putDouble(KEY_WIDE_LATITUDE, centerLatLng.latitude);
+		mapCenterCoordinate.putDouble(KEY_WIDE_LONGITUDE, centerLatLng.longitude);
+		actionMap.clearMap();
 		getLoaderManager().restartLoader(SEARCH_WIDE, mapCenterCoordinate, this);
 	}
 
 	@Override
 	public void onBackPressed() {
-		// TODO Auto-generated method stub
-
+		Animator ani = ObjectAnimator.ofFloat(slidingBusListView, "translationX", 0, -300);
+		ani.setDuration(100);
+		
+		ani.addListener(new AnimatorListener() {
+			@Override
+			public void onAnimationStart(Animator animation) {
+			}
+			@Override
+			public void onAnimationRepeat(Animator animation) {
+			}
+			@Override
+			public void onAnimationEnd(Animator animation) {
+				view.removeView(slidingBusListView);
+			}
+			@Override
+			public void onAnimationCancel(Animator animation) {
+			}
+		});
+		ani.start();
+		
 	}
 
 	@Override
 	public void onClear() {
-		// TODO Auto-generated method stub
+		view.removeView(slidingBusListView);
+	}
 
+	@Override
+	public void onInfoWindowClick(Marker marker, Integer id) {
+		if (!MainActivity.backAction.isAlreadyPushed()) {
+			Bundle stationId = new Bundle();
+			stationId.putInt(KEY_STATION_ID, id);
+			getLoaderManager().restartLoader(SEARCH_STATION_PASSBUS, stationId, this);
+		}
 	}
 
 }

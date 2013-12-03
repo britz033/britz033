@@ -1,60 +1,67 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical" >
+    android:layout_height="match_parent" 
+    android:id="@+id/layout_fragment_search_station_root"
+    >
 
-    <EditText
-        android:id="@+id/edit_search_sub2fragment"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/edittext_back"
-        android:hint="역 이름을 적으세요"
-        android:textSize="20sp" />
+        android:layout_height="match_parent"
+        android:orientation="vertical" >
 
-    <util.AnimationRelativeLayout
-        android:id="@+id/layout_search_station_map_container"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="3"
-        android:visibility="gone" >
-
-        <RelativeLayout
-            android:id="@+id/layout_search_station_map"
+        <EditText
+            android:id="@+id/edit_search_sub2fragment"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" >
-        </RelativeLayout>
-        
-        <Button
-            android:id="@+id/btn_search_station_widesearch"
-            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="주변검색"
-            android:textSize="12sp" />
-    </util.AnimationRelativeLayout>
-    
-<!--     inflate 되면 다른레이아웃으로 교체 그 레이아웃의 id를 override 해주는게 inflateid -->
-    <ViewStub 
-        android:id="@+id/viewstub_search_station_map_fail"
-        android:inflatedId="@+id/layout_google_fail"
-        android:layout="@layout/viewstub_google_fail"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        />
+            android:background="@drawable/edittext_back"
+            android:hint="역 이름을 적으세요"
+            android:textSize="20sp" />
 
-    <ListView
-        android:id="@id/android:list"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="3" />
+        <util.AnimationRelativeLayout
+            android:id="@+id/layout_search_station_map_container"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="3"
+            android:visibility="gone" >
 
-    <TextView
-        android:id="@id/android:empty"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_gravity="center"
-        android:layout_weight="3"
-        android:text="정류소명을 정확히 입력해주세요"
-        android:textSize="20sp" />
+            <RelativeLayout
+                android:id="@+id/layout_search_station_map"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" >
+            </RelativeLayout>
 
-</LinearLayout>
+            <Button
+                android:id="@+id/btn_search_station_widesearch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="주변검색"
+                android:textSize="12sp" />
+        </util.AnimationRelativeLayout>
+
+        <!-- inflate 되면 다른레이아웃으로 교체 그 레이아웃의 id를 override 해주는게 inflateid -->
+
+        <ViewStub
+            android:id="@+id/viewstub_search_station_map_fail"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inflatedId="@+id/layout_google_fail"
+            android:layout="@layout/viewstub_google_fail" />
+
+        <ListView
+            android:id="@id/android:list"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="3" />
+
+        <TextView
+            android:id="@id/android:empty"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_gravity="center"
+            android:layout_weight="3"
+            android:text="정류소명을 정확히 입력해주세요"
+            android:textSize="20sp" />
+    </LinearLayout>
+
+</FrameLayout>

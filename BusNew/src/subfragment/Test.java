@@ -21,6 +21,7 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.view.animation.BounceInterpolator;
 import android.view.animation.TranslateAnimation;
 import android.widget.Button;
@@ -37,6 +38,9 @@ import com.zoeas.qdeagubus.MainActivity;
 import com.zoeas.qdeagubus.MainActivity.OnBackAction;
 import com.zoeas.qdeagubus.R;
 
+/*
+ * 후에 지울때 애니메이션 관련은 공부를 위해서 보전
+ */
 public class Test extends Fragment implements OnBackAction {
 
 	private View view;
@@ -154,6 +158,15 @@ public class Test extends Fragment implements OnBackAction {
 		slideLayoutMenu.setVisibility(View.GONE);
 		first_flag = true;
 	}
+	
+	@Override
+	public Animation onCreateAnimation(int transit, boolean enter, int nextAnim) {
+		if(enter){
+			return AnimationUtils.loadAnimation(getActivity(), R.animator.slide_open);
+		} else {
+			return AnimationUtils.loadAnimation(getActivity(), R.animator.slide_close);
+		}
+	}
 }
 
 class CaptureTask extends AsyncTask<Void, Void, Bitmap> {
@@ -231,6 +244,6 @@ class CaptureTask extends AsyncTask<Void, Void, Bitmap> {
 		aniSet.start();
 	}
 	
-	
+   	
 
 }

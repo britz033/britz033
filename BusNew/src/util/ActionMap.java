@@ -1,6 +1,7 @@
 package util;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -9,9 +10,9 @@ import android.app.PendingIntent.CanceledException;
 import android.content.Context;
 import android.graphics.Color;
 import android.location.Location;
+import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.View;
-import android.view.ViewStub;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.TextView;
@@ -21,6 +22,7 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.Circle;
@@ -30,8 +32,12 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.zoeas.qdeagubus.R;
 
-public class ActionMap {
+public class ActionMap<MarkerInfo> implements OnInfoWindowClickListener{
 
+	public interface OnActionInfoWindowClickListener<MarkerInfo>{
+		public void onInfoWindowClick(Marker marker, MarkerInfo markerAdditionalinfo);
+	}
+	
 	// 한국좌표는 구글좌표 기준으로 북쪽 +, 오른쪽 +
 	public static final LatLng DEAGU_LATLNG = new LatLng(35.871942, 128.601122);
 	public static final int GOOGLE_SERVICE_REQUEST_CODE = 1001;
@@ -55,6 +61,8 @@ public class ActionMap {
 	private ArrayList<LatLng> latLngList;
 	private Marker preMarker;
 	private MarkerOptions markerDefaultOptions;
+	private HashMap<Marker, MarkerInfo> markerAdditionalInfo;
+	private OnActionInfoWindowClickListener clicker;
 
 	public ActionMap(Context context) {
 		if (map == null)
@@ -77,6 +85,7 @@ public class ActionMap {
 		colorIndex = Color.HSVToColor(new float[] { 120, 1, 1 });
 		zIndex = 0;
 		latLngList = new ArrayList<LatLng>();
+		markerAdditionalInfo = new HashMap<Marker, MarkerInfo>();
 	}
 
 	public boolean checkGoogleService() {
@@ -114,6 +123,7 @@ public class ActionMap {
 
 	public void setMap(GoogleMap map) {
 		this.map = map;
+		this.map.setOnInfoWindowClickListener(this);
 		markerDefaultOptions = new MarkerOptions().icon(BitmapDescriptorFactory.defaultMarker(220));
 	}
 
@@ -160,40 +170,28 @@ public class ActionMap {
 	}
 
 	public void removeMarker() {
-		if (preMarker != null)
+		if (preMarker != null){
 			preMarker.remove();
+			markerAdditionalInfo.remove(preMarker);
+		}
 	}
 
-	public void addMarker(String title, LatLng latLng) {
+	public void addMarker(MarkerOptions options,MarkerInfo additionalInfo) {
+		if (map != null) {
+			preMarker = map.addMarker(options);
+			markerAdditionalInfo.put(preMarker, additionalInfo);
+		}
+	}
+	
+	public void addMarker(String title, LatLng latLng, MarkerInfo additionalInfo) {
 		if (map != null) {
 			markerDefaultOptions.title(title).position(latLng);
 			preMarker = map.addMarker(markerDefaultOptions);
+			markerAdditionalInfo.put(preMarker, additionalInfo);
 		}
 	}
 
-	public void addMarkerAndShow(String title, LatLng latLng) {
-		if (map != null) {
-			markerDefaultOptions.title(title).position(latLng);
-			preMarker = map.addMarker(markerDefaultOptions);
-			preMarker.showInfoWindow();
-		}
-	}
-
-	public void addMarkerAndShow(int position, String title) {
-		if (map != null) {
-			try {
-				LatLng latLng = latLngList.get(position);
-				markerDefaultOptions.title(title).position(latLng);
-				preMarker = map.addMarker(markerDefaultOptions);
-				preMarker.showInfoWindow();
-			} catch (Exception e) {
-				e.printStackTrace();
-				new AlertDialog.Builder(context).setTitle("맵 포인트로 이동중 문제가 발생하였습니다 죄송합니다").create().show();
-			}
-		}
-	}
-
-	public void addMarker(String title, LatLng latLng, int icon) {
+	public void addMarker(String title, LatLng latLng, int icon, MarkerInfo additionalInfo) {
 		if (map != null) {
 			markerDefaultOptions.title(title).position(latLng).icon(BitmapDescriptorFactory.fromResource(icon))
 					.anchor(0.5f, 0.5f);
@@ -201,18 +199,53 @@ public class ActionMap {
 		}
 	}
 
-	public void addMarker(String title, String contents, LatLng latLng) {
+	public void addMarker(String title, String contents, LatLng latLng, MarkerInfo additionalInfo) {
 		if (map != null) {
 			markerDefaultOptions.title(title).snippet(contents).position(latLng);
 			preMarker = map.addMarker(markerDefaultOptions);
+			markerAdditionalInfo.put(preMarker, additionalInfo);
 		}
 	}
 
-	public void addMarker(String title, String contents, LatLng latLng, int icon) {
+	public void addMarker(String title, String contents, LatLng latLng, int icon, MarkerInfo additionalInfo) {
 		if (map != null) {
 			markerDefaultOptions.title(title).snippet(contents).position(latLng)
 					.icon(BitmapDescriptorFactory.fromResource(icon));
 			preMarker = map.addMarker(markerDefaultOptions);
+			markerAdditionalInfo.put(preMarker, additionalInfo);
+		}
+	}
+	
+	public void addMarkerAndShow(MarkerOptions options, MarkerInfo additionalInfo) {
+		if (map != null) {
+			preMarker = map.addMarker(options);
+			preMarker.showInfoWindow();
+			markerAdditionalInfo.put(preMarker, additionalInfo);
+		}
+	}
+	
+	public void addMarkerAndShow(String title, LatLng latLng, MarkerInfo additionalInfo) {
+		if (map != null) {
+			markerDefaultOptions.title(title).position(latLng);
+			preMarker = map.addMarker(markerDefaultOptions);
+			preMarker.showInfoWindow();
+			markerAdditionalInfo.put(preMarker, additionalInfo);
+		}
+	}
+
+	public void addMarkerAndShow(int position, String title, MarkerInfo additionalInfo) {
+		if (map != null) {
+			try {
+				LatLng latLng = latLngList.get(position);
+				markerDefaultOptions.title(title).position(latLng);
+				preMarker = map.addMarker(markerDefaultOptions);
+				preMarker.showInfoWindow();
+				markerAdditionalInfo.put(preMarker, additionalInfo);
+			} catch (Exception e) {
+				e.printStackTrace();
+				new AlertDialog.Builder(context).setTitle("맵 포인트로 이동중 문제가 발생하였습니다 죄송합니다").create().show();
+			}
+			
 		}
 	}
 
@@ -236,7 +269,7 @@ public class ActionMap {
 				map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom));
 		}
 	}
-
+	
 	public void aniMap(int position) {
 		if (map != null) {
 			Log.d("사이즈", latLngList.size() + "");
@@ -251,6 +284,10 @@ public class ActionMap {
 				new AlertDialog.Builder(context).setTitle("맵 포인트로 이동중 문제가 발생하였습니다 죄송합니다").create().show();
 			}
 		}
+	}
+	
+	public LatLng getCenterOfMap(){
+		return map.getCameraPosition().target;
 	}
 
 	public static double latLngToMeter(double lat1, double lon1, double lat2, double lon2) { // generally
@@ -311,5 +348,20 @@ public class ActionMap {
 	public boolean isMap() {
 		return (map == null) ? false : true;
 	}
+
+	public void setOnActionInfoWindowClickListener(OnActionInfoWindowClickListener instance){
+		clicker = instance;
+	}
+	
+	// fragment가 있으면 그것을 기준으로 하고 없으면 activity라고 가정한다
+	@Override
+	public void onInfoWindowClick(Marker marker) {
+		MarkerInfo additionalInfo = markerAdditionalInfo.get(marker);
+		if(clicker != null)
+			clicker.onInfoWindowClick(marker, additionalInfo);
+		else
+			Log.e("액션맵", "마커클릭 리스너가 지정되어있지 않습니다");
+	}
+	
 
 }

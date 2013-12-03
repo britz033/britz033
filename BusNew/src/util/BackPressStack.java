@@ -17,6 +17,7 @@ import com.zoeas.qdeagubus.MainActivity;
  * 이 클래스가 구분해주는 것은 종료와 다른 동작이 있었다는 것뿐임. 
  * 그러므로 다른곳에서 3-4개 동작이 들어오면 그만큼 동작이 들어와 있다는 것만 알려주니
  * 순서처리등은 프래그먼트에서 개별적으로 해야함.
+ * 
  */
 public class BackPressStack {
 
@@ -66,6 +67,13 @@ public class BackPressStack {
 	public void init(){
 		backId.clear(); 
 		backId.addFirst(FINISH_READY);
+	}
+	
+	// 동작을 한번만으로 제한하고 싶을때 사용
+	public boolean isAlreadyPushed(){
+		if(backId.size() > 1)
+			return true;
+		return false;
 	}
 
 }

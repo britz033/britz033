@@ -13,11 +13,16 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
-import android.view.inputmethod.InputMethodManager;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageButton;
+import android.widget.ListView;
 import android.widget.TextView;
 
+import com.nineoldandroids.animation.Animator;
+import com.nineoldandroids.animation.ObjectAnimator;
 import com.zoeas.qdeagubus.MyContentProvider;
 import com.zoeas.qdeagubus.R;
 
@@ -27,6 +32,7 @@ public class StationSearchListCursorAdapter extends CursorAdapter implements OnT
 	private Context mcontext;
 	private OnCommunicationActivity communication; // 즐겨찾기 되면 액티비티에 구현한 리스너가
 													// 자동호출
+	private int lastAnimatedPosition;
 
 	static class ViewHolder {
 		TextView tvNumber;
@@ -38,6 +44,7 @@ public class StationSearchListCursorAdapter extends CursorAdapter implements OnT
 		super(context, c, flags);
 		mcontext = context;
 		communication = (OnCommunicationActivity) mcontext;
+		lastAnimatedPosition = 0;
 	}
 
 	final OnClickListener listener = new OnClickListener() {
@@ -58,6 +65,7 @@ public class StationSearchListCursorAdapter extends CursorAdapter implements OnT
 			communication.OnFavoriteRefresh();
 		}
 	};
+	
 
 	// 즐겨찾기 변경
 	private void updateFavorite(int favorite, int id) {
@@ -76,6 +84,32 @@ public class StationSearchListCursorAdapter extends CursorAdapter implements OnT
 		mcontext.getContentResolver().update(singleUri, value, null, null);
 
 	}
+	
+	@Override
+	public View getView(int position, View convertView, ViewGroup parent) {
+        if (!mDataValid) {
+            throw new IllegalStateException("this should only be called when the cursor is valid");
+        }
+        if (!mCursor.moveToPosition(position)) {
+            throw new IllegalStateException("couldn't move cursor to position " + position);
+        }
+        View v;
+        if (convertView == null) {
+            v = newView(mContext, mCursor, parent);
+        } else {
+            v = convertView;
+        }
+        bindView(v, mContext, mCursor);
+        
+        if(lastAnimatedPosition <= position){
+        	Animator a = new ObjectAnimator().ofFloat(v,"alpha",0,1);
+    		a.setDuration(1000);
+    		a.start();
+    		lastAnimatedPosition = position;
+        }
+        
+        return v;
+    }
 
 	@Override
 	public void bindView(View view, Context context, Cursor cursor) {
@@ -95,7 +129,11 @@ public class StationSearchListCursorAdapter extends CursorAdapter implements OnT
 		// 현재 뿌려진 Cursor 상태에서 몇번째 위치인가를 반환한다.
 		holder.ibFavorite.setTag(Integer.valueOf(cursor.getPosition()));
 	}
-
+	
+	public void resetAnimatedPosition(){
+		lastAnimatedPosition = 0;
+	}
+	
 	@Override
 	public View newView(Context context, Cursor cursor, ViewGroup parent) {
 		LayoutInflater inflater = LayoutInflater.from(context);
@@ -118,4 +156,5 @@ public class StationSearchListCursorAdapter extends CursorAdapter implements OnT
 		imm.hideSoftInputFromWindow(v.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
 		return false;
 	}
+	
 }

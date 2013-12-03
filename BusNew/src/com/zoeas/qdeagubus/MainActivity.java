@@ -41,7 +41,6 @@ import com.google.android.gms.maps.model.LatLng;
 public class MainActivity extends ActionBarActivity implements TabListener, OnSaveBusStationInfoListener,
 		OnCommunicationActivity {
 
-	private boolean mflag = false; // 뒤로가기 버튼 두번으로 종료 플레그
 	private ArrayList<Fragment> flist; // 액티비티가 관리하는 애들
 
 	public interface CallFragmentMethod {
@@ -62,8 +61,8 @@ public class MainActivity extends ActionBarActivity implements TabListener, OnSa
 	public enum MyTabs {
 		FAVORITE(0, "즐겨찾기", "subfragment.FavoriteFragment"), STATION_LISTVIEW(1, "정류소",
 				"subfragment.SearchStationFragment"), BUS_LISTVIEW(2, "버스", "subfragment.SearchBusNumberFragment"), GMAP(
-				3, "주변맵", "subfragment.GMapFragment"), DUMMY(4, "설정", "subfragment.SettingFragment"), TEST(5, "test",
-				"subfragment.Test");
+				3, "주변맵", "subfragment.GMapFragment"), DUMMY(4, "설정", "subfragment.SettingFragment"), 
+				TEST(5, "test",	"subfragment.Test"), TEST2(6, "test2",	"subfragment.Test2") ;
 		private final String name;
 		private final String fragmentName;
 		private final int num;
@@ -232,7 +231,6 @@ public class MainActivity extends ActionBarActivity implements TabListener, OnSa
 		// TODO Auto-generated method stub
 
 	}
-
 
 	@Override
 	public void onBackPressed() {

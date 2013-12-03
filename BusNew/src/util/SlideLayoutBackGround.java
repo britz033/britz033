@@ -30,7 +30,7 @@ public class SlideLayoutBackGround extends LinearLayout{
 	private void init(){
 		mWidth = 0;
 		setOrientation(LinearLayout.VERTICAL);
-		LayoutInflater.from(context).inflate(R.layout.test_sliding, this, true);
+		LayoutInflater.from(context).inflate(R.layout.layout_sliding_background, this, true);
 	}
 	
 	@Override
