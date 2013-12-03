@@ -54,7 +54,6 @@ public class MainActivity extends ActionBarActivity implements TabListener, OnSa
 
 	public interface OnBackAction {
 		public void onBackPressed();
-
 		public void onClear();
 	}
 
@@ -149,8 +148,8 @@ public class MainActivity extends ActionBarActivity implements TabListener, OnSa
 			@Override
 			public void onPageSelected(int position) {
 				backAction.init();
-				subFragment = (OnBackAction) flist.get(position);
 				subFragment.onClear();
+				subFragment = (OnBackAction) flist.get(position);
 
 				getSupportActionBar().setSelectedNavigationItem(position);
 				if (MyTabs.GMAP.getValue() == position) {
@@ -172,6 +171,7 @@ public class MainActivity extends ActionBarActivity implements TabListener, OnSa
 
 			}
 		});
+		subFragment = (OnBackAction) flist.get(0);
 	}
 
 	private void actionBarSetting() {

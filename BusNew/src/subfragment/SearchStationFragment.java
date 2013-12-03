@@ -38,6 +38,7 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.FrameLayout.LayoutParams;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
@@ -460,8 +461,10 @@ public class SearchStationFragment extends ListFragment implements LoaderCallbac
 
 	@Override
 	public void onClear() {
+		Toast.makeText(context, "onClear 불려짐", 0).show();
 		view.removeView(slidingBusListView);
 	}
+	
 
 	@Override
 	public void onInfoWindowClick(Marker marker, Integer id) {
