@@ -22,6 +22,7 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.GoogleMap.InfoWindowAdapter;
 import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
@@ -32,12 +33,12 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.zoeas.qdeagubus.R;
 
-public class ActionMap<MarkerInfo> implements OnInfoWindowClickListener{
+public class ActionMap<MarkerInfo> implements OnInfoWindowClickListener {
 
-	public interface OnActionInfoWindowClickListener<MarkerInfo>{
+	public interface OnActionInfoWindowClickListener<MarkerInfo> {
 		public void onInfoWindowClick(Marker marker, MarkerInfo markerAdditionalinfo);
 	}
-	
+
 	// 한국좌표는 구글좌표 기준으로 북쪽 +, 오른쪽 +
 	public static final LatLng DEAGU_LATLNG = new LatLng(35.871942, 128.601122);
 	public static final int GOOGLE_SERVICE_REQUEST_CODE = 1001;
@@ -45,8 +46,10 @@ public class ActionMap<MarkerInfo> implements OnInfoWindowClickListener{
 	public static final int ZOOM_NOMAL = 14;
 	public static final int ZOOM_IN = 16;
 	public static final int ZOOM_OUT = 11;
-	
-	//에러처리 관련
+	public static final double ADJUST_INFO_CENTER_NOMAL = 0.0025d;
+	public static final double ADJUST_INFO_CENTER_IN = 0.0005d;
+
+	// 에러처리 관련
 	private String errorMsg;
 	private PendingIntent pendingIntent;
 	// private static final double CORRECT = 0.00062799; // 좌표 -> 미터 변환시
@@ -63,6 +66,7 @@ public class ActionMap<MarkerInfo> implements OnInfoWindowClickListener{
 	private MarkerOptions markerDefaultOptions;
 	private HashMap<Marker, MarkerInfo> markerAdditionalInfo;
 	private OnActionInfoWindowClickListener clicker;
+	private boolean defaultAdjust;
 
 	public ActionMap(Context context) {
 		if (map == null)
@@ -86,6 +90,7 @@ public class ActionMap<MarkerInfo> implements OnInfoWindowClickListener{
 		zIndex = 0;
 		latLngList = new ArrayList<LatLng>();
 		markerAdditionalInfo = new HashMap<Marker, MarkerInfo>();
+		defaultAdjust = true;
 	}
 
 	public boolean checkGoogleService() {
@@ -95,30 +100,32 @@ public class ActionMap<MarkerInfo> implements OnInfoWindowClickListener{
 			if (GooglePlayServicesUtil.isUserRecoverableError(resultCode)) {
 				Toast.makeText(context, "현재 구글맵 서비스가 설치되어 있지 않습니다", Toast.LENGTH_LONG).show();
 				errorMsg = GooglePlayServicesUtil.getErrorString(resultCode);
-				pendingIntent = GooglePlayServicesUtil.getErrorPendingIntent(resultCode, context, GOOGLE_SERVICE_REQUEST_CODE);
+				pendingIntent = GooglePlayServicesUtil.getErrorPendingIntent(resultCode, context,
+						GOOGLE_SERVICE_REQUEST_CODE);
 			} else {
 				((Activity) context).finish();
 			}
 			return false;
 		}
-		
+
 		// 초기화중에 map관련 변수가 있으면 Serivce가 없을땐 에러뜸 그리고 여기서도 뜨네..;;
-		
+
 		return true;
 	}
-	
-	public void setGoogleFailLayout(View msgView){
-		((TextView)msgView.findViewById(R.id.text_google_service_error_msg)).setText(errorMsg);
-		((Button)msgView.findViewById(R.id.btn_google_service_pendingintent)).setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				try {
-					pendingIntent.send(ActionMap.GOOGLE_SERVICE_REQUEST_CODE);
-				} catch (CanceledException e) {
-					e.printStackTrace();
-				}
-			}
-		});
+
+	public void setGoogleFailLayout(View msgView) {
+		((TextView) msgView.findViewById(R.id.text_google_service_error_msg)).setText(errorMsg);
+		((Button) msgView.findViewById(R.id.btn_google_service_pendingintent))
+				.setOnClickListener(new OnClickListener() {
+					@Override
+					public void onClick(View v) {
+						try {
+							pendingIntent.send(ActionMap.GOOGLE_SERVICE_REQUEST_CODE);
+						} catch (CanceledException e) {
+							e.printStackTrace();
+						}
+					}
+				});
 	}
 
 	public void setMap(GoogleMap map) {
@@ -170,70 +177,83 @@ public class ActionMap<MarkerInfo> implements OnInfoWindowClickListener{
 	}
 
 	public void removeMarker() {
-		if (preMarker != null){
+		if (preMarker != null) {
 			preMarker.remove();
 			markerAdditionalInfo.remove(preMarker);
 		}
 	}
 
-	public void addMarker(MarkerOptions options,MarkerInfo additionalInfo) {
+	public Marker addMarker(MarkerOptions options, MarkerInfo additionalInfo) {
 		if (map != null) {
 			preMarker = map.addMarker(options);
 			markerAdditionalInfo.put(preMarker, additionalInfo);
+			return preMarker;
 		}
+		return null;
 	}
-	
-	public void addMarker(String title, LatLng latLng, MarkerInfo additionalInfo) {
+
+	public Marker addMarker(String title, LatLng latLng, MarkerInfo additionalInfo) {
 		if (map != null) {
 			markerDefaultOptions.title(title).position(latLng);
 			preMarker = map.addMarker(markerDefaultOptions);
 			markerAdditionalInfo.put(preMarker, additionalInfo);
+			return preMarker;
 		}
+		return null;
 	}
 
-	public void addMarker(String title, LatLng latLng, int icon, MarkerInfo additionalInfo) {
+	public Marker addMarker(String title, LatLng latLng, int icon, MarkerInfo additionalInfo) {
 		if (map != null) {
 			markerDefaultOptions.title(title).position(latLng).icon(BitmapDescriptorFactory.fromResource(icon))
 					.anchor(0.5f, 0.5f);
 			preMarker = map.addMarker(markerDefaultOptions);
+			return preMarker;
 		}
+		return null;
 	}
 
-	public void addMarker(String title, String contents, LatLng latLng, MarkerInfo additionalInfo) {
+	public Marker addMarker(String title, String contents, LatLng latLng, MarkerInfo additionalInfo) {
 		if (map != null) {
-			markerDefaultOptions.title(title).snippet(contents).position(latLng);
 			preMarker = map.addMarker(markerDefaultOptions);
 			markerAdditionalInfo.put(preMarker, additionalInfo);
+			return preMarker;
 		}
+		return null;
 	}
 
-	public void addMarker(String title, String contents, LatLng latLng, int icon, MarkerInfo additionalInfo) {
+	public Marker addMarker(String title, String contents, LatLng latLng, int icon, MarkerInfo additionalInfo) {
 		if (map != null) {
 			markerDefaultOptions.title(title).snippet(contents).position(latLng)
 					.icon(BitmapDescriptorFactory.fromResource(icon));
 			preMarker = map.addMarker(markerDefaultOptions);
 			markerAdditionalInfo.put(preMarker, additionalInfo);
+			return preMarker;
 		}
+		return null;
 	}
-	
-	public void addMarkerAndShow(MarkerOptions options, MarkerInfo additionalInfo) {
+
+	public Marker addMarkerAndShow(MarkerOptions options, MarkerInfo additionalInfo) {
 		if (map != null) {
 			preMarker = map.addMarker(options);
 			preMarker.showInfoWindow();
 			markerAdditionalInfo.put(preMarker, additionalInfo);
+			return preMarker;
 		}
+		return null;
 	}
-	
-	public void addMarkerAndShow(String title, LatLng latLng, MarkerInfo additionalInfo) {
+
+	public Marker addMarkerAndShow(String title, LatLng latLng, MarkerInfo additionalInfo) {
 		if (map != null) {
 			markerDefaultOptions.title(title).position(latLng);
 			preMarker = map.addMarker(markerDefaultOptions);
 			preMarker.showInfoWindow();
 			markerAdditionalInfo.put(preMarker, additionalInfo);
+			return preMarker;
 		}
+		return null;
 	}
 
-	public void addMarkerAndShow(int position, String title, MarkerInfo additionalInfo) {
+	public Marker addMarkerAndShow(int position, String title, MarkerInfo additionalInfo) {
 		if (map != null) {
 			try {
 				LatLng latLng = latLngList.get(position);
@@ -245,8 +265,10 @@ public class ActionMap<MarkerInfo> implements OnInfoWindowClickListener{
 				e.printStackTrace();
 				new AlertDialog.Builder(context).setTitle("맵 포인트로 이동중 문제가 발생하였습니다 죄송합니다").create().show();
 			}
-			
+
+			return preMarker;
 		}
+		return null;
 	}
 
 	public void moveMap(LatLng position) {
@@ -257,7 +279,7 @@ public class ActionMap<MarkerInfo> implements OnInfoWindowClickListener{
 
 	public void aniMap(LatLng latLng) {
 		if (map != null) {
-			map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, ZOOM_OUT));
+			map.animateCamera(CameraUpdateFactory.newLatLngZoom(adjustDefault(latLng, ZOOM_OUT), ZOOM_OUT));
 		}
 	}
 
@@ -266,18 +288,41 @@ public class ActionMap<MarkerInfo> implements OnInfoWindowClickListener{
 			if (latLng == null)
 				map.animateCamera(CameraUpdateFactory.zoomTo(zoom));
 			else
-				map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom));
+				map.animateCamera(CameraUpdateFactory.newLatLngZoom(adjustDefault(latLng, zoom), zoom));
 		}
 	}
-	
+
+	public void setAdjustDefault(boolean adjust) {
+		defaultAdjust = adjust;
+	}
+
+	private LatLng adjustDefault(LatLng latLng, int zoom) {
+		if (defaultAdjust) {
+			switch(zoom){
+			case ZOOM_IN :
+				return new LatLng(latLng.latitude + ADJUST_INFO_CENTER_IN, latLng.longitude);
+			case ZOOM_NOMAL :
+				return new LatLng(latLng.latitude + ADJUST_INFO_CENTER_NOMAL, latLng.longitude);
+			case ZOOM_OUT :
+				return new LatLng(latLng.latitude + ADJUST_INFO_CENTER_NOMAL, latLng.longitude);
+			}
+			
+		}
+		return latLng;
+	}
+
+	public static LatLng adjustLatLng(LatLng latLng, double y, double x) {
+		return new LatLng(latLng.latitude + y, latLng.longitude + x);
+	}
+
 	public void aniMap(int position) {
 		if (map != null) {
 			Log.d("사이즈", latLngList.size() + "");
 			try {
 				LatLng latLng = latLngList.get(position);
-				latLng = new LatLng(latLng.latitude + 0.0025d, latLng.longitude);
 
-				CameraPosition cp = CameraPosition.builder().target(latLng).zoom(ZOOM_NOMAL).tilt(50).build();
+				CameraPosition cp = CameraPosition.builder().target(adjustDefault(latLng, ZOOM_NOMAL)).zoom(ZOOM_NOMAL)
+						.tilt(50).build();
 				map.animateCamera(CameraUpdateFactory.newCameraPosition(cp));
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -285,8 +330,8 @@ public class ActionMap<MarkerInfo> implements OnInfoWindowClickListener{
 			}
 		}
 	}
-	
-	public LatLng getCenterOfMap(){
+
+	public LatLng getCenterOfMap() {
 		return map.getCameraPosition().target;
 	}
 
@@ -349,19 +394,18 @@ public class ActionMap<MarkerInfo> implements OnInfoWindowClickListener{
 		return (map == null) ? false : true;
 	}
 
-	public void setOnActionInfoWindowClickListener(OnActionInfoWindowClickListener instance){
+	public void setOnActionInfoWindowClickListener(OnActionInfoWindowClickListener instance) {
 		clicker = instance;
 	}
-	
+
 	// fragment가 있으면 그것을 기준으로 하고 없으면 activity라고 가정한다
 	@Override
 	public void onInfoWindowClick(Marker marker) {
 		MarkerInfo additionalInfo = markerAdditionalInfo.get(marker);
-		if(clicker != null)
+		if (clicker != null)
 			clicker.onInfoWindowClick(marker, additionalInfo);
 		else
 			Log.e("액션맵", "마커클릭 리스너가 지정되어있지 않습니다");
 	}
-	
 
 }

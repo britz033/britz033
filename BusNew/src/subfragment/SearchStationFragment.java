@@ -1,5 +1,7 @@
 package subfragment;
 
+import java.util.ArrayList;
+
 import subfragment.CustomMapFragment.OnMapReadyListener;
 import util.ActionMap;
 import util.ActionMap.OnActionInfoWindowClickListener;
@@ -92,6 +94,7 @@ public class SearchStationFragment extends ListFragment implements LoaderCallbac
 	private boolean isGoogleServiceInstalled;
 	private boolean isFirst;
 	private int rowHeight;
+	private ArrayList<Marker> wideMarkerList;
 
 	@Override
 	public void onAttach(Activity activity) {
@@ -104,6 +107,7 @@ public class SearchStationFragment extends ListFragment implements LoaderCallbac
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		view = (FrameLayout) inflater.inflate(R.layout.fragment_search_station_layout, null);
 		isFirst = true;
+		wideMarkerList = new ArrayList<Marker>();
 		et = (EditText) view.findViewById(R.id.edit_search_sub2fragment);
 		et.addTextChangedListener(new MyWatcher());
 		et.setOnKeyListener(this);
@@ -370,11 +374,11 @@ public class SearchStationFragment extends ListFragment implements LoaderCallbac
 				madapter.swapCursor(cursor);
 				getListView().setItemChecked(0, true);
 				cursor.moveToFirst();
+				wideMarkerList.clear();
 				for (int i = 0; i < cursor.getCount(); i++) {
 					LatLng position = new LatLng(cursor.getDouble(4), cursor.getDouble(3));
-					MarkerOptions options = new MarkerOptions().position(position).title(cursor.getString(2))
-							.snippet(cursor.getString(1));
-					actionMap.addMarker(options, cursor.getInt(0));
+					MarkerOptions options = new MarkerOptions().position(position).title(cursor.getString(2));
+					wideMarkerList.add(actionMap.addMarker(options, cursor.getInt(0)));
 					cursor.moveToNext();
 				}
 				actionMap.aniMap(null, ActionMap.ZOOM_NOMAL);
@@ -509,6 +513,12 @@ public class SearchStationFragment extends ListFragment implements LoaderCallbac
 	public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
 		if (currentUpdatableId == SEARCH_WIDE) {
 			getListView().setItemChecked(firstVisibleItem, true);
+			if(wideMarkerList.size()!=0){
+				Marker selectInfo = wideMarkerList.get(firstVisibleItem);
+				selectInfo.showInfoWindow();
+				
+				actionMap.aniMap(selectInfo.getPosition() ,ActionMap.ZOOM_NOMAL);
+			}
 		}
 	}
 

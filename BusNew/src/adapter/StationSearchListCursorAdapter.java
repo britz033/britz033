@@ -173,10 +173,10 @@ public class StationSearchListCursorAdapter extends CursorAdapter {
 		holder.tvName = (TextView) view.findViewById(R.id.text_station_item_name);
 		holder.ibFavorite = (ImageButton) view.findViewById((R.id.btn_station_item_favorite));
 		holder.dummy = view.findViewById((R.id.dummy_station_item_favorite));
-		LayoutParams params = holder.dummy.getLayoutParams();
-		params.height = dummyHeight;
-		Log.d("New View 호출됨",""+dummyHeight);
-		holder.dummy.setLayoutParams(params);
+//		LayoutParams params = holder.dummy.getLayoutParams();
+//		params.height = dummyHeight;
+//		Log.d("New View 호출됨",""+dummyHeight);
+//		holder.dummy.setLayoutParams(params);
 		
 		view.setTag(holder);
 
