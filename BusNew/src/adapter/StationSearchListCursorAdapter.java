@@ -53,7 +53,7 @@ public class StationSearchListCursorAdapter extends CursorAdapter {
 	public void setDummyHeight(int height){
 		Log.d("아이템클릭 리사이즈","불려짐");
 		dummyHeight = height;
-		notifyDataSetChanged();
+//		notifyDataSetChanged();
 	}
 
 	@Override
