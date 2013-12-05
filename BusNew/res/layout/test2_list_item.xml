@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="10dp"
+    android:descendantFocusability="blocksDescendants"
+    android:background="@drawable/listview_selected"
+     >
+
+    <TextView
+        android:id="@+id/text_listitem_test2" 
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="default"
+        android:textSize="22sp"
+        />
+    <ImageButton 
+        android:id="@+id/btn_listitem_test2"
+        android:layout_alignParentRight="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/btn_station_list_item_off_selector"
+        android:background="#00ffffff"
+        android:focusable="false"
+        android:paddingRight="30dp"
+        />
+
+</RelativeLayout>
+

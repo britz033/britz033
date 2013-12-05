@@ -14,11 +14,10 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
+import android.view.ViewGroup.LayoutParams;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageButton;
-import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.nineoldandroids.animation.Animator;
@@ -27,16 +26,19 @@ import com.zoeas.qdeagubus.MyContentProvider;
 import com.zoeas.qdeagubus.R;
 
 //리스트뷰에 들어갈 어뎁터
-public class StationSearchListCursorAdapter extends CursorAdapter implements OnTouchListener {
+public class StationSearchListCursorAdapter extends CursorAdapter {
 
 	private Context mcontext;
 	private OnCommunicationActivity communication; // 즐겨찾기 되면 액티비티에 구현한 리스너가
 													// 자동호출
 	private int lastAnimatedPosition;
+	private int lastPosition;
+	private int dummyHeight;
 
 	static class ViewHolder {
 		TextView tvNumber;
 		TextView tvName;
+		View dummy;
 		ImageButton ibFavorite;
 	}
 
@@ -45,7 +47,23 @@ public class StationSearchListCursorAdapter extends CursorAdapter implements OnT
 		mcontext = context;
 		communication = (OnCommunicationActivity) mcontext;
 		lastAnimatedPosition = 0;
+		dummyHeight = 0;
 	}
+	
+	public void setDummyHeight(int height){
+		Log.d("아이템클릭 리사이즈","불려짐");
+		dummyHeight = height;
+		notifyDataSetChanged();
+	}
+
+	@Override
+	public Cursor swapCursor(Cursor newCursor) {
+		if(newCursor != null)
+			lastPosition = newCursor.getCount()-1;
+		return super.swapCursor(newCursor);
+	}
+
+
 
 	final OnClickListener listener = new OnClickListener() {
 		@Override
@@ -94,6 +112,7 @@ public class StationSearchListCursorAdapter extends CursorAdapter implements OnT
             throw new IllegalStateException("couldn't move cursor to position " + position);
         }
         View v;
+        
         if (convertView == null) {
             v = newView(mContext, mCursor, parent);
         } else {
@@ -107,6 +126,12 @@ public class StationSearchListCursorAdapter extends CursorAdapter implements OnT
     		a.start();
     		lastAnimatedPosition = position;
         }
+        Log.d("get View 호출됨",""+dummyHeight);
+        if(lastPosition == position){
+        	((ViewHolder)v.getTag()).dummy.setVisibility(View.VISIBLE);
+        } else {
+        	((ViewHolder)v.getTag()).dummy.setVisibility(View.GONE);
+        }
         
         return v;
     }
@@ -119,6 +144,10 @@ public class StationSearchListCursorAdapter extends CursorAdapter implements OnT
 		holder.ibFavorite.setOnClickListener(listener);
 		holder.tvNumber.setText(cursor.getString(SearchStationFragment.STATION_NUMBER_INDEX));
 		holder.tvName.setText(cursor.getString(SearchStationFragment.STATION_NAME_INDEX));
+		
+		LayoutParams params = holder.dummy.getLayoutParams();
+		params.height = dummyHeight;
+		holder.dummy.setLayoutParams(params);
 
 		if (cursor.getInt(SearchStationFragment.STATION_FAVORITE_INDEX) == 0) {
 			holder.ibFavorite.setImageResource(R.drawable.btn_station_list_item_off_selector);
@@ -137,24 +166,21 @@ public class StationSearchListCursorAdapter extends CursorAdapter implements OnT
 	@Override
 	public View newView(Context context, Cursor cursor, ViewGroup parent) {
 		LayoutInflater inflater = LayoutInflater.from(context);
-		View view = inflater.inflate(R.layout.list_favorite_station_item, null);
+		View view = inflater.inflate(R.layout.list_favorite_station_item, parent, false);
 
 		ViewHolder holder = new ViewHolder();
 		holder.tvNumber = (TextView) view.findViewById(R.id.text_station_item_number);
 		holder.tvName = (TextView) view.findViewById(R.id.text_station_item_name);
 		holder.ibFavorite = (ImageButton) view.findViewById((R.id.btn_station_item_favorite));
-
+		holder.dummy = view.findViewById((R.id.dummy_station_item_favorite));
+		LayoutParams params = holder.dummy.getLayoutParams();
+		params.height = dummyHeight;
+		Log.d("New View 호출됨",""+dummyHeight);
+		holder.dummy.setLayoutParams(params);
+		
 		view.setTag(holder);
 
 		return view;
-	}
-	
-	@Override
-	public boolean onTouch(View v, MotionEvent event) {
-		Log.d("정류장리스트터치","호출되었습니다");
-		InputMethodManager imm = (InputMethodManager) mcontext.getSystemService(Context.INPUT_METHOD_SERVICE);
-		imm.hideSoftInputFromWindow(v.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
-		return false;
 	}
 	
 }

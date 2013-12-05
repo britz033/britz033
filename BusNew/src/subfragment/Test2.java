@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -33,6 +34,12 @@ public class Test2 extends ListFragment implements OnBackAction, LoaderCallbacks
 		lq.start();
 		setListAdapter(new MyAdapter(getActivity()));
 		return inflater.inflate(R.layout.test2, container, false);
+	}
+	
+	@Override
+	public void onResume() {
+		super.onResume();
+		getListView().setItemChecked(3, true);
 	}
 
 	@Override
@@ -89,11 +96,14 @@ public class Test2 extends ListFragment implements OnBackAction, LoaderCallbacks
 		public View getView(int position, View convertView, ViewGroup parent) {
 			Animation ani = AnimationUtils.loadAnimation(getActivity(), R.animator.slide_open);
 			ani.setStartOffset(50 * position);
-			TextView tv = new TextView(context);
+			
+			View view = LayoutInflater.from(context).inflate(R.layout.test2_list_item, null);
+			
+			TextView tv = (TextView) view.findViewById(R.id.text_listitem_test2);
 			tv.setText("아야이야오ㅑㅐㅣㅇ");
 			tv.setTextSize(12 * density);
 			tv.startAnimation(ani);
-			return tv;
+			return view;
 		}
 
 	}
