@@ -130,7 +130,6 @@ public class ActionMap<MarkerInfo> implements OnInfoWindowClickListener {
 
 	public void setMap(GoogleMap map) {
 		this.map = map;
-		this.map.setOnInfoWindowClickListener(this);
 		markerDefaultOptions = new MarkerOptions().icon(BitmapDescriptorFactory.defaultMarker(220));
 	}
 
@@ -396,6 +395,7 @@ public class ActionMap<MarkerInfo> implements OnInfoWindowClickListener {
 
 	public void setOnActionInfoWindowClickListener(OnActionInfoWindowClickListener instance) {
 		clicker = instance;
+		map.setOnInfoWindowClickListener(this);
 	}
 
 	// fragment가 있으면 그것을 기준으로 하고 없으면 activity라고 가정한다

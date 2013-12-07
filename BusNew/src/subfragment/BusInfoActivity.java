@@ -95,8 +95,6 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 		setContentView(R.layout.activity_businfo);
 		actionMapForward = new ActionMap<Integer>(this);
 		actionMapBackward = new ActionMap<Integer>(this);
-		actionMapForward.setOnActionInfoWindowClickListener(this);
-		actionMapBackward.setOnActionInfoWindowClickListener(this);
 		passBusHash = new HashMap<Integer, String>();
 		pathForward = new ArrayList<String>();
 		pathBackward = new ArrayList<String>();
@@ -395,6 +393,7 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 
 	private void showInfo() {
 		settingSwitch(currentDirection);
+		actionMapDirection.setOnActionInfoWindowClickListener(this);
 		actionMapDirection.drawLine(getResources().getDisplayMetrics().density);
 	}
 

@@ -126,7 +126,6 @@ public class SearchStationFragment extends ListFragment implements LoaderCallbac
 			}
 		});
 		actionMap = new ActionMap<Integer>(context);
-		actionMap.setOnActionInfoWindowClickListener(this);
 		mapContainer = (AnimationRelativeLayout) view.findViewById(R.id.layout_search_station_map_container);
 		mapContainer.setInAnimation((Animation) AnimationUtils.loadAnimation(context, R.animator.in_ani));
 		Button btn = (Button) view.findViewById(R.id.btn_search_station_widesearch);
@@ -177,6 +176,7 @@ public class SearchStationFragment extends ListFragment implements LoaderCallbac
 	public void OnMapReady(GoogleMap map) {
 		actionMap.setMap(map);
 		actionMap.moveMap(ActionMap.DEAGU_LATLNG);
+		actionMap.setOnActionInfoWindowClickListener(this);
 	}
 
 
