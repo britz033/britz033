@@ -58,6 +58,14 @@ public class LoopQuery<T> {
 		restart();
 	}
 	
+	public void start(T[] changeResource){
+		count = 0;
+		length = changeResource.length;
+		sourceArray = changeResource;
+		restart();
+	}
+	
+	
 	public void restart(){
 		bundle.putSerializable(KEY, (Serializable) sourceArray[count++]);
 		loaderManager.restartLoader(id, bundle, callback);
@@ -74,6 +82,7 @@ public class LoopQuery<T> {
 		dataSet.add(data);
 	}
 	
+	// 현재 루프수 index보단 1 큼
 	public int getCount(){
 		return count;
 	}
