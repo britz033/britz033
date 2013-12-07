@@ -346,7 +346,7 @@ public class SearchStationFragment extends ListFragment implements LoaderCallbac
 			projection = new String[] { "_id", "station_pass" };
 			selection = "_id=" + args.getInt(KEY_STATION_ID);
 			break;
-		case LoopQuery.LOOP_QUERY:
+		case LoopQuery.DEFAULT_LOOP_QUERY_ID:
 			baseUri = MyContentProvider.CONTENT_URI_BUS;
 			projection = new String[] { "_id", MyContentProvider.BUS_NUMBER, MyContentProvider.BUS_ID };
 			selection = "bus_id=" + busNumloopQuery.getBundleData();
@@ -392,7 +392,7 @@ public class SearchStationFragment extends ListFragment implements LoaderCallbac
 				isMarkerClick = false;
 			}
 			break;
-		case LoopQuery.LOOP_QUERY:
+		case LoopQuery.DEFAULT_LOOP_QUERY_ID:
 			if (cursor.getCount() != 0) { // 대구버스통계가 뭐 같아서.. 아직 만들지도 않은 버스를 미리
 											// 넣어놨을 경우 없다고 뜸 ㅡ,.ㅡ;;;
 				cursor.moveToFirst();

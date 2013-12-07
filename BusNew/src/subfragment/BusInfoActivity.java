@@ -1,10 +1,12 @@
 package subfragment;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import util.ActionMap;
+import util.LoopQuery;
 import util.ActionMap.OnActionInfoWindowClickListener;
 import util.Switch;
 import adapter.PathPagerAdapter;
@@ -37,6 +39,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
@@ -57,15 +60,16 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 	public static final String KEY_CURRENT_STATION_NAME = "STATION";
 	public static final String KEY_PATH_STATION = "PATH";
 	public static final LatLng DEAGU = new LatLng(35.8719607, 128.5910759);
+	private static final int LOADER_ID_INIT = 0;
+	private static final int LOADER_ID_PATH = 1;
+	
 	private static final int FORWARD = 10;
 	private static final int BACKWARD = 20;
 	private ViewPager pathPager;
 	private ArrayList<String> pathDirection;
 	private ArrayList<String> pathForward;
 	private ArrayList<String> pathBackward;
-	private int[] stationIdDirection;
-	private int[] stationIdForward;
-	private int[] stationIdBackward;
+	private HashMap<String, String> passBus;
 	private Cursor mcursor;
 	private int busDirection;
 	private int currentDirection;
@@ -149,7 +153,7 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 		});
 
 		// 정방향 역방향의 모든 버스정류장 이름을 추출
-		getSupportLoaderManager().initLoader(0, getIntent().getExtras(), this);
+		getSupportLoaderManager().initLoader(LOADER_ID_INIT, getIntent().getExtras(), this);
 
 		Log.d("버스인포", "onCreate 호출");
 	}
@@ -157,10 +161,10 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 	@Override
 	protected void onResume() {
 		super.onResume();
-		if(actionMapForward.checkGoogleService())
+		if (actionMapForward.checkGoogleService())
 			mapSetIfNeeded();
 		else {
-			
+
 		}
 
 	}
@@ -188,11 +192,11 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 			String busBackward = mcursor.getString(3);
 			busFavorite = mcursor.getInt(4);
 			busId = mcursor.getInt(0);
-			
-			Log.d("즐겨찾기여부",""+busFavorite);
+
+			Log.d("즐겨찾기여부", "" + busFavorite);
 			if (busFavorite == 0) {
 				favoriteAddBtn.setImageResource(R.drawable.btn_station_list_item_off_selector);
-			} else{
+			} else {
 				favoriteAddBtn.setImageResource(R.drawable.btn_station_list_item_on_selector);
 			}
 
@@ -216,26 +220,43 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 				station = matcherBackward.group(1).replace(" ()", "");
 				pathBackward.add(station);
 			}
-			
-			// 마커의 스테이션 정보를 가져오는데 필요한 id
-			stationIdForward = new int[pathForward.size()];
-			stationIdBackward = new int[pathBackward.size()];
+
 
 			TextView textBusInterval = (TextView) findViewById(R.id.text_activity_businfo_current);
 			textBusInterval.setText(busInterval);
 		} catch (Exception e) {
 			e.printStackTrace();
-			new AlertDialog.Builder(this).setMessage("현재 이 버스는 업데이트되어 있지 않습니다").show().setOnDismissListener(new OnDismissListener() {
-				
-				@Override
-				public void onDismiss(DialogInterface dialog) {
-					finish();
-				}
-			});
+			new AlertDialog.Builder(this).setMessage("현재 이 버스는 업데이트되어 있지 않습니다").show()
+					.setOnDismissListener(new OnDismissListener() {
+
+						@Override
+						public void onDismiss(DialogInterface dialog) {
+							finish();
+						}
+					});
 		}
 		settingSwitch(FORWARD);
-		loopQuery();
+//		loopQuery();
+		
+		LoopQuery<String> loopQueryStation = new LoopQuery<String>(getSupportLoaderManager(), sourceArray, this);
 	}
+	
+	// 받은 버스번호를 토대로 경로를 뽑은데서 다시 각 경로마다의 버스정류장을 반복쿼리함, 반복 index는 loopIndex
+		public void loopQuery() {
+			try {
+				Log.d("루프 스테이션 이름", pathDirection.get(loopIndex));
+				Bundle data = new Bundle();
+				data.putString(KEY_PATH_STATION, pathDirection.get(loopIndex));
+				loopIndex++;
+				getSupportLoaderManager().restartLoader(LOADER_ID_PATH, data, this);
+			} catch (Exception e) {
+				AlertDialog.Builder builder = new AlertDialog.Builder(this);
+				builder.setMessage("이 버스는 경로를 불러올 수 없습니다 : " + currentStationName);
+				builder.create().show();
+				// 버스 경로에서 불러온 이름으로 버스정류장을 다시 검색하였으나 존재치 않음
+				e.printStackTrace();
+			}
+		}
 
 	public void settingSwitch(int pathSwitch) {
 		PathPagerAdapter<BusInfoPathItemFragment> adapter = null;
@@ -245,7 +266,6 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 					BusInfoPathItemFragment.class);
 			pathDirection = pathForward;
 			actionMapDirection = actionMapForward;
-			stationIdDirection = stationIdForward;
 			break;
 
 		case BACKWARD:
@@ -253,29 +273,13 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 					BusInfoPathItemFragment.class);
 			pathDirection = pathBackward;
 			actionMapDirection = actionMapBackward;
-			stationIdDirection = stationIdBackward;
 			break;
 		}
 		pathPager.setAdapter(adapter);
 		pathPager.setOnPageChangeListener(this);
 	}
 
-	// 받은 버스번호를 토대로 경로를 뽑은데서 다시 각 경로마다의 버스정류장을 반복쿼리함, 반복 index는 loopIndex
-	public void loopQuery() {
-		try {
-			Log.d("루프 스테이션 이름", pathDirection.get(loopIndex));
-			Bundle data = new Bundle();
-			data.putString(KEY_PATH_STATION, pathDirection.get(loopIndex));
-			loopIndex++;
-			getSupportLoaderManager().restartLoader(1, data, this);
-		} catch (Exception e) {
-			AlertDialog.Builder builder = new AlertDialog.Builder(this);
-			builder.setMessage("이 버스는 경로를 불러올 수 없습니다 : " + currentStationName);
-			builder.create().show();
-			// 버스 경로에서 불러온 이름으로 버스정류장을 다시 검색하였으나 존재치 않음
-			e.printStackTrace();
-		}
-	}
+	
 
 	// 이 쿼리문 자체는 정방향, 역방향의 영향을 받지 않는 순수한 쿼리
 	@Override
@@ -288,16 +292,18 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 		// 0 번은 스위치에 관계없이 무조건 불려져야하는 버스자체의 정보
 		// 1번은 들어오는 정류장이름으로 좌표 추출, 2번은 즐겨찾기추가 업데이트
 		switch (id) {
-		case 0:
+		case LOADER_ID_INIT:
 			Log.d("버스인포", "로더 초기화 생성");
 			uri = MyContentProvider.CONTENT_URI_BUS;
 			projection = new String[] { "_id", "bus_interval", "bus_forward", "bus_backward", "bus_favorite" };
 			selection = "bus_number='" + data.getString(KEY_BUS_INFO) + "'";
 			break;
-		case 1:
+		case LOADER_ID_PATH:
 			uri = MyContentProvider.CONTENT_URI_STATION;
-			projection = new String[] { "_id", "station_name", "station_latitude", "station_longitude" };
+			projection = new String[] { "_id", "station_name", "station_latitude", "station_longitude", "station_pass" };
 			selection = "station_name='" + data.getString(KEY_PATH_STATION) + "'";
+			break;
+		case LoopQuery.LOOP_QUERY:
 			break;
 		}
 
@@ -310,8 +316,7 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 	public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
 
 		switch (loader.getId()) {
-		case 0: // 무조건 한번만 불려짐, 즐겨찾기 추가등으로 업데이트 되었을시 불려지는걸 방지 단, 즐겨찾기정보만은 업데이트
-			
+		case LOADER_ID_INIT: // 무조건 한번만 불려짐, 즐겨찾기 추가등으로 업데이트 되었을시 불려지는걸 방지 단, 즐겨찾기정보만은 업데이트
 			if (!userControlAllowed) {
 				mcursor = cursor;
 				initBusInfo();
@@ -320,13 +325,12 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 				busFavorite = cursor.getInt(4);
 			}
 			break;
-		case 1:
+		case LOADER_ID_PATH:
 			try {
 				// 처음이것이 불려질시 앞에 ininbusInfo에서 loopQuery를 호출했으므로 loopIndex 는 1인
 				// 상태
 				cursor.moveToNext();
 				LatLng latLng = new LatLng(cursor.getDouble(2), cursor.getDouble(3));
-				stationIdDirection[loopIndex - 1] = cursor.getInt(0);
 				actionMapDirection.addLinePoint(latLng);
 				// actionMap.addMarker(cursor.getString(1), latLng,
 				// R.drawable.station_point);
@@ -360,7 +364,7 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 	private void finishLoading() {
 		currentDirection = busDirection;
 		showInfo();
-		actionMapDirection.addMarkerAndShow(saveIndex, pathDirection.get(saveIndex), stationIdDirection[1]);
+		actionMapDirection.addMarkerAndShow(saveIndex, pathDirection.get(saveIndex), null);
 		prePosition = saveIndex;
 		pathPager.setCurrentItem(saveIndex);
 		if (pathBackward.size() != 0) {
@@ -409,7 +413,7 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 		if (userControlAllowed) {
 			actionMapDirection.removeMarker();
 			actionMapDirection.aniMap(position);
-			actionMapDirection.addMarkerAndShow(position, pathDirection.get(position), stationIdDirection[position]);
+			actionMapDirection.addMarkerAndShow(position, pathDirection.get(position), null);
 		}
 
 		// 첫로딩시 가져오면 에러가 남.. instantiateItem 쪽 개념때문인듯. 이거 어떻게든 해야되는데..
@@ -455,42 +459,52 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 			ContentValues value = new ContentValues();
 			if (busFavorite == 0) {
 				value.put("bus_favorite", 1);
-				((ImageButton)v).setImageResource(R.drawable.btn_station_list_item_on_selector);
-			} else{
+				((ImageButton) v).setImageResource(R.drawable.btn_station_list_item_on_selector);
+			} else {
 				value.put("bus_favorite", 0);
-				((ImageButton)v).setImageResource(R.drawable.btn_station_list_item_off_selector);
+				((ImageButton) v).setImageResource(R.drawable.btn_station_list_item_off_selector);
 			}
 			getContentResolver().update(uri, value, null, null);
 			break;
 		case R.id.btn_activity_businfo_pathsearch:
 			LayoutInflater inflater = LayoutInflater.from(this);
 			LinearLayout ll = (LinearLayout) inflater.inflate(R.layout.edittext_businfo_search, null);
-			new AlertDialog.Builder(this).setView(ll).create().show();
+			final AlertDialog searchDialog = new AlertDialog.Builder(this).setView(ll).create();
+			searchDialog.show();
 
 			EditText et = (EditText) ll.findViewById(R.id.edittext_activity_businfo_search);
 
 			et.setOnKeyListener(new OnKeyListener() {
 				@Override
 				public boolean onKey(View v, int keyCode, KeyEvent event) {
-					actionMapDirection.clearMap();
-					String s = ((EditText) v).getText().toString();
-					int saveSearchPoint[] = new int[pathDirection.size()];
-					int searchIndex = 0;
-
-					for (int i = 0; i < pathDirection.size(); i++) {
-						if (pathDirection.get(i).contains(s)) {
-							saveSearchPoint[searchIndex++] = i;
-						}
-					}
-
 					if (event.getAction() == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER) {
+						
+						actionMapDirection.clearMap();
+						actionMapDirection.drawLine(getResources().getDisplayMetrics().density);
+						
+						String s = ((EditText) v).getText().toString();
+						ArrayList<Integer> saveSearchPoint = new ArrayList<Integer>(); 
+
 						StringBuilder sb = new StringBuilder();
-						for (int i = 0; i < saveSearchPoint.length; i++) {
-							actionMapDirection.addMarkerAndShow(saveSearchPoint[i],pathDirection.get(saveSearchPoint[i]),stationIdDirection[i]);
+						for (int i = 0; i < pathDirection.size(); i++) {
+							if (pathDirection.get(i).contains(s)) {
+								sb.append(" " + pathDirection.get(i));
+								saveSearchPoint.add(i);
+
+							}
 						}
-						// new
-						// AlertDialog.Builder(BusInfoActivity.this).setTitle(sb.toString()).create().show();
-						actionMapDirection.aniMap(null, ActionMap.ZOOM_OUT);
+
+//						Toast.makeText(getBaseContext(), sb.toString(), 1).show();
+
+
+						for (int i = 0; i < saveSearchPoint.size(); i++) {
+							int point = saveSearchPoint.get(i);
+							actionMapDirection.addMarkerAndShow(point,pathDirection.get(point), null);
+						}
+
+						actionMapDirection.aniMap(null, 9);
+
+						searchDialog.dismiss();
 					}
 					return false;
 				}
@@ -499,11 +513,8 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 		}
 	}
 
-
 	@Override
 	public void onInfoWindowClick(Marker marker, Integer markerAdditionalinfo) {
-		// TODO Auto-generated method stub
-		
 	}
 
 }

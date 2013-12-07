@@ -11,7 +11,9 @@ import android.util.Log;
 
 public class LoopQuery<T> {
 	
-	public static final int LOOP_QUERY = 25429;
+	public static final int DEFAULT_LOOP_QUERY_ID = 25429;
+	public static final int LOOP_QUERY_ID_2 = 34329;
+	public static final int LOOP_QUERY_ID_3 = 57649;
 	public static final String KEY = "loopQuery";
 	
 	private LoaderManager loaderManager;
@@ -20,13 +22,29 @@ public class LoopQuery<T> {
 	private ArrayList<String[]> dataSet; 
 	private int length;
 	private int count;
+	private int id;
 	private Bundle bundle;
 	
-	public LoopQuery(LoaderManager lm, T[] sourceArray, LoaderCallbacks<Cursor> instance){
+	
+	public LoopQuery(LoaderManager lm, T[] sourceArray, LoaderCallbacks<Cursor> callback){
+		loaderManager = lm;
+		this.callback = callback;
+		bundle = new Bundle();
+		length = sourceArray.length;
+		this.id = DEFAULT_LOOP_QUERY_ID;
+		this.sourceArray = sourceArray;
+		this.dataSet = new ArrayList<String[]>();
+		if(sourceArray != null && length==0){
+			Log.d("LoopQuery","자료입력이 잘못되었습니다");
+		}
+	}
+	
+	public LoopQuery(LoaderManager lm, T[] sourceArray, LoaderCallbacks<Cursor> instance, int id){
 		loaderManager = lm;
 		callback = instance;
 		bundle = new Bundle();
 		length = sourceArray.length;
+		this.id = id;
 		this.sourceArray = sourceArray;
 		this.dataSet = new ArrayList<String[]>();
 		if(sourceArray != null && length==0){
@@ -42,7 +60,7 @@ public class LoopQuery<T> {
 	
 	public void restart(){
 		bundle.putSerializable(KEY, (Serializable) sourceArray[count++]);
-		loaderManager.restartLoader(LOOP_QUERY, bundle, callback);
+		loaderManager.restartLoader(id, bundle, callback);
 	}
 	
 	public boolean isEnd(){
