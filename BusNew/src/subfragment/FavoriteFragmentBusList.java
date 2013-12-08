@@ -78,16 +78,15 @@ public class FavoriteFragmentBusList extends ListFragment {
 
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
-			View view;
-			ViewHolder holder = new ViewHolder();
+			ViewHolder holder = null;
 			if (convertView == null) {
+				holder = new ViewHolder();
 				LayoutInflater inflater = LayoutInflater.from(context);
-				view = inflater.inflate(R.layout.list_favorite_bus_item, null);
-				holder.tv = (TextView) view.findViewById(R.id.text_favorite_list_busitem_busnumber);
-				view.setTag(holder);
+				convertView = inflater.inflate(R.layout.list_favorite_bus_item, null);
+				holder.tv = (TextView) convertView.findViewById(R.id.text_favorite_list_busitem_busnumber);
+				convertView.setTag(holder);
 			} else {
-				view = convertView;
-				holder = (ViewHolder) view.getTag();
+				holder = (ViewHolder) convertView.getTag();
 			}
 			
 			SpannableStringBuilder ssb = new SpannableStringBuilder();
@@ -98,7 +97,7 @@ public class FavoriteFragmentBusList extends ListFragment {
 			holder.tv.setText(ssb);
 			
 			
-			return view;
+			return convertView;
 		}
 
 	}

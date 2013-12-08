@@ -20,6 +20,7 @@ public class BusInfo implements Parcelable {
 	private String busNum;
 	private String time;
 	private String current;
+	private String route;
 
 	public BusInfo() {
 		soon = false;
@@ -30,6 +31,7 @@ public class BusInfo implements Parcelable {
 	}
 
 	public void setRoute(String route) {
+		this.route = route;
 		busNum = busNum + " " + route;
 	}
 
@@ -99,6 +101,10 @@ public class BusInfo implements Parcelable {
 	public void setCurrent(String current) {
 		this.current = current;
 	}
+	
+	public String getLoute(){
+		return route;
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -133,6 +139,7 @@ public class BusInfo implements Parcelable {
 		dest.writeString(busNum);
 		dest.writeString(time);
 		dest.writeString(current);
+		dest.writeString(route);
 	}
 
 	// 이건 필수가 아닌데 저 다음것에서 read 할려면 getter 써야하는게 귀찮아서..
@@ -142,6 +149,7 @@ public class BusInfo implements Parcelable {
 		busNum = in.readString();
 		time = in.readString();
 		current = in.readString();
+		route = in.readString();
 	}
 
 	/*

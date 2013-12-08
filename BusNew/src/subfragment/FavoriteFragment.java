@@ -6,6 +6,8 @@ import internet.ResponseTask;
 
 import java.util.ArrayList;
 
+import util.LoopQuery;
+
 import adapter.FavoriteDummyPagerAdapter;
 import adapter.FavoritePreviewPagerAdatper;
 import android.app.Activity;
@@ -53,7 +55,6 @@ public class FavoriteFragment extends Fragment implements ResponseTask, LoaderCa
 
 	public static final String KEY_BUSINFO_LIST = "buslist";
 	public static final String KEY_STATION_NAME = "station";
-	public static final String KEY_STATION_PASS = "pass";
 	public static final String KEY_ERROR = "error";
 
 	private Context context;
@@ -61,26 +62,29 @@ public class FavoriteFragment extends Fragment implements ResponseTask, LoaderCa
 	private String stationNum;
 	private String stationName;
 	private String stationPass; // 이 정류장을 거치는 버스들 id
-	private String[] busNum;
-	private Integer[] busFavorite;
-	private String[] passBus;
-	private int loopIndex;
+	private String[] dbBusNum;
+	private Integer[] dbBusFavorite;
+	private String[] dbPassBusId;
 	private int busCount;
 	private View view;
 	private FavoritePreviewPagerAdatper adapter;
 	private ViewPager pager;
 	private RelativeLayout loadingContainer;
-	private Bundle data;
+	private LoopQuery<String> loopQueryBus;
 
 	@Override
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
 		context = activity;
 	}
+	
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+	}
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		data = new Bundle(); // 걍 데이터 재사용 번들
 		view = inflater.inflate(R.layout.fragment_favorite_layout, container,false);
 		getLoaderManager().initLoader(0, null, this);
 		loadingContainer = (RelativeLayout) view.findViewById(R.id.layout_favorite_buslist_loadingcontainer);
@@ -93,7 +97,6 @@ public class FavoriteFragment extends Fragment implements ResponseTask, LoaderCa
 				settingInfo();
 			}
 		});
-		loopIndex = 0;
 		Log.d("컨테이너크기", container.toString());
 
 		viewPagerSetting(view);
@@ -187,6 +190,9 @@ public class FavoriteFragment extends Fragment implements ResponseTask, LoaderCa
 		// 각종오류 감지 및 정보뿌림
 		if (error == null && list != null) {
 			// 정상일 경우
+			
+			bindInfo(list);
+			
 			initData.putParcelableArrayList(KEY_BUSINFO_LIST, list);
 			initData.putString(KEY_STATION_NAME, stationName);
 
@@ -206,6 +212,29 @@ public class FavoriteFragment extends Fragment implements ResponseTask, LoaderCa
 		ft.addToBackStack(null);
 		ft.commitAllowingStateLoss();
 	}
+	
+	/*
+	 * <임시>
+	 * 인터넷에서 가져온 list 의 이름으로 완전매치 검색
+	 * 있으면 남은 정보뿌리고 
+	 * 없으면 회색처리
+	 * 
+	 * 
+	 */
+	private void bindInfo(ArrayList<BusInfo> list){
+		for(int i=0; i<dbPassBusId.length; i++){
+			
+			for(int j=0; j<list.size(); j++){
+				// 완전일치시
+				if(dbBusNum[i].equals(list.get(j).getBusNum())){
+					//id부여
+				}
+			}
+			
+			// 다돌았는데 일치하는게 없을경우
+			// 회색처리
+		}
+	}
 
 	public void refreshPreview() {
 		getLoaderManager().restartLoader(0, null, this);
@@ -213,7 +242,6 @@ public class FavoriteFragment extends Fragment implements ResponseTask, LoaderCa
 
 	// 리스트뷰를 보여주기 위한 시작, 루프의 시작
 	private void settingInfo() {
-		loopIndex = 0;
 		loadingContainer.setVisibility(View.VISIBLE);
 		if (cursor != null && cursor.getCount() > 0) {
 			stationNum = cursor.getString(0);
@@ -226,15 +254,15 @@ public class FavoriteFragment extends Fragment implements ResponseTask, LoaderCa
 
 		// 모든 버스 id는 10자리 쉼표포함해서 11자리, 마지막은 쉼표가 없으니 + 1, 해서 모든 버스id에서 버스정보를 추출한다
 		if (stationPass.length() != 0) {
-			passBus = stationPass.split(",");
+			dbPassBusId = stationPass.split(",");
 			busCount = (stationPass.length() + 1) / 11;
 
 			Log.d("즐겨찾기", "버스숫자" + busCount);
-			busNum = new String[busCount];
-			busFavorite = new Integer[busCount];
+			dbBusNum = new String[busCount];
+			dbBusFavorite = new Integer[busCount];
 
-			data.putString(KEY_STATION_PASS, passBus[loopIndex]);
-			getLoaderManager().restartLoader(1, data, this);
+			loopQueryBus = new LoopQuery<String>(getLoaderManager(), dbPassBusId, this);
+			loopQueryBus.start();
 		} else {
 			// 이 역에는 암것도 없음.. 혹시나 에러날 가능성 좀 있으니 후에 체크
 			showInfo(stationNum);
@@ -258,10 +286,10 @@ public class FavoriteFragment extends Fragment implements ResponseTask, LoaderCa
 			selection = MyContentProvider.STATION_FAVORITE + "=?";
 			selectionArgs = new String[] { "1" };
 			break;
-		case 1:
+		case LoopQuery.DEFAULT_LOOP_QUERY_ID:
 			uri = MyContentProvider.CONTENT_URI_BUS;
 			projection = new String[] { MyContentProvider.BUS_NUMBER, MyContentProvider.BUS_FAVORITE };
-			selection = MyContentProvider.BUS_ID + "=" + data.getString(KEY_STATION_PASS);
+			selection = MyContentProvider.BUS_ID + "=" + loopQueryBus.getBundleData();
 			break;
 		}
 
@@ -283,7 +311,7 @@ public class FavoriteFragment extends Fragment implements ResponseTask, LoaderCa
 				settingInfo();
 			}
 			break;
-		case 1:
+		case LoopQuery.DEFAULT_LOOP_QUERY_ID:
 			/*
 			 * for (int i = 0; i < busCount; i++) {
 			 * bus.putString(KEY_STATION_PASS, passBus[i]);
@@ -292,24 +320,22 @@ public class FavoriteFragment extends Fragment implements ResponseTask, LoaderCa
 			 */
 			// 결국.. 쿼리가 끝나면 하나 다시 restart 하고 하는 수밖에..ㅠㅠ;;
 			
-			// 버스번호가 신세계가 검색이 안될때는 건너뜀
-			// 현재 한개가 덜 들어옴.. 이후 수정!!!!!!!!!!!!!!!!!!!!!!!!!
-			if (loopIndex + 1 < busCount) {
-				if (cursor.getCount() != 0) {
-					cursor.moveToFirst();
-					busNum[loopIndex] = cursor.getString(0);
-					busFavorite[loopIndex] = cursor.getInt(1);
-					Log.d("즐겨찾기",busNum[loopIndex]);
-				} else {
-					busNum[loopIndex] = null;
-					busFavorite[loopIndex] = 0;
-				}
-				
-				
-
-				loopIndex++;
-				data.putString(KEY_STATION_PASS, passBus[loopIndex]);
-				getLoaderManager().restartLoader(1, data, this);
+			int loopIndex = 0;
+			
+			// 버스번호가 검색이 안될때는 건너뜀 (앞으로의 예정버스임)
+			if (cursor.getCount() != 0) {
+				cursor.moveToFirst();
+				loopIndex = loopQueryBus.getCount()-1;
+				dbBusNum[loopIndex] = cursor.getString(0);
+				dbBusFavorite[loopIndex] = cursor.getInt(1);
+				Log.d("즐겨찾기",dbBusNum[loopIndex]);
+			} else {
+				dbBusNum[loopIndex] = null;
+				dbBusFavorite[loopIndex] = 0;
+			}
+			
+			if (!loopQueryBus.isEnd()) {
+				loopQueryBus.restart();
 			} else {
 				showInfo(stationNum);
 			}
