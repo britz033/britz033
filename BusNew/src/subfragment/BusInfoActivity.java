@@ -6,9 +6,11 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import util.ActionMap;
-import util.LoopQuery;
 import util.ActionMap.OnActionInfoWindowClickListener;
+import util.BackPressStack;
+import util.LoopQuery;
 import util.Switch;
+import adapter.BusInfoStationSearchListAdapter;
 import adapter.PathPagerAdapter;
 import android.app.AlertDialog;
 import android.content.ContentUris;
@@ -35,15 +37,21 @@ import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
+import com.nineoldandroids.animation.Animator;
+import com.nineoldandroids.animation.AnimatorListenerAdapter;
+import com.nineoldandroids.animation.AnimatorSet;
+import com.nineoldandroids.animation.ObjectAnimator;
 import com.zoeas.qdeagubus.MyContentProvider;
 import com.zoeas.qdeagubus.R;
 
@@ -88,6 +96,10 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 	private Drawable[] drawables;
 	private int busFavorite;
 	private int busId;
+	private BackPressStack backPressStack;
+	private FrameLayout stationListViewContainer;
+	private ListView stationListView;
+	private boolean searchAgain;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -98,10 +110,12 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 		passBusHash = new HashMap<Integer, String>();
 		pathForward = new ArrayList<String>();
 		pathBackward = new ArrayList<String>();
+		backPressStack = new BackPressStack();
 		saveIndex = 0;
 		prePosition = 0;
 		busDirection = currentDirection = FORWARD;
 		userControlAllowed = false;
+		searchAgain = false;
 		drawables = new Drawable[] { getResources().getDrawable(R.drawable.path),
 				getResources().getDrawable(R.drawable.path_selected), getResources().getDrawable(R.drawable.path_end),
 				getResources().getDrawable(R.drawable.path_end_selected),
@@ -118,6 +132,8 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 		TextView textOption = (TextView) findViewById(R.id.text_activity_businfo_option);
 		Button searchBtn = (Button) findViewById(R.id.btn_activity_businfo_pathsearch);
 		favoriteAddBtn = (ImageButton) findViewById(R.id.btn_activity_businfo_addfavorite);
+		stationListViewContainer = (FrameLayout) findViewById(R.id.layout_activity_businfo_path_container);
+		stationListView = new ListView(this);
 		searchBtn.setOnClickListener(this);
 		favoriteAddBtn.setOnClickListener(this);
 
@@ -140,14 +156,22 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 				if (userControlAllowed) {
+					if (searchAgain) {
+						backPressStack.pop();
+						pathListClose();
+						searchAgain = false;
+					}
+					
 					if (isChecked) {
 						currentDirection = FORWARD;
 					} else {
 						currentDirection = BACKWARD;
 					}
+					
 					actionMapDirection.clearMap();
 					prePosition = 0;
 					settingMapPath();
+					onPageSelected(0);
 				}
 			}
 		});
@@ -505,43 +529,101 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 				public boolean onKey(View v, int keyCode, KeyEvent event) {
 					if (event.getAction() == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER) {
 
-						actionMapDirection.clearMap();
-						actionMapDirection.drawLine();
-
 						String s = ((EditText) v).getText().toString();
 						ArrayList<Integer> saveSearchPoint = new ArrayList<Integer>();
+						ArrayList<String> searchedStationList = new ArrayList<String>();
 
-						StringBuilder sb = new StringBuilder();
 						for (int i = 0; i < pathDirection.size(); i++) {
 							if (pathDirection.get(i).contains(s)) {
-								sb.append(" " + pathDirection.get(i));
 								saveSearchPoint.add(i);
-
+								searchedStationList.add(pathDirection.get(i));
 							}
 						}
 
-						// Toast.makeText(getBaseContext(), sb.toString(),
-						// 1).show();
+						if (searchedStationList.size() != 0) {
+							actionMapDirection.clearMap();
+							actionMapDirection.drawLine();
 
-						for (int i = 0; i < saveSearchPoint.size(); i++) {
-							int point = saveSearchPoint.get(i);
-							actionMapDirection.addMarkerAndShow(point, pathDirection.get(point), saveSearchPoint.get(i));
+							for (int i = 0; i < saveSearchPoint.size(); i++) {
+								int point = saveSearchPoint.get(i);
+								actionMapDirection.addMarkerAndShow(point, pathDirection.get(point),
+										saveSearchPoint.get(i));
+							}
+
+							BusInfoStationSearchListAdapter searchAdapter = new BusInfoStationSearchListAdapter(
+									searchedStationList, getBaseContext());
+
+							if (!searchAgain) {
+								searchAgain = true;
+								backPressStack.push();
+								pathListOpen();
+							}
+
+							stationListView.setAdapter(searchAdapter);
+
+							actionMapDirection.setLineBound();
+						} else {
+							Toast.makeText(getBaseContext(), "버스 경로상에 <" + s + "> 단어가 포함된 \n정류소가 없습니다", 0).show();
 						}
-
-						actionMapDirection.aniMapZoom(9);
-
 						searchDialog.dismiss();
 					}
 					return false;
 				}
+
 			});
 			break;
 		}
 	}
 
+	private void pathListOpen() {
+		Animator downAni = ObjectAnimator.ofFloat(pathPager, "translationY", 0, 200);
+		Animator alphaAni = ObjectAnimator.ofFloat(pathPager, "alpha", 1, 0);
+
+		AnimatorSet aniSet = new AnimatorSet();
+		aniSet.playTogether(downAni, alphaAni);
+		aniSet.setDuration(1000);
+		aniSet.addListener(new AnimatorListenerAdapter() {
+			@Override
+			public void onAnimationEnd(Animator animation) {
+				stationListViewContainer.addView(stationListView);
+				pathPager.setVisibility(View.GONE);
+			}
+		});
+		aniSet.start();
+	}
+
+	private void pathListClose() {
+		stationListViewContainer.removeViewAt(1);
+		pathPager.setVisibility(View.VISIBLE);
+
+		Animator downAni = ObjectAnimator.ofFloat(pathPager, "translationY", 200, 0);
+		Animator alphaAni = ObjectAnimator.ofFloat(pathPager, "alpha", 0, 1);
+
+		AnimatorSet aniSet = new AnimatorSet();
+		aniSet.playTogether(downAni, alphaAni);
+		aniSet.setDuration(1000);
+		aniSet.start();
+	}
+
 	@Override
 	public void onInfoWindowClick(Marker marker, Integer markerAdditionalinfo) {
 		Toast.makeText(this, passBusHash.get(markerAdditionalinfo), 0).show();
+	}
+
+	// 경유버스 목록 닫기, 검색된 버스 목록 닫고 경로 목록 열기, 각각은 겹치지 않게 경유버스가 안닫혔으면 검색 버스가 안열리는
+	// 식으로.. 이거 잘못하면 에러 박살남
+	@Override
+	public void onBackPressed() {
+		switch (backPressStack.pop()) {
+		case BackPressStack.FINISH:
+		case BackPressStack.FINISH_READY:
+			finish();
+			break;
+		case BackPressStack.DO_SOMETHING:
+			pathListClose();
+			searchAgain = false;
+			break;
+		}
 	}
 
 }

@@ -4,8 +4,7 @@
     android:id="@+id/layout_activity_businfo_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#416092"
-    >
+    android:background="#416092" >
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -102,11 +101,18 @@
                 android:text="검색" />
         </RelativeLayout>
 
-        <android.support.v4.view.ViewPager
-            android:id="@+id/viewpager_activity_businfo_path"
+        <FrameLayout
+            android:id="@+id/layout_activity_businfo_path_container"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="35" />
+            android:layout_weight="35" >
+
+            <android.support.v4.view.ViewPager
+                android:id="@+id/viewpager_activity_businfo_path"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+        </FrameLayout>
     </LinearLayout>
 
 </FrameLayout>
