@@ -28,6 +28,7 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
@@ -59,7 +60,7 @@ public class ActionMap<MarkerInfo> implements OnInfoWindowClickListener {
 	private Context context;
 	// Color.HSVToColor( 알파[0..255], float{ 색상[0-360), 채도[0...1], 명도[0...1] }
 	private int colorIndex;
-	private LatLng prePoint;
+	private LatLngBounds.Builder lineBoundBuilder;
 	private int zIndex;
 	private ArrayList<LatLng> latLngList;
 	private Marker preMarker;
@@ -67,6 +68,7 @@ public class ActionMap<MarkerInfo> implements OnInfoWindowClickListener {
 	private HashMap<Marker, MarkerInfo> markerAdditionalInfo;
 	private OnActionInfoWindowClickListener clicker;
 	private boolean defaultAdjust;
+	private float density;
 
 	public ActionMap(Context context) {
 		if (map == null)
@@ -86,11 +88,13 @@ public class ActionMap<MarkerInfo> implements OnInfoWindowClickListener {
 	private void init(Context context) {
 		this.context = context;
 
+		density = context.getResources().getDisplayMetrics().density;
 		colorIndex = Color.HSVToColor(new float[] { 120, 1, 1 });
 		zIndex = 0;
 		latLngList = new ArrayList<LatLng>();
 		markerAdditionalInfo = new HashMap<Marker, MarkerInfo>();
 		defaultAdjust = true;
+		lineBoundBuilder = new LatLngBounds.Builder();
 	}
 
 	public boolean checkGoogleService() {
@@ -154,9 +158,23 @@ public class ActionMap<MarkerInfo> implements OnInfoWindowClickListener {
 
 	public void addLinePoint(LatLng point) {
 		latLngList.add(point);
+		lineBoundBuilder.include(point);
+	}
+	
+	public void setLineBound(){
+		LatLngBounds bounds = lineBoundBuilder.build();
+		moveMap(bounds,10);
+	}
+	
+	public void setBoundAndMoveCenter(ArrayList<LatLng> pointList){
+		LatLngBounds.Builder newbuilder = new LatLngBounds.Builder();
+		for(int i=0; i<pointList.size(); i++)
+			newbuilder.include(pointList.get(i));
+		LatLngBounds bounds = newbuilder.build();
+		moveMap(bounds,10);
 	}
 
-	public void drawLine(float density) {
+	public void drawLine() {
 		if (map != null) {
 			Log.d("드로우", latLngList.size() + "");
 			zIndex++;
@@ -275,6 +293,12 @@ public class ActionMap<MarkerInfo> implements OnInfoWindowClickListener {
 			map.moveCamera(CameraUpdateFactory.newLatLngZoom(position, ZOOM_OUT));
 		}
 	}
+	
+	public void moveMap(LatLngBounds bounds, int padding) {
+		if (map != null) {
+			map.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, (int)(padding*density)));
+		}
+	}
 
 	public void aniMap(LatLng latLng) {
 		if (map != null) {
@@ -284,10 +308,33 @@ public class ActionMap<MarkerInfo> implements OnInfoWindowClickListener {
 
 	public void aniMap(LatLng latLng, int zoom) {
 		if (map != null) {
-			if (latLng == null)
-				map.animateCamera(CameraUpdateFactory.zoomTo(zoom));
-			else
-				map.animateCamera(CameraUpdateFactory.newLatLngZoom(adjustDefault(latLng, zoom), zoom));
+			map.animateCamera(CameraUpdateFactory.newLatLngZoom(adjustDefault(latLng, zoom), zoom));
+		}
+	}
+	
+	public void aniMapZoom(int zoom){
+		map.animateCamera(CameraUpdateFactory.zoomTo(zoom));
+	}
+	
+	public void aniMap(LatLngBounds bounds,  int padding) {
+		if (map != null) {
+			map.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, (int)(padding*density)));
+		}
+	}
+	
+	public void aniMap(int position) {
+		if (map != null) {
+			Log.d("사이즈", latLngList.size() + "");
+			try {
+				LatLng latLng = latLngList.get(position);
+
+				CameraPosition cp = CameraPosition.builder().target(adjustDefault(latLng, ZOOM_NOMAL)).zoom(ZOOM_NOMAL)
+						.tilt(50).build();
+				map.animateCamera(CameraUpdateFactory.newCameraPosition(cp));
+			} catch (Exception e) {
+				e.printStackTrace();
+				new AlertDialog.Builder(context).setTitle("맵 포인트로 이동중 문제가 발생하였습니다 죄송합니다").create().show();
+			}
 		}
 	}
 
@@ -312,22 +359,6 @@ public class ActionMap<MarkerInfo> implements OnInfoWindowClickListener {
 
 	public static LatLng adjustLatLng(LatLng latLng, double y, double x) {
 		return new LatLng(latLng.latitude + y, latLng.longitude + x);
-	}
-
-	public void aniMap(int position) {
-		if (map != null) {
-			Log.d("사이즈", latLngList.size() + "");
-			try {
-				LatLng latLng = latLngList.get(position);
-
-				CameraPosition cp = CameraPosition.builder().target(adjustDefault(latLng, ZOOM_NOMAL)).zoom(ZOOM_NOMAL)
-						.tilt(50).build();
-				map.animateCamera(CameraUpdateFactory.newCameraPosition(cp));
-			} catch (Exception e) {
-				e.printStackTrace();
-				new AlertDialog.Builder(context).setTitle("맵 포인트로 이동중 문제가 발생하였습니다 죄송합니다").create().show();
-			}
-		}
 	}
 
 	public LatLng getCenterOfMap() {

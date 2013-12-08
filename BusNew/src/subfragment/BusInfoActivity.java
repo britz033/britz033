@@ -61,7 +61,7 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 	public static final String KEY_PATH_STATION = "PATH";
 	public static final LatLng DEAGU = new LatLng(35.8719607, 128.5910759);
 	private static final int LOADER_ID_INIT = 0;
-	
+
 	private static final int FORWARD = 10;
 	private static final int BACKWARD = 20;
 	private ViewPager pathPager;
@@ -147,7 +147,7 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 					}
 					actionMapDirection.clearMap();
 					prePosition = 0;
-					showInfo();
+					settingMapPath();
 				}
 			}
 		});
@@ -220,10 +220,9 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 				station = matcherBackward.group(1).replace(" ()", "");
 				pathBackward.add(station);
 			}
-			
+
 			stationIdForward = new int[pathForward.size()];
 			stationIdBackward = new int[pathBackward.size()];
-
 
 			TextView textBusInterval = (TextView) findViewById(R.id.text_activity_businfo_current);
 			textBusInterval.setText(busInterval);
@@ -239,28 +238,28 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 					});
 		}
 		settingSwitch(FORWARD);
-//		loopQuery();
+		// loopQuery();
 		String[] startPath = pathDirection.toArray(new String[pathDirection.size()]);
 		loopQueryStation = new LoopQuery<String>(getSupportLoaderManager(), startPath, this);
 		loopQueryStation.start();
 	}
-	
+
 	// 받은 버스번호를 토대로 경로를 뽑은데서 다시 각 경로마다의 버스정류장을 반복쿼리함, 반복 index는 loopIndex
-//		public void loopQuery() {
-//			try {
-//				Log.d("루프 스테이션 이름", pathDirection.get(loopIndex));
-//				Bundle data = new Bundle();
-//				data.putString(KEY_PATH_STATION, pathDirection.get(loopIndex));
-//				loopIndex++;
-//				getSupportLoaderManager().restartLoader(LOADER_ID_PATH, data, this);
-//			} catch (Exception e) {
-//				AlertDialog.Builder builder = new AlertDialog.Builder(this);
-//				builder.setMessage("이 버스는 경로를 불러올 수 없습니다 : " + currentStationName);
-//				builder.create().show();
-//				// 버스 경로에서 불러온 이름으로 버스정류장을 다시 검색하였으나 존재치 않음
-//				e.printStackTrace();
-//			}
-//		}
+	// public void loopQuery() {
+	// try {
+	// Log.d("루프 스테이션 이름", pathDirection.get(loopIndex));
+	// Bundle data = new Bundle();
+	// data.putString(KEY_PATH_STATION, pathDirection.get(loopIndex));
+	// loopIndex++;
+	// getSupportLoaderManager().restartLoader(LOADER_ID_PATH, data, this);
+	// } catch (Exception e) {
+	// AlertDialog.Builder builder = new AlertDialog.Builder(this);
+	// builder.setMessage("이 버스는 경로를 불러올 수 없습니다 : " + currentStationName);
+	// builder.create().show();
+	// // 버스 경로에서 불러온 이름으로 버스정류장을 다시 검색하였으나 존재치 않음
+	// e.printStackTrace();
+	// }
+	// }
 
 	public void settingSwitch(int pathSwitch) {
 		PathPagerAdapter<BusInfoPathItemFragment> adapter = null;
@@ -285,8 +284,6 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 		pathPager.setOnPageChangeListener(this);
 	}
 
-	
-
 	// 이 쿼리문 자체는 정방향, 역방향의 영향을 받지 않는 순수한 쿼리
 	@Override
 	public Loader<Cursor> onCreateLoader(int id, Bundle data) {
@@ -304,11 +301,13 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 			projection = new String[] { "_id", "bus_interval", "bus_forward", "bus_backward", "bus_favorite" };
 			selection = "bus_number='" + data.getString(KEY_BUS_INFO) + "'";
 			break;
-//		case LOADER_ID_PATH:
-//			uri = MyContentProvider.CONTENT_URI_STATION;
-//			projection = new String[] { "_id", "station_name", "station_latitude", "station_longitude", "station_pass" };
-//			selection = "station_name='" + data.getString(KEY_PATH_STATION) + "'";
-//			break;
+		// case LOADER_ID_PATH:
+		// uri = MyContentProvider.CONTENT_URI_STATION;
+		// projection = new String[] { "_id", "station_name",
+		// "station_latitude", "station_longitude", "station_pass" };
+		// selection = "station_name='" + data.getString(KEY_PATH_STATION) +
+		// "'";
+		// break;
 		case LoopQuery.DEFAULT_LOOP_QUERY_ID:
 			uri = MyContentProvider.CONTENT_URI_STATION;
 			projection = new String[] { "_id", "station_name", "station_latitude", "station_longitude", "station_pass" };
@@ -323,7 +322,8 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 	public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
 
 		switch (loader.getId()) {
-		case LOADER_ID_INIT: // 무조건 한번만 불려짐, 즐겨찾기 추가등으로 업데이트 되었을시 불려지는걸 방지 단, 즐겨찾기정보만은 업데이트
+		case LOADER_ID_INIT: // 무조건 한번만 불려짐, 즐겨찾기 추가등으로 업데이트 되었을시 불려지는걸 방지 단,
+								// 즐겨찾기정보만은 업데이트
 			if (!userControlAllowed) {
 				mcursor = cursor;
 				initBusInfo();
@@ -332,21 +332,32 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 				busFavorite = cursor.getInt(4);
 			}
 			break;
-		
-		// 역의 좌표,경로(두방향모두),경유버스 저장 
+
+		// 역의 좌표,경로(두방향모두),경유버스 저장
 		case LoopQuery.DEFAULT_LOOP_QUERY_ID:
 			try {
 				cursor.moveToNext();
 				LatLng latLng = new LatLng(cursor.getDouble(2), cursor.getDouble(3));
 				actionMapDirection.addLinePoint(latLng);
-				passBusHash.put(cursor.getInt(0), cursor.getString(4));			// 나중에 꺼낼 pass 저장, id별로 저장
-				stationIdDirection[loopQueryStation.getCount()-1] = cursor.getInt(0);	// 각 마커마다 순서대로 id를 전달하기 위해 저장중
+				passBusHash.put(cursor.getInt(0), cursor.getString(4)); // 나중에
+																		// 꺼낼
+																		// pass
+																		// 저장,
+																		// id별로
+																		// 저장
+				stationIdDirection[loopQueryStation.getCount() - 1] = cursor.getInt(0); // 각
+																						// 마커마다
+																						// 순서대로
+																						// id를
+																						// 전달하기
+																						// 위해
+																						// 저장중
 
 				// 일단 양쪽 모두 돌리는데 정류장이 발견되면 현재 돌고 있는 방향을 저장
 				if (cursor.getString(1).equals(currentStationName)) {
 					Log.d("버스인포액티비티", "정류장 존재");
 					actionMapDirection.aniMap(latLng);
-					saveIndex = loopQueryStation.getCount()-1;
+					saveIndex = loopQueryStation.getCount() - 1;
 					busDirection = currentDirection;
 				}
 				if (!loopQueryStation.isEnd()) {
@@ -371,11 +382,16 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 	// 모든 로딩이 끝나고 저장된 마커정보를 바탕으로 마커를 찍고 경로를 그림
 	private void finishLoading() {
 		currentDirection = busDirection;
-		showInfo();
+		settingMapPath();
 		actionMapDirection.addMarkerAndShow(saveIndex, pathDirection.get(saveIndex), stationIdDirection[saveIndex]);
-		
-		prePosition = saveIndex;
-		pathPager.setCurrentItem(saveIndex);
+
+		if (saveIndex != 0) {
+			prePosition = saveIndex;
+			pathPager.setCurrentItem(saveIndex);
+		} else {
+			actionMapDirection.setLineBound();
+		}
+
 		if (pathBackward.size() != 0) {
 			pathSwitchWidget.setStartWork();
 			if (busDirection == FORWARD) {
@@ -391,10 +407,10 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 
 	}
 
-	private void showInfo() {
+	private void settingMapPath() {
 		settingSwitch(currentDirection);
 		actionMapDirection.setOnActionInfoWindowClickListener(this);
-		actionMapDirection.drawLine(getResources().getDisplayMetrics().density);
+		actionMapDirection.drawLine();
 	}
 
 	@Override
@@ -488,12 +504,12 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 				@Override
 				public boolean onKey(View v, int keyCode, KeyEvent event) {
 					if (event.getAction() == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER) {
-						
+
 						actionMapDirection.clearMap();
-						actionMapDirection.drawLine(getResources().getDisplayMetrics().density);
-						
+						actionMapDirection.drawLine();
+
 						String s = ((EditText) v).getText().toString();
-						ArrayList<Integer> saveSearchPoint = new ArrayList<Integer>(); 
+						ArrayList<Integer> saveSearchPoint = new ArrayList<Integer>();
 
 						StringBuilder sb = new StringBuilder();
 						for (int i = 0; i < pathDirection.size(); i++) {
@@ -504,15 +520,15 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 							}
 						}
 
-//						Toast.makeText(getBaseContext(), sb.toString(), 1).show();
-
+						// Toast.makeText(getBaseContext(), sb.toString(),
+						// 1).show();
 
 						for (int i = 0; i < saveSearchPoint.size(); i++) {
 							int point = saveSearchPoint.get(i);
-							actionMapDirection.addMarkerAndShow(point,pathDirection.get(point), saveSearchPoint.get(i));
+							actionMapDirection.addMarkerAndShow(point, pathDirection.get(point), saveSearchPoint.get(i));
 						}
 
-						actionMapDirection.aniMap(null, 9);
+						actionMapDirection.aniMapZoom(9);
 
 						searchDialog.dismiss();
 					}

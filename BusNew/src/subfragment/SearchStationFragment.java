@@ -381,7 +381,7 @@ public class SearchStationFragment extends ListFragment implements LoaderCallbac
 					wideMarkerList.add(actionMap.addMarker(options, cursor.getInt(0)));
 					cursor.moveToNext();
 				}
-				actionMap.aniMap(null, ActionMap.ZOOM_NOMAL);
+				actionMap.aniMapZoom(ActionMap.ZOOM_NOMAL);
 				resizeListView(getListView().getHeight()-(rowHeight-3));
 			}
 			break;
