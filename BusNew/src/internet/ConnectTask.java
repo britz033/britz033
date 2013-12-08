@@ -25,7 +25,7 @@ import android.widget.Toast;
  * 결과값과 에러메세지는 ResponseTask proxy.onFinishTask 인터페이스를 통해 
  * 테스크가 끝난후 전달되며 이때 에러메세지가 null 일 경우는 에러메세지 대신 일반적 데이터를 표시한다.
  */
-public class ConnectTask extends AsyncTask<String, Integer, ArrayList<BusInfo>> {
+public class ConnectTask extends AsyncTask<String, Integer, ArrayList<BusInfoNet>> {
 
 	public static final String BUS_URL = "http://businfo.daegu.go.kr/ba/arrbus/arrbus.do?act=arrbus&winc_id=";
 
@@ -40,8 +40,8 @@ public class ConnectTask extends AsyncTask<String, Integer, ArrayList<BusInfo>> 
 	}
 
 	@Override
-	protected ArrayList<BusInfo> doInBackground(String... s) {
-		ArrayList<BusInfo> busInfoList = new ArrayList<BusInfo>();
+	protected ArrayList<BusInfoNet> doInBackground(String... s) {
+		ArrayList<BusInfoNet> busInfoList = new ArrayList<BusInfoNet>();
 
 		InputStream is = null;
 		try {
@@ -68,7 +68,7 @@ public class ConnectTask extends AsyncTask<String, Integer, ArrayList<BusInfo>> 
 	}
 
 	@Override
-	protected void onPostExecute(ArrayList<BusInfo> result) {
+	protected void onPostExecute(ArrayList<BusInfoNet> result) {
 		super.onPostExecute(result);
 
 		if (result == null) {

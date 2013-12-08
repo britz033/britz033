@@ -1,6 +1,6 @@
 package com.zoeas.qdeagubus;
 
-import internet.BusInfo;
+import internet.BusInfoNet;
 import internet.ConnectTask;
 import internet.ResponseTask;
 
@@ -48,12 +48,12 @@ public class BusWidget extends AppWidgetProvider implements ResponseTask{
 
 	// 여기가 주력, 결과값과 함께 혹시나의 에러값
 	@Override
-	public void onTaskFinish(ArrayList<BusInfo> buslist, String error) {
+	public void onTaskFinish(ArrayList<BusInfoNet> buslist, String error) {
 		RemoteViews rv = new RemoteViews(context.getPackageName(), R.layout.widget_layout);
 		if(error == null && buslist != null){
 			
 			// 일단 0, 후에 아예 즐겨찾기된것만 되게 바꿀거임
-			BusInfo bus = buslist.get(0);
+			BusInfoNet bus = buslist.get(0);
 			rv.setTextViewText(R.id.widget_busNum, bus.getBusNum());
 			rv.setTextViewText(R.id.widget_time, bus.getTime());
 			rv.setTextViewText(R.id.widget_where, bus.getCurrent());

@@ -1,6 +1,6 @@
 package subfragment;
 
-import internet.BusInfo;
+import internet.BusInfoNet;
 
 import java.util.ArrayList;
 
@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.text.SpannableStringBuilder;
+import android.text.TextUtils.StringSplitter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,48 +23,99 @@ import com.zoeas.qdeagubus.R;
  * 즐겨찾기의 정류소별 전광판 정보를 리스트뷰로 뿌림
  */
 public class FavoriteFragmentBusList extends ListFragment {
-	
+
 	private Context context;
-	private ArrayList<BusInfo> list;
+	private ArrayList<BusInfoNet> netList;
+	private ArrayList<BusInfo> busList;
 	private String stationName;
+	private float density;
+	private int netSize;
+	private int busSize;
 
 	@Override
 	public void onViewCreated(View view, Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
 		context = getActivity();
-		
+		density = context.getResources().getDisplayMetrics().density;
+
 		Bundle data = getArguments();
 		String error = data.getString(FavoriteFragment.KEY_ERROR);
-		list = data.getParcelableArrayList(FavoriteFragment.KEY_BUSINFO_LIST);
+		netList = data.getParcelableArrayList(FavoriteFragment.KEY_BUS_NET_INFO_LIST);
+		busList = data.getParcelableArrayList(FavoriteFragment.KEY_BUS_INFO_LIST);
 		stationName = data.getString(FavoriteFragment.KEY_STATION_NAME);
-		
-		if(error == null)
+
+		// if (error == null)
+		// setListAdapter(new BusListAdapter());
+		// else {
+		// setListAdapter(null);
+		// setEmptyText(error);
+		// }
+
+		if (busList.size() != 0) {
+			if (netList == null) {
+				netSize = 0;
+			} else {
+				netSize = netList.size();
+			}
+			busSize = busList.size();
 			setListAdapter(new BusListAdapter());
-		else {
+		} else {
 			setListAdapter(null);
-			setEmptyText(error);
+			setEmptyText("현재 버스정보가 없는 정류소입니다");
 		}
 	}
-	
+
+	/*
+	 * <임시> 인터넷에서 가져온 정보에 id와 favorite 추가 추가시마다 본래 리스트껀 제거 리스트뷰엔 net에서 가져온거 상단에
+	 * 다 뿌린후.. 본래꺼에서 남는것들 뿌림
+	 */
+	private void bindInfo() {
+		for (int i = 0; i < netList.size(); i++) {
+			for (int j = 0; j < busList.size(); j++) {
+				// 완전일치시
+				BusInfoNet netInfo = netList.get(i);
+				if (netInfo.getBusNum().equals(busList.get(j).getBusName())) {
+					// id부여
+					netInfo.setBusId(busList.get(j).getBusId());
+					netInfo.setFavorite(busList.get(j).getBusFavorite());
+					busList.remove(j);
+					break;
+				}
+			}
+		}
+	}
+
 	@Override
 	public void onListItemClick(ListView l, View v, int position, long id) {
 		super.onListItemClick(l, v, position, id);
-		String busNum =list.get(position).getBusNum();
+
+		String busName = null;
+		String busId = null;
+		// 클릭시 보내는 정보를 부정확한 이름조합에서 정확한 버스Id로 교체할 예정
+		if (position < netSize) {
+			busId = netList.get(position).getBusId();
+			busName = netList.get(position).getBusNum();
+		} else {
+			busId = busList.get(position).getBusId();
+			busName = busList.get(position).getBusName();
+		}
+
 		Intent intent = new Intent(context, BusInfoActivity.class);
-		intent.putExtra(BusInfoActivity.KEY_BUS_INFO, busNum);
-		intent.putExtra(BusInfoActivity.KEY_CURRENT_STATION_NAME,stationName);
+		intent.putExtra(BusInfoActivity.KEY_BUS_ID, busId);
+		intent.putExtra(BusInfoActivity.KEY_BUS_NAME, busName);
+		intent.putExtra(BusInfoActivity.KEY_CURRENT_STATION_NAME, stationName);
 		startActivity(intent);
 	}
 
 	class BusListAdapter extends BaseAdapter {
-		
+
 		class ViewHolder {
 			TextView tv;
 		}
 
 		@Override
 		public int getCount() {
-			return list.size();
+			return netSize + busSize;
 		}
 
 		@Override
@@ -88,15 +140,14 @@ public class FavoriteFragmentBusList extends ListFragment {
 			} else {
 				holder = (ViewHolder) convertView.getTag();
 			}
-			
-			SpannableStringBuilder ssb = new SpannableStringBuilder();
-			
-			float density = context.getResources().getDisplayMetrics().density;
-			ssb.append(list.get(position).getSpannableStringBusInfo(density));
-			
-			holder.tv.setText(ssb);
-			
-			
+
+			if (position < netSize) {
+				SpannableStringBuilder ssb = netList.get(position).getSpannableStringBusInfo(density);
+				holder.tv.setText(ssb);
+			} else {
+				holder.tv.setText(busList.get(position).getBusName());
+			}
+
 			return convertView;
 		}
 

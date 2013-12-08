@@ -78,7 +78,7 @@ public class SearchBusNumberFragment extends ListFragment implements LoaderCallb
 	public Loader<Cursor> onCreateLoader(int id, Bundle data) {
 
 		Uri uri = MyContentProvider.CONTENT_URI_BUS;
-		String[] projection = { "_id", "bus_number" };
+		String[] projection = { "_id", "bus_number", "bus_id" };
 		String selection = null;
 		String sortOrder = null;
 				
@@ -132,11 +132,13 @@ public class SearchBusNumberFragment extends ListFragment implements LoaderCallb
 		super.onListItemClick(l, v, position, id);
 		Cursor cursor = busAdapter.getCursor();
 		cursor.moveToPosition(position);
+		String busId = cursor.getString(2);
 		String busNum = cursor.getString(1);
 		
 		
 		Intent intent = new Intent(context,BusInfoActivity.class);
-		intent.putExtra(BusInfoActivity.KEY_BUS_INFO, busNum);
+		intent.putExtra(BusInfoActivity.KEY_BUS_ID, busId);
+		intent.putExtra(BusInfoActivity.KEY_BUS_NAME, busNum);
 		intent.putExtra(BusInfoActivity.KEY_CURRENT_STATION_NAME, DEFAULT_STATION);
 		startActivity(intent);
 	}

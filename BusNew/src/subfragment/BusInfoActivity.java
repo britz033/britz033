@@ -61,10 +61,11 @@ import com.zoeas.qdeagubus.R;
  * 쿼리시 에러가 나면 try문으로 캐취해서 경고문 띄움
  */
 
-public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks<Cursor>, OnPageChangeListener,
-		OnClickListener, OnActionInfoWindowClickListener<Integer> {
+public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks<Cursor>, OnPageChangeListener, OnClickListener,
+		OnActionInfoWindowClickListener<Integer> {
 
-	public static final String KEY_BUS_INFO = "BUSNUM";
+	public static final String KEY_BUS_ID = "BUSID";
+	public static final String KEY_BUS_NAME = "BUSNAME";
 	public static final String KEY_CURRENT_STATION_NAME = "STATION";
 	public static final String KEY_PATH_STATION = "PATH";
 	public static final LatLng DEAGU = new LatLng(35.8719607, 128.5910759);
@@ -116,16 +117,15 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 		busDirection = currentDirection = FORWARD;
 		userControlAllowed = false;
 		searchAgain = false;
-		drawables = new Drawable[] { getResources().getDrawable(R.drawable.path),
-				getResources().getDrawable(R.drawable.path_selected), getResources().getDrawable(R.drawable.path_end),
-				getResources().getDrawable(R.drawable.path_end_selected),
-				getResources().getDrawable(R.drawable.path_start),
-				getResources().getDrawable(R.drawable.path_start_selected) };
+		drawables = new Drawable[] { getResources().getDrawable(R.drawable.path), getResources().getDrawable(R.drawable.path_selected),
+				getResources().getDrawable(R.drawable.path_end), getResources().getDrawable(R.drawable.path_end_selected),
+				getResources().getDrawable(R.drawable.path_start), getResources().getDrawable(R.drawable.path_start_selected) };
 
 		// 각정보를 넣을 곳을 기본 세팅하고 쿼리를 스타트
 		pathPager = (ViewPager) findViewById(R.id.viewpager_activity_businfo_path);
 
-		String busNum = getIntent().getExtras().getString(KEY_BUS_INFO);
+		String busId = getIntent().getExtras().getString(KEY_BUS_ID);
+		String busName = getIntent().getExtras().getString(KEY_BUS_NAME);
 		currentStationName = getIntent().getExtras().getString(KEY_CURRENT_STATION_NAME);
 		TextView textBusNumber = (TextView) findViewById(R.id.text_activity_businfo_number);
 		TextView textStationName = (TextView) findViewById(R.id.text_activity_businfo_stationname);
@@ -139,13 +139,13 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 
 		String busOption = "";
 		Pattern pattern = Pattern.compile("^(.+) \\((.+)\\)$");
-		Matcher matcher = pattern.matcher(busNum);
+		Matcher matcher = pattern.matcher(busName);
 		if (matcher.find()) {
-			busNum = matcher.group(1);
+			busName = matcher.group(1);
 			busOption = matcher.group(2);
 		}
 
-		textBusNumber.setText(busNum);
+		textBusNumber.setText(busName);
 		textOption.setText(busOption);
 
 		if (currentStationName != null)
@@ -161,13 +161,13 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 						pathListClose();
 						searchAgain = false;
 					}
-					
+
 					if (isChecked) {
 						currentDirection = FORWARD;
 					} else {
 						currentDirection = BACKWARD;
 					}
-					
+
 					actionMapDirection.clearMap();
 					prePosition = 0;
 					settingMapPath();
@@ -196,10 +196,8 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 	// 액티비티니까 null 걱정없이 바로 xml에서 map 가져옴
 	private void mapSetIfNeeded() {
 		if (!actionMapForward.isMap() || !actionMapBackward.isMap()) {
-			actionMapForward.setMap(((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.busmap))
-					.getMap());
-			actionMapBackward.setMap(((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.busmap))
-					.getMap());
+			actionMapForward.setMap(((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.busmap)).getMap());
+			actionMapBackward.setMap(((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.busmap)).getMap());
 		}
 		actionMapForward.moveMap(DEAGU); // 처음로딩때 대구시
 		actionMapBackward.moveMap(DEAGU); // 처음로딩때 대구시
@@ -252,17 +250,15 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 			textBusInterval.setText(busInterval);
 		} catch (Exception e) {
 			e.printStackTrace();
-			new AlertDialog.Builder(this).setMessage("현재 이 버스는 업데이트되어 있지 않습니다").show()
-					.setOnDismissListener(new OnDismissListener() {
+			new AlertDialog.Builder(this).setMessage("현재 이 버스는 업데이트되어 있지 않습니다").show().setOnDismissListener(new OnDismissListener() {
 
-						@Override
-						public void onDismiss(DialogInterface dialog) {
-							finish();
-						}
-					});
+				@Override
+				public void onDismiss(DialogInterface dialog) {
+					finish();
+				}
+			});
 		}
 		settingSwitch(FORWARD);
-		// loopQuery();
 		String[] startPath = pathDirection.toArray(new String[pathDirection.size()]);
 		loopQueryStation = new LoopQuery<String>(getSupportLoaderManager(), startPath, this);
 		loopQueryStation.start();
@@ -289,16 +285,14 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 		PathPagerAdapter<BusInfoPathItemFragment> adapter = null;
 		switch (pathSwitch) {
 		case FORWARD:
-			adapter = new PathPagerAdapter<BusInfoPathItemFragment>(getSupportFragmentManager(), pathForward,
-					BusInfoPathItemFragment.class);
+			adapter = new PathPagerAdapter<BusInfoPathItemFragment>(getSupportFragmentManager(), pathForward, BusInfoPathItemFragment.class);
 			pathDirection = pathForward;
 			actionMapDirection = actionMapForward;
 			stationIdDirection = stationIdForward;
 			break;
 
 		case BACKWARD:
-			adapter = new PathPagerAdapter<BusInfoPathItemFragment>(getSupportFragmentManager(), pathBackward,
-					BusInfoPathItemFragment.class);
+			adapter = new PathPagerAdapter<BusInfoPathItemFragment>(getSupportFragmentManager(), pathBackward, BusInfoPathItemFragment.class);
 			pathDirection = pathBackward;
 			actionMapDirection = actionMapBackward;
 			stationIdDirection = stationIdBackward;
@@ -323,7 +317,7 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 			Log.d("버스인포", "로더 초기화 생성");
 			uri = MyContentProvider.CONTENT_URI_BUS;
 			projection = new String[] { "_id", "bus_interval", "bus_forward", "bus_backward", "bus_favorite" };
-			selection = "bus_number='" + data.getString(KEY_BUS_INFO) + "'";
+			selection = "bus_id='" + data.getString(KEY_BUS_ID) + "'";
 			break;
 		// case LOADER_ID_PATH:
 		// uri = MyContentProvider.CONTENT_URI_STATION;
@@ -346,8 +340,7 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 	public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
 
 		switch (loader.getId()) {
-		case LOADER_ID_INIT: // 무조건 한번만 불려짐, 즐겨찾기 추가등으로 업데이트 되었을시 불려지는걸 방지 단,
-								// 즐겨찾기정보만은 업데이트
+		case LOADER_ID_INIT: // 무조건 한번만 불려짐, 즐겨찾기 추가등으로 업데이트 되었을시 불려지는걸 방지 단, 즐겨찾기정보만은 업데이트
 			if (!userControlAllowed) {
 				mcursor = cursor;
 				initBusInfo();
@@ -363,19 +356,8 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 				cursor.moveToNext();
 				LatLng latLng = new LatLng(cursor.getDouble(2), cursor.getDouble(3));
 				actionMapDirection.addLinePoint(latLng);
-				passBusHash.put(cursor.getInt(0), cursor.getString(4)); // 나중에
-																		// 꺼낼
-																		// pass
-																		// 저장,
-																		// id별로
-																		// 저장
-				stationIdDirection[loopQueryStation.getCount() - 1] = cursor.getInt(0); // 각
-																						// 마커마다
-																						// 순서대로
-																						// id를
-																						// 전달하기
-																						// 위해
-																						// 저장중
+				passBusHash.put(cursor.getInt(0), cursor.getString(4)); // 나중에 꺼낼 pass 저장, id별로 저장
+				stationIdDirection[loopQueryStation.getCount() - 1] = cursor.getInt(0); // 각 마커마다 순서대로 id를 전달하기 위해 저장중
 
 				// 일단 양쪽 모두 돌리는데 정류장이 발견되면 현재 돌고 있는 방향을 저장
 				if (cursor.getString(1).equals(currentStationName)) {
@@ -468,10 +450,10 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 
 		// 첫로딩시 가져오면 에러가 남.. instantiateItem 쪽 개념때문인듯. 이거 어떻게든 해야되는데..
 		if (position != prePosition) {
-			ImageView preImg = (ImageView) ((BusInfoPathItemFragment) pathPager.getAdapter().instantiateItem(pathPager,
-					prePosition + 2)).getView().findViewById(R.id.img_path);
-			ImageView curImg = (ImageView) ((BusInfoPathItemFragment) pathPager.getAdapter().instantiateItem(pathPager,
-					position + 2)).getView().findViewById(R.id.img_path);
+			ImageView preImg = (ImageView) ((BusInfoPathItemFragment) pathPager.getAdapter().instantiateItem(pathPager, prePosition + 2)).getView()
+					.findViewById(R.id.img_path);
+			ImageView curImg = (ImageView) ((BusInfoPathItemFragment) pathPager.getAdapter().instantiateItem(pathPager, position + 2)).getView()
+					.findViewById(R.id.img_path);
 
 			if (position == 0) {
 				curImg.setImageDrawable(drawables[START_SELECTED]);
@@ -546,12 +528,10 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 
 							for (int i = 0; i < saveSearchPoint.size(); i++) {
 								int point = saveSearchPoint.get(i);
-								actionMapDirection.addMarkerAndShow(point, pathDirection.get(point),
-										saveSearchPoint.get(i));
+								actionMapDirection.addMarkerAndShow(point, pathDirection.get(point), saveSearchPoint.get(i));
 							}
 
-							BusInfoStationSearchListAdapter searchAdapter = new BusInfoStationSearchListAdapter(
-									searchedStationList, getBaseContext());
+							BusInfoStationSearchListAdapter searchAdapter = new BusInfoStationSearchListAdapter(searchedStationList, getBaseContext());
 
 							if (!searchAgain) {
 								searchAgain = true;

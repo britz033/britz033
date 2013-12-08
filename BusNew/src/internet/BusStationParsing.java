@@ -33,13 +33,13 @@ import android.widget.Toast;
 
 public class BusStationParsing {
 
-	public BusStationParsing(XmlPullParser parser, ArrayList<BusInfo> busInfoArray) throws Exception {
+	public BusStationParsing(XmlPullParser parser, ArrayList<BusInfoNet> busInfoArray) throws Exception {
 		parser.next(); // 문서의 시작은 넘어감
 		int status = parser.getEventType(); // 현재 parser가 가르키는 곳의 상황을
 											// 가져옴.문서의
 											// 시작이라던지, 태그의 시작점이라던지..
 		String tag = null; // 태그 이름
-		BusInfo bus = null;
+		BusInfoNet bus = null;
 		boolean end_flag = false;
 		// busInfoArray = new ArrayList<BusInfo>();
 
@@ -55,7 +55,7 @@ public class BusStationParsing {
 				if (tag.equals("li")) {
 
 					String attr = parser.getAttributeValue(0);
-					bus = new BusInfo();
+					bus = new BusInfoNet();
 					bus.setStation(busStation);
 
 					if (attr.equals("st")) {

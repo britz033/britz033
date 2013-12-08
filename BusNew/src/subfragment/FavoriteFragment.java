@@ -1,13 +1,12 @@
 package subfragment;
 
-import internet.BusInfo;
+import internet.BusInfoNet;
 import internet.ConnectTask;
 import internet.ResponseTask;
 
 import java.util.ArrayList;
 
 import util.LoopQuery;
-
 import adapter.FavoriteDummyPagerAdapter;
 import adapter.FavoritePreviewPagerAdatper;
 import android.app.Activity;
@@ -53,7 +52,8 @@ import com.zoeas.qdeagubus.R;
 
 public class FavoriteFragment extends Fragment implements ResponseTask, LoaderCallbacks<Cursor>, OnBackAction {
 
-	public static final String KEY_BUSINFO_LIST = "buslist";
+	public static final String KEY_BUS_NET_INFO_LIST = "busNETlist";
+	public static final String KEY_BUS_INFO_LIST = "buslist";
 	public static final String KEY_STATION_NAME = "station";
 	public static final String KEY_ERROR = "error";
 
@@ -62,15 +62,14 @@ public class FavoriteFragment extends Fragment implements ResponseTask, LoaderCa
 	private String stationNum;
 	private String stationName;
 	private String stationPass; // 이 정류장을 거치는 버스들 id
-	private String[] dbBusNum;
-	private Integer[] dbBusFavorite;
+	private ArrayList<BusInfo> busInfoList;
 	private String[] dbPassBusId;
-	private int busCount;
 	private View view;
 	private FavoritePreviewPagerAdatper adapter;
 	private ViewPager pager;
 	private RelativeLayout loadingContainer;
 	private LoopQuery<String> loopQueryBus;
+	private float density;
 
 	@Override
 	public void onAttach(Activity activity) {
@@ -81,6 +80,8 @@ public class FavoriteFragment extends Fragment implements ResponseTask, LoaderCa
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		busInfoList = new ArrayList<BusInfo>();
+		density = context.getResources().getDisplayMetrics().density;
 	}
 
 	@Override
@@ -108,7 +109,6 @@ public class FavoriteFragment extends Fragment implements ResponseTask, LoaderCa
 	// 즐겨찾기된 그림들을 DB에서 받아온다 그 정보는 어뎁터 내에 집어넣는다.
 	private void viewPagerSetting(final View view) {
 
-		float density = context.getResources().getDisplayMetrics().density;
 		int dip = (int) (density * 30);
 
 		PagerTitleStrip titlepager = (PagerTitleStrip) view.findViewById(R.id.pager_title_strip);
@@ -182,7 +182,7 @@ public class FavoriteFragment extends Fragment implements ResponseTask, LoaderCa
 	 * commitAllowingStateLoss를 써야만 에러가 나지 않는다. 이부분은 다시 찾아볼것
 	 */
 	@Override
-	public void onTaskFinish(ArrayList<BusInfo> list, String error) {
+	public void onTaskFinish(ArrayList<BusInfoNet> list, String error) {
 		loadingContainer.setVisibility(View.INVISIBLE);
 		FavoriteFragmentBusList busListFragment = new FavoriteFragmentBusList();
 		Bundle initData = new Bundle();
@@ -190,20 +190,20 @@ public class FavoriteFragment extends Fragment implements ResponseTask, LoaderCa
 		// 각종오류 감지 및 정보뿌림
 		if (error == null && list != null) {
 			// 정상일 경우
-			
-			bindInfo(list);
-			
-			initData.putParcelableArrayList(KEY_BUSINFO_LIST, list);
-			initData.putString(KEY_STATION_NAME, stationName);
+			initData.putParcelableArrayList(KEY_BUS_NET_INFO_LIST, list);
 
 		} else if (error != null) {
 			// error 메세지가 있을 경우
 			initData.putString(KEY_ERROR, error);
 		} else {
 			// 이도 저도 아닐 경우 - 정류장 번호가 없다던지..
-			initData.putString(KEY_ERROR, "정류소가 설정되어 있지 않습니다");
+			initData.putString(KEY_ERROR, "정보를 찾을 수 없습니다.");
 		}
+		
+		initData.putParcelableArrayList(KEY_BUS_INFO_LIST, busInfoList);
+		initData.putString(KEY_STATION_NAME, stationName);
 
+		// 리스트뷰로 보내는 버스의 모든정보
 		busListFragment.setArguments(initData);
 
 		FragmentManager fm = getChildFragmentManager();
@@ -213,28 +213,7 @@ public class FavoriteFragment extends Fragment implements ResponseTask, LoaderCa
 		ft.commitAllowingStateLoss();
 	}
 	
-	/*
-	 * <임시>
-	 * 인터넷에서 가져온 list 의 이름으로 완전매치 검색
-	 * 있으면 남은 정보뿌리고 
-	 * 없으면 회색처리
-	 * 
-	 * 
-	 */
-	private void bindInfo(ArrayList<BusInfo> list){
-		for(int i=0; i<dbPassBusId.length; i++){
-			
-			for(int j=0; j<list.size(); j++){
-				// 완전일치시
-				if(dbBusNum[i].equals(list.get(j).getBusNum())){
-					//id부여
-				}
-			}
-			
-			// 다돌았는데 일치하는게 없을경우
-			// 회색처리
-		}
-	}
+	
 
 	public void refreshPreview() {
 		getLoaderManager().restartLoader(0, null, this);
@@ -255,11 +234,8 @@ public class FavoriteFragment extends Fragment implements ResponseTask, LoaderCa
 		// 모든 버스 id는 10자리 쉼표포함해서 11자리, 마지막은 쉼표가 없으니 + 1, 해서 모든 버스id에서 버스정보를 추출한다
 		if (stationPass.length() != 0) {
 			dbPassBusId = stationPass.split(",");
-			busCount = (stationPass.length() + 1) / 11;
-
-			Log.d("즐겨찾기", "버스숫자" + busCount);
-			dbBusNum = new String[busCount];
-			dbBusFavorite = new Integer[busCount];
+			
+			Log.d("즐겨찾기", "버스숫자 " + dbPassBusId.length);
 
 			loopQueryBus = new LoopQuery<String>(getLoaderManager(), dbPassBusId, this);
 			loopQueryBus.start();
@@ -288,7 +264,7 @@ public class FavoriteFragment extends Fragment implements ResponseTask, LoaderCa
 			break;
 		case LoopQuery.DEFAULT_LOOP_QUERY_ID:
 			uri = MyContentProvider.CONTENT_URI_BUS;
-			projection = new String[] { MyContentProvider.BUS_NUMBER, MyContentProvider.BUS_FAVORITE };
+			projection = new String[] { MyContentProvider.BUS_ID, MyContentProvider.BUS_NUMBER, MyContentProvider.BUS_FAVORITE };
 			selection = MyContentProvider.BUS_ID + "=" + loopQueryBus.getBundleData();
 			break;
 		}
@@ -320,19 +296,16 @@ public class FavoriteFragment extends Fragment implements ResponseTask, LoaderCa
 			 */
 			// 결국.. 쿼리가 끝나면 하나 다시 restart 하고 하는 수밖에..ㅠㅠ;;
 			
-			int loopIndex = 0;
-			
 			// 버스번호가 검색이 안될때는 건너뜀 (앞으로의 예정버스임)
 			if (cursor.getCount() != 0) {
 				cursor.moveToFirst();
-				loopIndex = loopQueryBus.getCount()-1;
-				dbBusNum[loopIndex] = cursor.getString(0);
-				dbBusFavorite[loopIndex] = cursor.getInt(1);
-				Log.d("즐겨찾기",dbBusNum[loopIndex]);
-			} else {
-				dbBusNum[loopIndex] = null;
-				dbBusFavorite[loopIndex] = 0;
-			}
+				BusInfo busInfo = new BusInfo();
+				busInfo.setBusId(cursor.getString(0));
+				busInfo.setBusName(cursor.getString(1));
+				busInfo.setBusFavorite(cursor.getInt(2));
+				busInfoList.add(busInfo);
+				Log.d("즐겨찾기",busInfo.getBusName() + ":" + busInfo.getBusNum());
+			} 
 			
 			if (!loopQueryBus.isEnd()) {
 				loopQueryBus.restart();
