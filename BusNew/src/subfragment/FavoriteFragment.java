@@ -80,7 +80,6 @@ public class FavoriteFragment extends Fragment implements ResponseTask, LoaderCa
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		busInfoList = new ArrayList<BusInfo>();
 		density = context.getResources().getDisplayMetrics().density;
 	}
 
@@ -133,8 +132,6 @@ public class FavoriteFragment extends Fragment implements ResponseTask, LoaderCa
 		// 미리보기에 쓰일 쿼리를 가져온다 and 미리보기를 표시할 아탑터를 세팅한다
 		OnPageChangeListener onPageChangeListener = new OnPageChangeListener() {
 
-			private int currentPos;
-
 			@Override
 			public void onPageSelected(int position) {
 				// 페이지가 선택되면 선택된 번호로 커서를 이동시켜 정류소 번호를 가져온다음 showInfo로 보내준다
@@ -157,7 +154,6 @@ public class FavoriteFragment extends Fragment implements ResponseTask, LoaderCa
 		pager.setOnPageChangeListener(onPageChangeListener);
 		pager.setOffscreenPageLimit(5);
 		pager.setClipChildren(false);
-		pager.setCurrentItem(0);
 
 		adapter.setDummy(dummyAdapter);
 
@@ -191,12 +187,10 @@ public class FavoriteFragment extends Fragment implements ResponseTask, LoaderCa
 		if (error == null && list != null) {
 			// 정상일 경우
 			initData.putParcelableArrayList(KEY_BUS_NET_INFO_LIST, list);
-
 		} else if (error != null) {
 			// error 메세지가 있을 경우
 			initData.putString(KEY_ERROR, error);
-		} else {
-			// 이도 저도 아닐 경우 - 정류장 번호가 없다던지..
+		} else if (busInfoList == null){
 			initData.putString(KEY_ERROR, "정보를 찾을 수 없습니다.");
 		}
 		
@@ -231,12 +225,15 @@ public class FavoriteFragment extends Fragment implements ResponseTask, LoaderCa
 					.create().show();
 		}
 
+		busInfoList = new ArrayList<BusInfo>();
+		
 		// 모든 버스 id는 10자리 쉼표포함해서 11자리, 마지막은 쉼표가 없으니 + 1, 해서 모든 버스id에서 버스정보를 추출한다
 		if (stationPass.length() != 0) {
 			dbPassBusId = stationPass.split(",");
 			
 			Log.d("즐겨찾기", "버스숫자 " + dbPassBusId.length);
 
+			
 			loopQueryBus = new LoopQuery<String>(getLoaderManager(), dbPassBusId, this);
 			loopQueryBus.start();
 		} else {
@@ -281,7 +278,7 @@ public class FavoriteFragment extends Fragment implements ResponseTask, LoaderCa
 			adapter.swapCursor(cursor);
 			this.cursor = cursor;
 			if (cursor.getCount() == 0)
-				showInfo(null);
+				onTaskFinish(null,"정류장 즐겨찾기를 추가해주세요");
 			else {
 				cursor.moveToPosition(pager.getCurrentItem());
 				settingInfo();

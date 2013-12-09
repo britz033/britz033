@@ -64,7 +64,7 @@ public class BusStationParsing {
 						bus.setSoon(false);
 					} else if (attr.equals("noop")) {
 						busInfoArray = null;
-						throw new Exception("기점에서 버스가 출발 대기중이거나 운행 정보가 없습니다");
+						throw new Exception("0");
 					}
 
 					nextCount(parser, 3);

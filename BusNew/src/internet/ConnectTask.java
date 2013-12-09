@@ -74,6 +74,7 @@ public class ConnectTask extends AsyncTask<String, Integer, ArrayList<BusInfoNet
 		if (result == null) {
 			Log.d("BusInfoDownLoaderTask.onPostExecute", "결과값이 null");
 		}
+		
 		proxy.onTaskFinish(result, errorMessage);
 		// wait.dismiss();
 

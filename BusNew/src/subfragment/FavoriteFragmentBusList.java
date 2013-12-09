@@ -44,30 +44,35 @@ public class FavoriteFragmentBusList extends ListFragment {
 		busList = data.getParcelableArrayList(FavoriteFragment.KEY_BUS_INFO_LIST);
 		stationName = data.getString(FavoriteFragment.KEY_STATION_NAME);
 
-		// if (error == null)
-		// setListAdapter(new BusListAdapter());
-		// else {
-		// setListAdapter(null);
-		// setEmptyText(error);
-		// }
+		if (error == null)
+			if (busList.size() != 0) {
+				if (netList == null) {
+					netSize = 0;
+					busSize = busList.size();
+				} else {
+					netSize = netList.size();
+					bindInfo();
+				}
 
-		if (busList.size() != 0) {
-			if (netList == null) {
-				netSize = 0;
+				setListAdapter(new BusListAdapter());
 			} else {
-				netSize = netList.size();
+				setListAdapter(null);
+				setEmptyText("현재 버스정보가 없는 정류소입니다");
 			}
+		else if(error.equals("0")){ // 버스가 끊김. 버스목록만 보여줌
+			netSize = 0;
 			busSize = busList.size();
+			
 			setListAdapter(new BusListAdapter());
 		} else {
 			setListAdapter(null);
-			setEmptyText("현재 버스정보가 없는 정류소입니다");
+			setEmptyText(error);
 		}
+
 	}
 
 	/*
-	 * <임시> 인터넷에서 가져온 정보에 id와 favorite 추가 추가시마다 본래 리스트껀 제거 리스트뷰엔 net에서 가져온거 상단에
-	 * 다 뿌린후.. 본래꺼에서 남는것들 뿌림
+	 * <임시> 인터넷에서 가져온 정보에 id와 favorite 추가 추가시마다 본래 리스트껀 제거 리스트뷰엔 net에서 가져온거 상단에 다 뿌린후.. 본래꺼에서 남는것들 뿌림
 	 */
 	private void bindInfo() {
 		for (int i = 0; i < netList.size(); i++) {
@@ -83,6 +88,8 @@ public class FavoriteFragmentBusList extends ListFragment {
 				}
 			}
 		}
+
+		busSize = busList.size();
 	}
 
 	@Override
@@ -96,8 +103,8 @@ public class FavoriteFragmentBusList extends ListFragment {
 			busId = netList.get(position).getBusId();
 			busName = netList.get(position).getBusNum();
 		} else {
-			busId = busList.get(position).getBusId();
-			busName = busList.get(position).getBusName();
+			busId = busList.get(position - netSize).getBusId();
+			busName = busList.get(position - netSize).getBusName();
 		}
 
 		Intent intent = new Intent(context, BusInfoActivity.class);
@@ -145,7 +152,7 @@ public class FavoriteFragmentBusList extends ListFragment {
 				SpannableStringBuilder ssb = netList.get(position).getSpannableStringBusInfo(density);
 				holder.tv.setText(ssb);
 			} else {
-				holder.tv.setText(busList.get(position).getBusName());
+				holder.tv.setText(busList.get(position - netSize).getBusName());
 			}
 
 			return convertView;

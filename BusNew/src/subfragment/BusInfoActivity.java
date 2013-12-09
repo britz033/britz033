@@ -319,13 +319,6 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 			projection = new String[] { "_id", "bus_interval", "bus_forward", "bus_backward", "bus_favorite" };
 			selection = "bus_id='" + data.getString(KEY_BUS_ID) + "'";
 			break;
-		// case LOADER_ID_PATH:
-		// uri = MyContentProvider.CONTENT_URI_STATION;
-		// projection = new String[] { "_id", "station_name",
-		// "station_latitude", "station_longitude", "station_pass" };
-		// selection = "station_name='" + data.getString(KEY_PATH_STATION) +
-		// "'";
-		// break;
 		case LoopQuery.DEFAULT_LOOP_QUERY_ID:
 			uri = MyContentProvider.CONTENT_URI_STATION;
 			projection = new String[] { "_id", "station_name", "station_latitude", "station_longitude", "station_pass" };
@@ -354,6 +347,7 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 		case LoopQuery.DEFAULT_LOOP_QUERY_ID:
 			try {
 				cursor.moveToNext();
+				Log.d("버스인포",cursor.getString(1));
 				LatLng latLng = new LatLng(cursor.getDouble(2), cursor.getDouble(3));
 				actionMapDirection.addLinePoint(latLng);
 				passBusHash.put(cursor.getInt(0), cursor.getString(4)); // 나중에 꺼낼 pass 저장, id별로 저장
