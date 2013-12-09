@@ -1,4 +1,4 @@
-package adapter;
+package sub.search.bus;
 
 import com.zoeas.qdeagubus.R;
 

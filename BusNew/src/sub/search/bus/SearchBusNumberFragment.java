@@ -1,6 +1,5 @@
-package subfragment;
+package sub.search.bus;
 
-import adapter.BusSearchListCursorAdapter;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
@@ -21,6 +20,7 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ListView;
+import businfo.activity.BusInfoActivity;
 
 import com.zoeas.qdeagubus.MainActivity.OnBackAction;
 import com.zoeas.qdeagubus.MyContentProvider;

@@ -1,4 +1,4 @@
-package adapter;
+package businfo.activity;
 
 import java.util.ArrayList;
 

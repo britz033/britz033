@@ -9,6 +9,11 @@ import android.view.ViewGroup;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
 
+/** 
+ * 애니메이션 함 할려고 조잡하게 만든 map프래그 현재 정류소검색 맵에 사용되고 있으며 조만간 삭제예정
+ * @author lol
+ *
+ */
 public class CustomMapFragment extends SupportMapFragment{
 	
 	public CustomMapFragment(){

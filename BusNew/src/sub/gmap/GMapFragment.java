@@ -1,5 +1,6 @@
-package subfragment;
+package sub.gmap;
 
+import subfragment.CustomMapFragment;
 import subfragment.CustomMapFragment.OnMapReadyListener;
 import util.ActionMap;
 import util.MyLocation;
@@ -7,7 +8,6 @@ import util.MyLocation.LocationResult;
 import android.app.Activity;
 import android.content.Context;
 import android.database.Cursor;
-import android.graphics.BitmapShader;
 import android.graphics.Color;
 import android.location.Location;
 import android.net.Uri;
@@ -26,12 +26,9 @@ import android.view.ViewGroup;
 import android.view.ViewStub;
 import android.widget.LinearLayout;
 
-import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener;
-import com.google.android.gms.maps.model.BitmapDescriptor;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
@@ -205,8 +202,6 @@ public class GMapFragment extends Fragment implements CallFragmentMethod, Loader
 
 	@Override
 	public boolean onMarkerClick(Marker marker) {
-		OnSaveBusStationInfoListener saver = (OnSaveBusStationInfoListener) context;
-		saver.OnSaveBusStationInfo(marker.getSnippet(), marker.getTitle(), new LatLng(0, 0));
 		return false;
 	}
 

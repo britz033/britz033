@@ -1,4 +1,4 @@
-package subfragment;
+package businfo.activity;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -10,8 +10,6 @@ import util.ActionMap.OnActionInfoWindowClickListener;
 import util.BackPressStack;
 import util.LoopQuery;
 import util.Switch;
-import adapter.BusInfoStationSearchListAdapter;
-import adapter.PathPagerAdapter;
 import android.app.AlertDialog;
 import android.content.ContentUris;
 import android.content.ContentValues;

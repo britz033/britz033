@@ -1,4 +1,4 @@
-package subfragment;
+package sub.favorite;
 
 import internet.BusInfoNet;
 import internet.ConnectTask;
@@ -7,8 +7,6 @@ import internet.ResponseTask;
 import java.util.ArrayList;
 
 import util.LoopQuery;
-import adapter.FavoriteDummyPagerAdapter;
-import adapter.FavoritePreviewPagerAdatper;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;

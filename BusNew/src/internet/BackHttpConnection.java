@@ -10,7 +10,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 
-import subfragment.SearchStationFragment;
+import sub.search.station.SearchStationFragment;
 
 
 import android.content.Context;

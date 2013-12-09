@@ -1,5 +1,6 @@
-package adapter;
+package sub.favorite;
 
+import adapter.OnCommunicationActivity;
 import android.content.Context;
 import android.database.Cursor;
 import android.graphics.drawable.Drawable;

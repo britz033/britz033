@@ -22,7 +22,6 @@ public class BusInfoNet implements Parcelable {
 	private String current;
 	private String route;
 	private String busId;
-	private int favorite;
 
 	public BusInfoNet() {
 		soon = false;
@@ -34,7 +33,6 @@ public class BusInfoNet implements Parcelable {
 
 	public void setRoute(String route) {
 		this.route = route;
-		busNum = busNum + " " + route;
 	}
 
 	public BusInfoNet(Parcel in) {
@@ -42,6 +40,7 @@ public class BusInfoNet implements Parcelable {
 	}
 
 	public SpannableStringBuilder getSpannableStringBusInfo(float density) {
+		StringBuilder sb = new StringBuilder(busNum).append(" ").append(route);
 		SpannableStringBuilder spb = new SpannableStringBuilder();
 
 		if (soon) {
@@ -52,7 +51,7 @@ public class BusInfoNet implements Parcelable {
 		
 		int textSize = (int)(30*density);
 		
-		SpannableString num = new SpannableString(busNum); 
+		SpannableString num = new SpannableString(sb.toString()); 
 		num.setSpan(new AbsoluteSizeSpan(textSize), 0, num.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 		num.setSpan(new StyleSpan(android.graphics.Typeface.BOLD), 0, num.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 		
@@ -104,7 +103,7 @@ public class BusInfoNet implements Parcelable {
 		this.current = current;
 	}
 	
-	public String getLoute(){
+	public String getRoute(){
 		return route;
 	}
 	
@@ -114,14 +113,6 @@ public class BusInfoNet implements Parcelable {
 
 	public void setBusId(String busId) {
 		this.busId = busId;
-	}
-
-	public int getFavorite() {
-		return favorite;
-	}
-
-	public void setFavorite(int favorite) {
-		this.favorite = favorite;
 	}
 
 	/*
@@ -159,7 +150,6 @@ public class BusInfoNet implements Parcelable {
 		dest.writeString(current);
 		dest.writeString(route);
 		dest.writeString(busId);
-		dest.writeInt(favorite);
 	}
 
 	// 이건 필수가 아닌데 저 다음것에서 read 할려면 getter 써야하는게 귀찮아서..
@@ -171,7 +161,6 @@ public class BusInfoNet implements Parcelable {
 		current = in.readString();
 		route = in.readString();
 		busId = in.readString();
-		favorite = in.readInt();
 		
 	}
 

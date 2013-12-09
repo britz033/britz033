@@ -1,4 +1,4 @@
-package subfragment;
+package sub.favorite;
 
 import internet.BusInfoNet;
 
@@ -6,6 +6,7 @@ import java.util.ArrayList;
 
 import util.ActionMap;
 
+import adapter.OnCommunicationActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -23,13 +24,18 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import businfo.activity.BusInfoActivity;
 
+import com.zoeas.qdeagubus.MainActivity;
+import com.zoeas.qdeagubus.MainActivity.MyTabs;
 import com.zoeas.qdeagubus.R;
 
-/*
+/**
  * 즐겨찾기의 정류소별 전광판 정보를 리스트뷰로 뿌림
+ * @author lol
+ *
  */
-public class FavoriteFragmentBusList extends ListFragment {
+public class FavoriteFragmentBusList extends ListFragment{
 
 	private Context context;
 	private ArrayList<BusInfoNet> netList;
@@ -57,7 +63,6 @@ public class FavoriteFragmentBusList extends ListFragment {
 					netSize = 0;
 					busSize = busList.size();
 				} else {
-					netSize = netList.size();
 					bindInfo();
 				}
 
@@ -66,45 +71,53 @@ public class FavoriteFragmentBusList extends ListFragment {
 				setListAdapter(null);
 				setEmptyText("현재 버스정보가 없는 정류소입니다");
 			}
-		else if(error.equals("0")){ // 버스가 끊김. 버스목록만 보여줌
+		else if (error.equals("0")) { // 버스가 끊김. 버스목록만 보여줌
 			netSize = 0;
 			busSize = busList.size();
-			
+
 			setListAdapter(new BusListAdapter());
 		} else {
 			setListAdapter(null);
 			setEmptyText(error);
 		}
-		
+
 	}
 
 	/*
-	 * <임시> 인터넷에서 가져온 정보에 id와 favorite 추가 추가시마다 본래 리스트껀 제거 리스트뷰엔 net에서 가져온거 상단에 다 뿌린후.. 본래꺼에서 남는것들 뿌림
-	 * 현재 완전일치만 정보를 갖고 나머진 버려지는중 고쳐야함
-	 * 번호만 일치시 
-	 * 	클릭 -> 검색으로 보냄
-	 * 	즐겨찾기가 아니라 즐겨 안찾기로 생각변경
-	 * 생각해보니 굳이 즐겨찾기를 넣을 필요가 없음. 반대로 안볼것들은 체크
-	 * 그리고 만약 보고 싶으면 체그 가능한 투명슬라이드라도 나오게 만들면 됨
-	 * 고로 즐겨찾기를 체크하고 체크가 안되어있는것들은 죄다 제거
-	 * 고로 버스 즐겨찾기 디폴트는 전부 다 1
+	 * <임시> 인터넷에서 가져온 정보에 id와 favorite 추가 추가시마다 본래 리스트껀 제거 리스트뷰엔 net에서 가져온거 상단에 다 뿌린후.. 본래꺼에서 남는것들 뿌림 현재 완전일치만 정보를 갖고 나머진 버려지는중 고쳐야함 번호만 일치시 클릭 -> 검색으로 보냄 즐겨찾기가 아니라 즐겨 안찾기로 생각변경
+	 * 생각해보니 굳이 즐겨찾기를 넣을 필요가 없음. 반대로 안볼것들은 체크 그리고 만약 보고 싶으면 체그 가능한 투명슬라이드라도 나오게 만들면 됨 고로 즐겨찾기를 체크하고 체크가 안되어있는것들은 죄다 제거 고로 버스 즐겨찾기 디폴트는 전부 다 1
 	 */
 	private void bindInfo() {
+
+		for (int k = 0; k < busList.size(); k++) {
+			if (busList.get(k).getBusFavorite() == 0) {
+				busList.remove(k);
+			}
+		}
+
 		for (int i = 0; i < netList.size(); i++) {
 			for (int j = 0; j < busList.size(); j++) {
-				// 완전일치시
+				
 				BusInfoNet netInfo = netList.get(i);
-				if (netInfo.getBusNum().equals(busList.get(j).getBusName())) {
-					// id부여
-					netInfo.setBusId(busList.get(j).getBusId());
-					netInfo.setFavorite(busList.get(j).getBusFavorite());
-					busList.remove(j);
-					break;
+				if (netInfo.getBusNum().equals(busList.get(j).getBusNum())) {
+					if (netInfo.getRoute().equals(busList.get(j).getBusOption())) {
+						//완전 일치시
+						netInfo.setBusId(busList.get(j).getBusId());
+						busList.remove(j);
+						break;
+					}
+					// 버스 이름만 일치시
+					netInfo.setBusId("0");
 				}
+			}
+			// 번호도 없음 -> 앞서 favorite 리스트에서 제거된 것이므로 여기서도 필요없음
+			if(!netList.get(i).getBusId().equals("0")){
+				netList.remove(i);
 			}
 		}
 
 		busSize = busList.size();
+		netSize = netList.size();
 	}
 
 	@Override
@@ -115,7 +128,13 @@ public class FavoriteFragmentBusList extends ListFragment {
 		String busId = null;
 		if (position < netSize) {
 			busId = netList.get(position).getBusId();
-			busName = netList.get(position).getBusNum();
+			
+			if(busId.equals("0")){
+				netList.get(position).getBusNum();
+				OnCommunicationActivity goBusSearch = (OnCommunicationActivity) getActivity();
+				goBusSearch.OnTabMove(MainActivity.MyTabs.BUS_LISTVIEW);
+			}
+			busName = netList.get(position).getBusNum() + " " + netList.get(position).getRoute();
 		} else {
 			busId = busList.get(position - netSize).getBusId();
 			busName = busList.get(position - netSize).getBusName();
@@ -175,4 +194,5 @@ public class FavoriteFragmentBusList extends ListFragment {
 		}
 
 	}
+
 }

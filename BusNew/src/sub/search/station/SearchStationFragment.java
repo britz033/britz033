@@ -1,14 +1,14 @@
-package subfragment;
+package sub.search.station;
 
 import java.util.ArrayList;
 
+import subfragment.CustomMapFragment;
 import subfragment.CustomMapFragment.OnMapReadyListener;
 import util.ActionMap;
 import util.ActionMap.OnActionInfoWindowClickListener;
 import util.AnimationRelativeLayout;
 import util.LoopQuery;
 import adapter.SlidingMenuAdapter;
-import adapter.StationSearchListCursorAdapter;
 import android.app.Activity;
 import android.content.Context;
 import android.database.Cursor;
@@ -194,8 +194,6 @@ public class SearchStationFragment extends ListFragment implements LoaderCallbac
 		double stationLatitude = c.getDouble(STATION_LATITUDE_INDEX);
 
 		LatLng stationPosition = new LatLng(stationLatitude, stationLongitude);
-		OnSaveBusStationInfoListener saver = (OnSaveBusStationInfoListener) context;
-		saver.OnSaveBusStationInfo(stationNumber, stationName, stationPosition);
 
 		if (actionMap.isMap()) {
 			mapContainer.show();

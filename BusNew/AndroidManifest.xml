@@ -35,7 +35,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="subfragment.BusInfoActivity"
+            android:name="businfo.activity.BusInfoActivity"
             android:label="번호정보"/>
         <receiver 
             android:name=".BusWidget"

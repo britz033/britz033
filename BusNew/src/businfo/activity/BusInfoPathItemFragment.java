@@ -1,6 +1,5 @@
-package subfragment;
+package businfo.activity;
 
-import adapter.PathPagerAdapter;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;

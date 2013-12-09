@@ -1,6 +1,6 @@
-package adapter;
+package sub.search.station;
 
-import subfragment.SearchStationFragment;
+import adapter.OnCommunicationActivity;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;

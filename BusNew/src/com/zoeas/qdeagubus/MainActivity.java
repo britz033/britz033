@@ -2,20 +2,16 @@ package com.zoeas.qdeagubus;
 
 import java.util.ArrayList;
 
-import subfragment.FavoriteFragment;
-import subfragment.GMapFragment;
-import subfragment.OnSaveBusStationInfoListener;
+import sub.favorite.FavoriteFragment;
 import util.BackPressStack;
 import adapter.OnCommunicationActivity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -29,17 +25,13 @@ import android.support.v7.app.ActionBar.TabListener;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
-import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.maps.model.LatLng;
 
-public class MainActivity extends ActionBarActivity implements TabListener, OnSaveBusStationInfoListener,
-		OnCommunicationActivity {
+public class MainActivity extends ActionBarActivity implements TabListener,OnCommunicationActivity {
 
 	private ArrayList<Fragment> flist; // 액티비티가 관리하는 애들
 
@@ -58,9 +50,9 @@ public class MainActivity extends ActionBarActivity implements TabListener, OnSa
 	}
 
 	public enum MyTabs {
-		FAVORITE(0, "즐겨찾기", "subfragment.FavoriteFragment"), STATION_LISTVIEW(1, "정류소",
-				"subfragment.SearchStationFragment"), BUS_LISTVIEW(2, "버스", "subfragment.SearchBusNumberFragment"), GMAP(
-				3, "주변맵", "subfragment.GMapFragment"), DUMMY(4, "설정", "subfragment.SettingFragment"), 
+		FAVORITE(0, "즐겨찾기", "sub.favorite.FavoriteFragment"), STATION_LISTVIEW(1, "정류소",
+				"sub.search.station.SearchStationFragment"), BUS_LISTVIEW(2, "버스", "sub.search.bus.SearchBusNumberFragment"), GMAP(
+				3, "주변맵", "sub.gmap.GMapFragment"), DUMMY(4, "설정", "subfragment.SettingFragment"), 
 				TEST(5, "test",	"subfragment.Test"), TEST2(6, "test2",	"subfragment.Test2") ;
 		private final String name;
 		private final String fragmentName;
@@ -192,24 +184,25 @@ public class MainActivity extends ActionBarActivity implements TabListener, OnSa
 		return true;
 	}
 
-	@Override
-	public void OnSaveBusStationInfo(String station_number, String station_name, LatLng latLng) {
-
-		SharedPreferences setting = getSharedPreferences(PREF_NAME, 0);
-		SharedPreferences.Editor editor = setting.edit();
-
-		editor.putString("station_number", station_number);
-		editor.putString("station_name", station_name);
-		editor.putString("station_longitude", String.valueOf(latLng.longitude));
-		editor.putString("station_latitude", String.valueOf(latLng.latitude));
-		editor.commit();
-
-		this.stationNumber = station_number;
-		this.stationName = station_name;
-		this.latlng = latLng;
-
-		Toast.makeText(this, latLng.toString() + " 저장되었습니다", 0).show();
-	}
+	// 일단 보류. 현재 위젯에서 이 정보를 사용해서 스테이션 결정중
+//	@Override
+//	public void OnSaveBusStationInfo(String station_number, String station_name, LatLng latLng) {
+//
+//		SharedPreferences setting = getSharedPreferences(PREF_NAME, 0);
+//		SharedPreferences.Editor editor = setting.edit();
+//
+//		editor.putString("station_number", station_number);
+//		editor.putString("station_name", station_name);
+//		editor.putString("station_longitude", String.valueOf(latLng.longitude));
+//		editor.putString("station_latitude", String.valueOf(latLng.latitude));
+//		editor.commit();
+//
+//		this.stationNumber = station_number;
+//		this.stationName = station_name;
+//		this.latlng = latLng;
+//
+//		Toast.makeText(this, latLng.toString() + " 저장되었습니다", 0).show();
+//	}
 
 	@Override
 	public void onTabReselected(Tab arg0, FragmentTransaction arg1) {
@@ -226,11 +219,6 @@ public class MainActivity extends ActionBarActivity implements TabListener, OnSa
 
 	}
 
-	@Override
-	public void OnSaveBusStationInfo(String station_number, String station_name) {
-		// TODO Auto-generated method stub
-
-	}
 
 	@Override
 	public void onBackPressed() {
@@ -255,7 +243,7 @@ public class MainActivity extends ActionBarActivity implements TabListener, OnSa
 
 	@Override
 	public void OnTabMove(MyTabs myTab) {
-		int index = myTab.STATION_LISTVIEW.getValue();
+		int index = myTab.getValue();
 		vp.setCurrentItem(index, true);
 	}
 
