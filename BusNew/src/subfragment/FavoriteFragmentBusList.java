@@ -4,6 +4,8 @@ import internet.BusInfoNet;
 
 import java.util.ArrayList;
 
+import util.ActionMap;
+
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -73,7 +75,7 @@ public class FavoriteFragmentBusList extends ListFragment {
 			setListAdapter(null);
 			setEmptyText(error);
 		}
-
+		
 	}
 
 	/*
