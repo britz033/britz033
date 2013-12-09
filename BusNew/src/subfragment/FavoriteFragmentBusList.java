@@ -6,10 +6,15 @@ import java.util.ArrayList;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
+import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils.StringSplitter;
+import android.text.style.ForegroundColorSpan;
+import android.text.style.TextAppearanceSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -73,6 +78,14 @@ public class FavoriteFragmentBusList extends ListFragment {
 
 	/*
 	 * <임시> 인터넷에서 가져온 정보에 id와 favorite 추가 추가시마다 본래 리스트껀 제거 리스트뷰엔 net에서 가져온거 상단에 다 뿌린후.. 본래꺼에서 남는것들 뿌림
+	 * 현재 완전일치만 정보를 갖고 나머진 버려지는중 고쳐야함
+	 * 번호만 일치시 
+	 * 	클릭 -> 검색으로 보냄
+	 * 	즐겨찾기가 아니라 즐겨 안찾기로 생각변경
+	 * 생각해보니 굳이 즐겨찾기를 넣을 필요가 없음. 반대로 안볼것들은 체크
+	 * 그리고 만약 보고 싶으면 체그 가능한 투명슬라이드라도 나오게 만들면 됨
+	 * 고로 즐겨찾기를 체크하고 체크가 안되어있는것들은 죄다 제거
+	 * 고로 버스 즐겨찾기 디폴트는 전부 다 1
 	 */
 	private void bindInfo() {
 		for (int i = 0; i < netList.size(); i++) {
@@ -98,7 +111,6 @@ public class FavoriteFragmentBusList extends ListFragment {
 
 		String busName = null;
 		String busId = null;
-		// 클릭시 보내는 정보를 부정확한 이름조합에서 정확한 버스Id로 교체할 예정
 		if (position < netSize) {
 			busId = netList.get(position).getBusId();
 			busName = netList.get(position).getBusNum();
@@ -152,7 +164,9 @@ public class FavoriteFragmentBusList extends ListFragment {
 				SpannableStringBuilder ssb = netList.get(position).getSpannableStringBusInfo(density);
 				holder.tv.setText(ssb);
 			} else {
-				holder.tv.setText(busList.get(position - netSize).getBusName());
+				SpannableString sb = new SpannableString(busList.get(position - netSize).getBusName());
+				sb.setSpan(new ForegroundColorSpan(Color.argb(100, 0, 0, 0)), 0, sb.length(), SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE);
+				holder.tv.setText(sb);
 			}
 
 			return convertView;

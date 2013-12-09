@@ -226,21 +226,15 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 			Matcher matcherForward = pattern.matcher(busForward);
 			Matcher matcherBackward = pattern.matcher(busBackward);
 
-			String station = null;
-
 			while (true) {
 				if (!matcherForward.find())
 					break;
-				// 간혹 어디어디 () 이런 식의 골때리는 역명이 있는데 괄호 제거안하면 에러
-				station = matcherForward.group(1).replace(" ()", "");
-				pathForward.add(station);
+				pathForward.add(matcherForward.group(1));
 			}
 			while (true) {
 				if (!matcherBackward.find())
 					break;
-				// 간혹 어디어디 () 이런 식의 골때리는 역명이 있는데 괄호 제거안하면 에러
-				station = matcherBackward.group(1).replace(" ()", "");
-				pathBackward.add(station);
+				pathBackward.add(matcherBackward.group(1));
 			}
 
 			stationIdForward = new int[pathForward.size()];
@@ -264,22 +258,6 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 		loopQueryStation.start();
 	}
 
-	// 받은 버스번호를 토대로 경로를 뽑은데서 다시 각 경로마다의 버스정류장을 반복쿼리함, 반복 index는 loopIndex
-	// public void loopQuery() {
-	// try {
-	// Log.d("루프 스테이션 이름", pathDirection.get(loopIndex));
-	// Bundle data = new Bundle();
-	// data.putString(KEY_PATH_STATION, pathDirection.get(loopIndex));
-	// loopIndex++;
-	// getSupportLoaderManager().restartLoader(LOADER_ID_PATH, data, this);
-	// } catch (Exception e) {
-	// AlertDialog.Builder builder = new AlertDialog.Builder(this);
-	// builder.setMessage("이 버스는 경로를 불러올 수 없습니다 : " + currentStationName);
-	// builder.create().show();
-	// // 버스 경로에서 불러온 이름으로 버스정류장을 다시 검색하였으나 존재치 않음
-	// e.printStackTrace();
-	// }
-	// }
 
 	public void settingSwitch(int pathSwitch) {
 		PathPagerAdapter<BusInfoPathItemFragment> adapter = null;
