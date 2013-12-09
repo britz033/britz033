@@ -222,7 +222,7 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 				favoriteAddBtn.setImageResource(R.drawable.btn_station_list_item_on_selector);
 			}
 
-			Pattern pattern = Pattern.compile("([^,]+),");
+			Pattern pattern = Pattern.compile("([^;]+);");
 			Matcher matcherForward = pattern.matcher(busForward);
 			Matcher matcherBackward = pattern.matcher(busBackward);
 
