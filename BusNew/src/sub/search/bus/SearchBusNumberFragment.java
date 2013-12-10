@@ -70,7 +70,7 @@ public class SearchBusNumberFragment extends ListFragment implements LoaderCallb
 		busAdapter = new BusSearchListCursorAdapter(context, null, 0);
 		setListAdapter(busAdapter);
 
-		getLoaderManager().initLoader(0, null, this);
+		getLoaderManager().initLoader(0, getArguments(), this);
 		return view;
 	}
 

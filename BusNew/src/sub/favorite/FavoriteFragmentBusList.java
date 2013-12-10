@@ -4,20 +4,16 @@ import internet.BusInfoNet;
 
 import java.util.ArrayList;
 
-import util.ActionMap;
-
 import adapter.OnCommunicationActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
-import android.text.TextUtils.StringSplitter;
 import android.text.style.ForegroundColorSpan;
-import android.text.style.TextAppearanceSpan;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,7 +23,6 @@ import android.widget.TextView;
 import businfo.activity.BusInfoActivity;
 
 import com.zoeas.qdeagubus.MainActivity;
-import com.zoeas.qdeagubus.MainActivity.MyTabs;
 import com.zoeas.qdeagubus.R;
 
 /**
@@ -111,8 +106,9 @@ public class FavoriteFragmentBusList extends ListFragment{
 				}
 			}
 			// 번호도 없음 -> 앞서 favorite 리스트에서 제거된 것이므로 여기서도 필요없음
-			if(!netList.get(i).getBusId().equals("0")){
+			if(netList.get(i).getBusId() == null){
 				netList.remove(i);
+				Log.d("즐겨찾기 버스리스트", "전광판 정보가 하나 제거됨");
 			}
 		}
 
@@ -133,6 +129,7 @@ public class FavoriteFragmentBusList extends ListFragment{
 				netList.get(position).getBusNum();
 				OnCommunicationActivity goBusSearch = (OnCommunicationActivity) getActivity();
 				goBusSearch.OnTabMove(MainActivity.MyTabs.BUS_LISTVIEW);
+				return;
 			}
 			busName = netList.get(position).getBusNum() + " " + netList.get(position).getRoute();
 		} else {

@@ -17,7 +17,7 @@ public class BusInfo implements Parcelable{
 		busName = null;
 		busId = null;
 		busNum = null;
-		busOption = null;
+		busOption = "";
 		busFavorite = 0;
 	}
 	

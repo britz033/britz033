@@ -29,6 +29,8 @@ public class BusInfoNet implements Parcelable {
 		time = "버스남은시간";
 		current = "버스현재장소";
 		station = "버스역";
+		route = "";
+		busId = null;
 	}
 
 	public void setRoute(String route) {

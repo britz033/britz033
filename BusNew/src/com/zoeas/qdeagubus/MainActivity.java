@@ -242,9 +242,9 @@ public class MainActivity extends ActionBarActivity implements TabListener,OnCom
 	}
 
 	@Override
-	public void OnTabMove(MyTabs myTab) {
-		int index = myTab.getValue();
-		vp.setCurrentItem(index, true);
+	public void OnTabMove(MyTabs myTab, Bundle data) {
+ 		int index = myTab.getValue();
+		vp.setCurrentItem(index, false);
 	}
 
 	@Override
