@@ -49,7 +49,7 @@ public class SearchBusNumberFragment extends ListFragment implements LoaderCallb
 	private BusSearchListCursorAdapter busAdapter;
 	private EditText et;
 	private InputMethodManager imm;
-	private static final String SELECTION_KEY = "selection";
+	public static final String SELECTION_KEY = "selection";
 	public static final String DEFAULT_STATION = "";
 	
 	
@@ -64,13 +64,14 @@ public class SearchBusNumberFragment extends ListFragment implements LoaderCallb
 		et.addTextChangedListener(this);
 		et.setInputType(InputType.TYPE_CLASS_NUMBER);
 		et.setOnKeyListener(this);
+		et.setText(getArguments().getString(SELECTION_KEY));
 		
 		imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
 
 		busAdapter = new BusSearchListCursorAdapter(context, null, 0);
 		setListAdapter(busAdapter);
 
-		getLoaderManager().initLoader(0, getArguments(), this);
+		getLoaderManager().initLoader(0, null, this);
 		return view;
 	}
 

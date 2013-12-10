@@ -4,6 +4,8 @@ import internet.BusInfoNet;
 
 import java.util.ArrayList;
 
+import sub.search.bus.SearchBusNumberFragment;
+
 import adapter.OnCommunicationActivity;
 import android.content.Context;
 import android.content.Intent;
@@ -126,9 +128,10 @@ public class FavoriteFragmentBusList extends ListFragment{
 			busId = netList.get(position).getBusId();
 			
 			if(busId.equals("0")){
-				netList.get(position).getBusNum();
 				OnCommunicationActivity goBusSearch = (OnCommunicationActivity) getActivity();
-				goBusSearch.OnTabMove(MainActivity.MyTabs.BUS_LISTVIEW);
+				Bundle data = new Bundle();
+				data.putString(SearchBusNumberFragment.SELECTION_KEY, netList.get(position).getBusNum());
+				goBusSearch.OnTabMove(MainActivity.MyTabs.BUS_LISTVIEW, data);
 				return;
 			}
 			busName = netList.get(position).getBusNum() + " " + netList.get(position).getRoute();

@@ -83,7 +83,7 @@ public class FavoritePreviewPagerAdatper extends PagerAdapter {
 				@Override
 				public void onClick(View v) {
 					activityCall = (MainActivity) context;
-					activityCall.OnTabMove(MainActivity.MyTabs.STATION_LISTVIEW);
+					activityCall.OnTabMove(MainActivity.MyTabs.STATION_LISTVIEW,null);
 				}
 			});
 		}
