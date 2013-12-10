@@ -68,6 +68,7 @@ public class FavoriteFragment extends Fragment implements ResponseTask, LoaderCa
 	private RelativeLayout loadingContainer;
 	private LoopQuery<String> loopQueryBus;
 	private float density;
+	private boolean isFirst;
 
 	@Override
 	public void onAttach(Activity activity) {
@@ -79,10 +80,12 @@ public class FavoriteFragment extends Fragment implements ResponseTask, LoaderCa
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		density = context.getResources().getDisplayMetrics().density;
+		Log.d("즐겨찾기 onCreate","불려짐");
 	}
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+		isFirst = true;
 		view = inflater.inflate(R.layout.fragment_favorite_layout, container,false);
 		getLoaderManager().initLoader(0, null, this);
 		loadingContainer = (RelativeLayout) view.findViewById(R.id.layout_favorite_buslist_loadingcontainer);
@@ -251,6 +254,9 @@ public class FavoriteFragment extends Fragment implements ResponseTask, LoaderCa
 
 		switch (id) {
 		case 0:
+			if(isFirst){
+				isFirst = false;
+			}
 			uri = MyContentProvider.CONTENT_URI_STATION;
 			projection = new String[] { MyContentProvider.STATION_NUMBER, MyContentProvider.STATION_NAME,
 					MyContentProvider.STATION_PASS };
@@ -270,6 +276,11 @@ public class FavoriteFragment extends Fragment implements ResponseTask, LoaderCa
 	// 검색이 끝나면 settingInfo에서 찾은 정보를 세팅하고 그것들을 showInfo에서 보여줌
 	@Override
 	public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
+		
+		if(isFirst && loader.getId()!=0){
+			return;
+		}
+		
 		switch (loader.getId()) {
 		case 0:
 			Log.d("즐겨찾기 미리보기", "스왑작동");

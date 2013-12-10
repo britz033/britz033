@@ -135,6 +135,7 @@ public class SearchStationFragment extends ListFragment implements LoaderCallbac
 			View msgView = ((ViewStub) view.findViewById(R.id.viewstub_search_station_map_fail)).inflate();
 			actionMap.setGoogleFailLayout(msgView);
 		}
+		
 
 		return view;
 	}
@@ -304,7 +305,7 @@ public class SearchStationFragment extends ListFragment implements LoaderCallbac
 
 	@Override
 	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-		Log.d("정류장검색", "로더 생성자 호출됨");
+		Log.d("정류장검색", "로더 생성자 호출됨 : " + id);
 		Uri baseUri = MyContentProvider.CONTENT_URI_STATION;
 
 		// 이것의 순서를 바꿔줄시 반드시 위의 상수인덱스 값도 변경해줘야함
@@ -354,12 +355,24 @@ public class SearchStationFragment extends ListFragment implements LoaderCallbac
 		return new CursorLoader(getActivity(), baseUri, projection, selection, null, null);
 	}
 
+	/**
+	 * 앞서 생성된 커서를 받아옴, 업데이트시 모든 로더가 다 날아옴
+	 * 뿐만 아니라 리셋후 다시 돌아올때마다 모든 로더를 다시 다 불러옴
+	 * 이때 불러들이는 로더들은 각 로더별로 마지막에 호출된 것들
+	 * 상황을 보고 createView에 flag를 만들어서 예상치 못한 재호출들은 다 차단해야한다
+	 * 이것의 예를들면 
+	 * search_station 외에는 재생성때 불려져선 안되니 다 차단
+	 */
 	@Override
 	public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
-		// 앞서 생성된 커서를 받아옴, 업데이트시 모든 로더가 다 날아옴
+		
 
 		Log.d("로더id 확인", "아이디: " + loader.getId());
-
+		
+		if(isFirst && loader.getId() != SEARCH_STATION){
+			return;
+		}
+		
 		switch (loader.getId()) {
 		case SEARCH_STATION:
 			if (currentUpdatableId == SEARCH_STATION) {
@@ -405,16 +418,15 @@ public class SearchStationFragment extends ListFragment implements LoaderCallbac
 			}
 			break;
 		}
-
+		
 		if (isFirst) {
 			View childView = madapter.getView(0, null, getListView());
 			childView.measure(MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED),
 					MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED));
 			rowHeight = childView.getMeasuredHeight();
-			Log.d("크기재기 2", "ㅊ" + rowHeight);
+			Log.d("크기재기 2", "" + rowHeight);
 			isFirst = false;
 		}
-
 	}
 
 	private void settingSlidingMenuQuery(String passBusId) {
