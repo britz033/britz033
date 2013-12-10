@@ -43,7 +43,8 @@ import com.zoeas.qdeagubus.R;
 
  */
 
-public class SearchBusNumberFragment extends ListFragment implements LoaderCallbacks<Cursor>, TextWatcher,OnKeyListener, OnBackAction {
+public class SearchBusNumberFragment extends ListFragment implements LoaderCallbacks<Cursor>, TextWatcher,
+		OnKeyListener, OnBackAction {
 
 	private Context context;
 	private BusSearchListCursorAdapter busAdapter;
@@ -51,21 +52,21 @@ public class SearchBusNumberFragment extends ListFragment implements LoaderCallb
 	private InputMethodManager imm;
 	public static final String SELECTION_KEY = "selection";
 	public static final String DEFAULT_STATION = "";
-	
-	
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		context = getActivity();
 		View view = inflater.inflate(R.layout.fragment_search_bus_layout, null);
-//		view.setOnTouchListener(this);
-		
+		// view.setOnTouchListener(this);
+
 		et = (EditText) view.findViewById(R.id.edit_fragment_search_bus);
 		et.addTextChangedListener(this);
 		et.setInputType(InputType.TYPE_CLASS_NUMBER);
 		et.setOnKeyListener(this);
-		et.setText(getArguments().getString(SELECTION_KEY));
-		
+		if (getArguments() != null) {
+			et.setText(getArguments().getString(SELECTION_KEY));
+		}
+
 		imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
 
 		busAdapter = new BusSearchListCursorAdapter(context, null, 0);
@@ -82,11 +83,11 @@ public class SearchBusNumberFragment extends ListFragment implements LoaderCallb
 		String[] projection = { "_id", "bus_number", "bus_id" };
 		String selection = null;
 		String sortOrder = null;
-				
+
 		if (data != null) {
 			selection = data.getString(SELECTION_KEY);
 		}
-		
+
 		return new CursorLoader(context, uri, projection, selection, null, sortOrder);
 	}
 
@@ -113,18 +114,18 @@ public class SearchBusNumberFragment extends ListFragment implements LoaderCallb
 	@Override
 	public void onTextChanged(CharSequence s, int start, int before, int count) {
 		Bundle data = new Bundle();
-		data.putString(SELECTION_KEY, "bus_number like '%"+s.toString()+"%'");
+		data.putString(SELECTION_KEY, "bus_number like '%" + s.toString() + "%'");
 
 		getLoaderManager().restartLoader(0, data, this);
 	}
 
 	@Override
 	public boolean onKey(View v, int keyCode, KeyEvent event) {
-		if(event.getAction() == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER){
+		if (event.getAction() == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER) {
 			imm.hideSoftInputFromWindow(et.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
 			return true;
 		}
-			
+
 		return false;
 	}
 
@@ -135,9 +136,8 @@ public class SearchBusNumberFragment extends ListFragment implements LoaderCallb
 		cursor.moveToPosition(position);
 		String busId = cursor.getString(2);
 		String busNum = cursor.getString(1);
-		
-		
-		Intent intent = new Intent(context,BusInfoActivity.class);
+
+		Intent intent = new Intent(context, BusInfoActivity.class);
 		intent.putExtra(BusInfoActivity.KEY_BUS_ID, busId);
 		intent.putExtra(BusInfoActivity.KEY_BUS_NAME, busNum);
 		intent.putExtra(BusInfoActivity.KEY_CURRENT_STATION_NAME, DEFAULT_STATION);
@@ -147,34 +147,32 @@ public class SearchBusNumberFragment extends ListFragment implements LoaderCallb
 	@Override
 	public void onBackPressed() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void onClear() {
 		// TODO Auto-generated method stub
-		
-	}
-	
-	
 
-//	@Override
-//	public boolean onTouch(View v, MotionEvent event) {
-//		if(event.getAction() == MotionEvent.ACTION_DOWN){
-//			// 에디터의 영역을 가져감
-//			Rect rect = new Rect();
-//			et.getGlobalVisibleRect(rect);
-//			
-//			Log.d("온터치","불려짐");
-//			
-//			if(!rect.contains((int)event.getRawX(), (int)event.getRawY())){
-//				et.clearFocus();
-//				imm.hideSoftInputFromWindow(et.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
-//			}
-//		}
-//		return false;
-//	}
-//	
-	
+	}
+
+	// @Override
+	// public boolean onTouch(View v, MotionEvent event) {
+	// if(event.getAction() == MotionEvent.ACTION_DOWN){
+	// // 에디터의 영역을 가져감
+	// Rect rect = new Rect();
+	// et.getGlobalVisibleRect(rect);
+	//
+	// Log.d("온터치","불려짐");
+	//
+	// if(!rect.contains((int)event.getRawX(), (int)event.getRawY())){
+	// et.clearFocus();
+	// imm.hideSoftInputFromWindow(et.getWindowToken(),
+	// InputMethodManager.HIDE_NOT_ALWAYS);
+	// }
+	// }
+	// return false;
+	// }
+	//
 
 }

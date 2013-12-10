@@ -380,7 +380,7 @@ public class SearchStationFragment extends ListFragment implements LoaderCallbac
 					cursor.moveToNext();
 				}
 				actionMap.aniMapZoom(ActionMap.ZOOM_NOMAL);
-				resizeListView(getListView().getHeight()-(rowHeight-3));
+				resizeListView(getListView().getHeight()-(rowHeight-(int)(3*getResources().getDisplayMetrics().density)));
 			}
 			break;
 		case SEARCH_STATION_PASSBUS:

@@ -244,7 +244,8 @@ public class MainActivity extends ActionBarActivity implements TabListener,OnCom
 	@Override
 	public void OnTabMove(MyTabs myTab, Bundle data) {
  		int index = myTab.getValue();
- 		flist.get(index).setArguments(data);
+ 		if(!flist.get(index).isAdded())
+ 			flist.get(index).setArguments(data);
 		vp.setCurrentItem(index, false);
 	}
 

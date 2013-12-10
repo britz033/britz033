@@ -126,7 +126,6 @@ public class StationSearchListCursorAdapter extends CursorAdapter {
     		a.start();
     		lastAnimatedPosition = position;
         }
-        Log.d("get View 호출됨",""+dummyHeight);
         if(lastPosition == position){
         	((ViewHolder)v.getTag()).dummy.setVisibility(View.VISIBLE);
         } else {
