@@ -81,7 +81,7 @@ public class FavoriteFragmentBusList extends ListFragment{
 	}
 
 	/**
-	 * 바인드 
+	 * 바인드 aa
 	 */
 	private void bindInfo() {
 
