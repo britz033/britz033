@@ -81,8 +81,15 @@ public class FavoriteFragmentBusList extends ListFragment{
 	}
 
 	/**
-	 * 바인드 afda
-	 */
+	 * 제거 체크가 되어 있는지 확인하고 체크되어 있으면 체크된 것을 제거하고 남은 것들로 보여주기를 시작한다 
+	 * 이때 전광판에서 정보가 오지 않은 것들은 회색으로 뿌리고 그외는 정보표시를 한다.
+	 * 이때 전광판에서 정보와 버스리스트가 매치되지 않으면 
+	 * 전광판에 나타난 번호를 기준으로 버스리스트를 다 지워버린다
+	 * 예를들어 300번이 있는데 버스리스트는 300(냥) 300(스파르타)라고 있으면 이 둘은 통합되어 있다보고 삭제시킨다 
+	 * 만약 300과 300(냥)이 전광판에 뜬다면 300(냥)과 300은 그냥 뜨고 300(스파르타) 가 삭제된다
+	 * 혹시 300과 300(냥)과 300(스파르타)가 다 전광판에 나오는데 이번에만 300이 떠서 나머지가 삭제된 경우라고 치더라도 어쩔수 없다
+	 * 다만 그렇게 삭제되더라도 다음에 매치시 나올테니 그걸로 위안 삼는다
+	 *  */
 	private void bindInfo() {
 
 		for (int k = 0; k < busList.size(); k++) {
@@ -110,9 +117,11 @@ public class FavoriteFragmentBusList extends ListFragment{
 			if(netList.get(i).getBusId() == null){
 				netList.remove(i);
 				Log.d("즐겨찾기 버스리스트", "전광판 정보가 하나 제거됨");
+			} else if(netList.get(i).getBusId() == "0"){
+				
 			}
 		}
-
+		
 		busSize = busList.size();
 		netSize = netList.size();
 	}
