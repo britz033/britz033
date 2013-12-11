@@ -5,7 +5,7 @@
     android:layout_height="110dp"
     android:orientation="vertical" >
 
-    <FrameLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="40" >
@@ -21,9 +21,16 @@
             android:id="@+id/btn_testreflash" 
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="text버튼"
+            android:text="새로고침"
             />
-    </FrameLayout>
+        <Button
+            android:id="@+id/btn_favorite_bus_check_open"
+            android:layout_below="@+id/btn_testreflash"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="버스Check"
+            />
+    </RelativeLayout>
 
     <android.support.v4.view.ViewPager
         android:id="@+id/viewpager_favorite_preview_dummy"

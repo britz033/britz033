@@ -70,6 +70,7 @@ public class FavoriteFragment extends Fragment implements ResponseTask, LoaderCa
 	private LoopQuery<String> loopQueryBus;
 	private float density;
 	private boolean isFirst;
+	private FavoriteFragmentBusList busListFragment; 
 
 	@Override
 	public void onAttach(Activity activity) {
@@ -91,6 +92,7 @@ public class FavoriteFragment extends Fragment implements ResponseTask, LoaderCa
 		getLoaderManager().initLoader(0, null, this);
 		loadingContainer = (RelativeLayout) view.findViewById(R.id.layout_favorite_buslist_loadingcontainer);
 		Button btn = (Button) view.findViewById(R.id.btn_testreflash);
+		Button btn2 = (Button) view.findViewById(R.id.btn_favorite_bus_check_open);
 		btn.setOnClickListener(new OnClickListener() {
 
 			@Override
@@ -99,6 +101,14 @@ public class FavoriteFragment extends Fragment implements ResponseTask, LoaderCa
 				settingInfo();
 			}
 		});
+		
+		btn2.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				busListFragment.onDialogOpen();
+			}
+		});
+		
 		Log.d("컨테이너크기", container.toString());
 
 		viewPagerSetting(view);
@@ -182,7 +192,7 @@ public class FavoriteFragment extends Fragment implements ResponseTask, LoaderCa
 	@Override
 	public void onTaskFinish(ArrayList<BusInfoNet> list, String error) {
 		loadingContainer.setVisibility(View.INVISIBLE);
-		FavoriteFragmentBusList busListFragment = new FavoriteFragmentBusList();
+		busListFragment = new FavoriteFragmentBusList();
 		Bundle initData = new Bundle();
 
 		// 각종오류 감지 및 정보뿌림
