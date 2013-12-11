@@ -21,3 +21,4 @@ public interface OnCommunicationActivity {
 	 */
 	public void OnTabMove(MyTabs myTab, Bundle data);
 }
+

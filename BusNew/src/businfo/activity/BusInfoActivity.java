@@ -99,6 +99,7 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 	private FrameLayout stationListViewContainer;
 	private ListView stationListView;
 	private boolean searchAgain;
+	private boolean isFirst;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -113,6 +114,7 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 		saveIndex = 0;
 		prePosition = 0;
 		busDirection = currentDirection = FORWARD;
+		isFirst = true;
 		userControlAllowed = false;
 		searchAgain = false;
 		drawables = new Drawable[] { getResources().getDrawable(R.drawable.path), getResources().getDrawable(R.drawable.path_selected),
@@ -307,7 +309,11 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 
 	@Override
 	public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
-
+		
+		if(isFirst && loader.getId() != LOADER_ID_INIT){
+			return;
+		}
+		
 		switch (loader.getId()) {
 		case LOADER_ID_INIT: // 무조건 한번만 불려짐, 즐겨찾기 추가등으로 업데이트 되었을시 불려지는걸 방지 단, 즐겨찾기정보만은 업데이트
 			if (!userControlAllowed) {
@@ -316,6 +322,10 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 			} else {
 				cursor.moveToFirst();
 				busFavorite = cursor.getInt(4);
+			}
+			
+			if(isFirst){
+				isFirst = false;
 			}
 			break;
 

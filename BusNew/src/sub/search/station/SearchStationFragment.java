@@ -379,6 +379,16 @@ public class SearchStationFragment extends ListFragment implements LoaderCallbac
 				resizeListView(0);
 				madapter.swapCursor(cursor);
 			}
+			
+			if (isFirst) {
+				View childView = madapter.getView(0, null, getListView());
+				childView.measure(MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED),
+						MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED));
+				rowHeight = childView.getMeasuredHeight();
+				Log.d("크기재기 2", "" + rowHeight);
+				isFirst = false;
+			}
+			
 			break;
 		case SEARCH_WIDE:
 			if (currentUpdatableId == SEARCH_WIDE) {
@@ -417,15 +427,6 @@ public class SearchStationFragment extends ListFragment implements LoaderCallbac
 				finishSlidingMenuQuery();
 			}
 			break;
-		}
-		
-		if (isFirst) {
-			View childView = madapter.getView(0, null, getListView());
-			childView.measure(MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED),
-					MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED));
-			rowHeight = childView.getMeasuredHeight();
-			Log.d("크기재기 2", "" + rowHeight);
-			isFirst = false;
 		}
 	}
 

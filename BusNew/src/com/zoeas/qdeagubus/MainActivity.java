@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import sub.favorite.FavoriteFragment;
 import util.BackPressStack;
 import adapter.OnCommunicationActivity;
+import adapter.OnCommunicationReceive;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -31,7 +32,7 @@ import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
 
-public class MainActivity extends ActionBarActivity implements TabListener,OnCommunicationActivity {
+public class MainActivity extends ActionBarActivity implements TabListener, OnCommunicationActivity {
 
 	private ArrayList<Fragment> flist; // 액티비티가 관리하는 애들
 
@@ -46,14 +47,14 @@ public class MainActivity extends ActionBarActivity implements TabListener,OnCom
 
 	public interface OnBackAction {
 		public void onBackPressed();
+
 		public void onClear();
 	}
 
 	public enum MyTabs {
-		FAVORITE(0, "즐겨찾기", "sub.favorite.FavoriteFragment"), STATION_LISTVIEW(1, "정류소",
-				"sub.search.station.SearchStationFragment"), BUS_LISTVIEW(2, "버스", "sub.search.bus.SearchBusNumberFragment"), GMAP(
-				3, "주변맵", "sub.gmap.GMapFragment"), DUMMY(4, "설정", "subfragment.SettingFragment"), 
-				TEST(5, "test",	"subfragment.Test"), TEST2(6, "test2",	"subfragment.Test2") ;
+		FAVORITE(0, "즐겨찾기", "sub.favorite.FavoriteFragment"), STATION_LISTVIEW(1, "정류소", "sub.search.station.SearchStationFragment"), BUS_LISTVIEW(2,
+				"버스", "sub.search.bus.SearchBusNumberFragment"), GMAP(3, "주변맵", "sub.gmap.GMapFragment"), DUMMY(4, "설정",
+				"subfragment.SettingFragment"), TEST(5, "test", "subfragment.Test"), TEST2(6, "test2", "subfragment.Test2");
 		private final String name;
 		private final String fragmentName;
 		private final int num;
@@ -93,8 +94,7 @@ public class MainActivity extends ActionBarActivity implements TabListener,OnCom
 	}
 
 	/*
-	 * asset에서 db 가져와서 기기에 디렉토리 만들고, 거기에 db를 카피 contentprovider가 먼저 호출되면서 덩달아
-	 * dbhelper도 호출 덕분에 이 코드는 망함. 그래서 dbhelper 쪽으로 이사감
+	 * asset에서 db 가져와서 기기에 디렉토리 만들고, 거기에 db를 카피 contentprovider가 먼저 호출되면서 덩달아 dbhelper도 호출 덕분에 이 코드는 망함. 그래서 dbhelper 쪽으로 이사감
 	 */
 
 	// commitAllowingStateLoss 를 사용해야 에러가 안난다. 이부분 주의
@@ -185,24 +185,24 @@ public class MainActivity extends ActionBarActivity implements TabListener,OnCom
 	}
 
 	// 일단 보류. 현재 위젯에서 이 정보를 사용해서 스테이션 결정중
-//	@Override
-//	public void OnSaveBusStationInfo(String station_number, String station_name, LatLng latLng) {
-//
-//		SharedPreferences setting = getSharedPreferences(PREF_NAME, 0);
-//		SharedPreferences.Editor editor = setting.edit();
-//
-//		editor.putString("station_number", station_number);
-//		editor.putString("station_name", station_name);
-//		editor.putString("station_longitude", String.valueOf(latLng.longitude));
-//		editor.putString("station_latitude", String.valueOf(latLng.latitude));
-//		editor.commit();
-//
-//		this.stationNumber = station_number;
-//		this.stationName = station_name;
-//		this.latlng = latLng;
-//
-//		Toast.makeText(this, latLng.toString() + " 저장되었습니다", 0).show();
-//	}
+	// @Override
+	// public void OnSaveBusStationInfo(String station_number, String station_name, LatLng latLng) {
+	//
+	// SharedPreferences setting = getSharedPreferences(PREF_NAME, 0);
+	// SharedPreferences.Editor editor = setting.edit();
+	//
+	// editor.putString("station_number", station_number);
+	// editor.putString("station_name", station_name);
+	// editor.putString("station_longitude", String.valueOf(latLng.longitude));
+	// editor.putString("station_latitude", String.valueOf(latLng.latitude));
+	// editor.commit();
+	//
+	// this.stationNumber = station_number;
+	// this.stationName = station_name;
+	// this.latlng = latLng;
+	//
+	// Toast.makeText(this, latLng.toString() + " 저장되었습니다", 0).show();
+	// }
 
 	@Override
 	public void onTabReselected(Tab arg0, FragmentTransaction arg1) {
@@ -218,7 +218,6 @@ public class MainActivity extends ActionBarActivity implements TabListener,OnCom
 	public void onTabUnselected(Tab arg0, FragmentTransaction arg1) {
 
 	}
-
 
 	@Override
 	public void onBackPressed() {
@@ -243,10 +242,12 @@ public class MainActivity extends ActionBarActivity implements TabListener,OnCom
 
 	@Override
 	public void OnTabMove(MyTabs myTab, Bundle data) {
- 		int index = myTab.getValue();
- 		if(!flist.get(index).isAdded())
- 			flist.get(index).setArguments(data);
+		int index = myTab.getValue();
 		vp.setCurrentItem(index, false);
+		if (data != null) {
+			OnCommunicationReceive send = (OnCommunicationReceive) flist.get(index);
+			send.OnReceive(data);
+		}
 	}
 
 	@Override

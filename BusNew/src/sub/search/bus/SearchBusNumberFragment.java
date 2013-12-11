@@ -1,5 +1,7 @@
 package sub.search.bus;
 
+import adapter.OnCommunicationActivity;
+import adapter.OnCommunicationReceive;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
@@ -20,9 +22,11 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Toast;
 import businfo.activity.BusInfoActivity;
 
 import com.zoeas.qdeagubus.MainActivity.OnBackAction;
+import com.zoeas.qdeagubus.MainActivity;
 import com.zoeas.qdeagubus.MyContentProvider;
 import com.zoeas.qdeagubus.R;
 
@@ -44,7 +48,7 @@ import com.zoeas.qdeagubus.R;
  */
 
 public class SearchBusNumberFragment extends ListFragment implements LoaderCallbacks<Cursor>, TextWatcher,
-		OnKeyListener, OnBackAction {
+		OnKeyListener, OnBackAction, OnCommunicationReceive{
 
 	private Context context;
 	private BusSearchListCursorAdapter busAdapter;
@@ -63,9 +67,9 @@ public class SearchBusNumberFragment extends ListFragment implements LoaderCallb
 		et.addTextChangedListener(this);
 		et.setInputType(InputType.TYPE_CLASS_NUMBER);
 		et.setOnKeyListener(this);
-		if (getArguments() != null) {
-			et.setText(getArguments().getString(SELECTION_KEY));
-		}
+//		if (getArguments() != null) {
+//			et.setText(getArguments().getString(SELECTION_KEY));
+//		}
 
 		imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
 
@@ -146,14 +150,20 @@ public class SearchBusNumberFragment extends ListFragment implements LoaderCallb
 
 	@Override
 	public void onBackPressed() {
-		// TODO Auto-generated method stub
-
+		OnCommunicationActivity backtotheFavorite = (OnCommunicationActivity) getActivity();
+		backtotheFavorite.OnTabMove(MainActivity.MyTabs.FAVORITE, null);
 	}
 
 	@Override
 	public void onClear() {
-		// TODO Auto-generated method stub
 
+	}
+
+	@Override
+	public void OnReceive(Bundle data) {
+		MainActivity.backAction.push();
+		et.setText(data.getString(SELECTION_KEY));
+		Toast.makeText(context, "뒤로가기를 누르시면 즐겨찾기로 되돌아갑니다", Toast.LENGTH_SHORT).show();
 	}
 
 	// @Override

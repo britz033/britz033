@@ -7,6 +7,7 @@ import internet.ResponseTask;
 import java.util.ArrayList;
 
 import util.LoopQuery;
+import adapter.OnCommunicationReceive;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
