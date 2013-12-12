@@ -60,6 +60,8 @@ import com.zoeas.qdeagubus.R;
 public class SearchStationFragment extends ListFragment implements LoaderCallbacks<Cursor>, OnKeyListener,
 		OnMapReadyListener, OnClickListener, OnBackAction, OnActionInfoWindowClickListener<Integer>, OnScrollListener {
 
+	private static final String TAG = "SearchStationFragment";
+	
 	public static final String TAG_STATION_MAP = "stationMap";
 	public static final String KEY_SERARCH = "station";
 	public static final String KEY_STATION_ID = "stationID";
@@ -305,7 +307,7 @@ public class SearchStationFragment extends ListFragment implements LoaderCallbac
 
 	@Override
 	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-		Log.d("정류장검색", "로더 생성자 호출됨 : " + id);
+		Log.d(TAG, "로더 생성자 호출됨 : " + id);
 		Uri baseUri = MyContentProvider.CONTENT_URI_STATION;
 
 		// 이것의 순서를 바꿔줄시 반드시 위의 상수인덱스 값도 변경해줘야함
@@ -326,7 +328,7 @@ public class SearchStationFragment extends ListFragment implements LoaderCallbac
 		case SEARCH_WIDE:
 			currentUpdatableId = id;
 			madapter.resetAnimatedPosition();
-			Log.d("정류소", "주변검색작동");
+			Log.d(TAG, "주변검색작동");
 			double latitude = args.getDouble(KEY_WIDE_LATITUDE);
 			double longitude = args.getDouble(KEY_WIDE_LONGITUDE);
 
@@ -367,7 +369,7 @@ public class SearchStationFragment extends ListFragment implements LoaderCallbac
 	public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
 		
 
-		Log.d("로더id 확인", "아이디: " + loader.getId());
+		Log.d(TAG, "로더 아이디: " + loader.getId());
 		
 		if(isFirst && loader.getId() != SEARCH_STATION){
 			return;
@@ -385,7 +387,7 @@ public class SearchStationFragment extends ListFragment implements LoaderCallbac
 				childView.measure(MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED),
 						MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED));
 				rowHeight = childView.getMeasuredHeight();
-				Log.d("크기재기 2", "" + rowHeight);
+				Log.d(TAG, "리스트뷰 아이템 높이" + rowHeight);
 				isFirst = false;
 			}
 			

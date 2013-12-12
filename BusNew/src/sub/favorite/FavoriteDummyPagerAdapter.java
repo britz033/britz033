@@ -8,10 +8,10 @@ import android.widget.TextView;
 
 public class FavoriteDummyPagerAdapter extends PagerAdapter{
 	
-	private FavoritePreviewPagerAdatper adapter;
+	private FavoritePreviewPagerAdapter adapter;
 	private Context context;
 	
-	public FavoriteDummyPagerAdapter(FavoritePreviewPagerAdatper adapter, Context context){
+	public FavoriteDummyPagerAdapter(FavoritePreviewPagerAdapter adapter, Context context){
 		this.adapter = adapter;
 		this.context = context;
 	}
@@ -40,7 +40,7 @@ public class FavoriteDummyPagerAdapter extends PagerAdapter{
 		return adapter.getPageTitle(position);
 	}
 	
-	public void swapAdapter(FavoritePreviewPagerAdatper adapter){
+	public void swapAdapter(FavoritePreviewPagerAdapter adapter){
 		this.adapter = adapter;
 		notifyDataSetChanged();
 	}

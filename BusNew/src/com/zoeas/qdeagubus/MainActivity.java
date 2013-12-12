@@ -33,6 +33,8 @@ import android.widget.Toast;
 import com.google.android.gms.maps.model.LatLng;
 
 public class MainActivity extends ActionBarActivity implements TabListener, OnCommunicationActivity {
+	
+	private static final String TAG = "MainActivity";
 
 	private ArrayList<Fragment> flist; // 액티비티가 관리하는 애들
 
@@ -117,7 +119,7 @@ public class MainActivity extends ActionBarActivity implements TabListener, OnCo
 				flist.add(addFragment);
 			}
 		} catch (Exception e) {
-			Log.d("페이지뷰 동적 클래스 생성", "실패했습니다");
+			Log.d(TAG, "페이지뷰 동적 클래스 생성 실패했습니다");
 			e.printStackTrace();
 		}
 

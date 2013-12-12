@@ -44,6 +44,8 @@ import com.zoeas.qdeagubus.R;
  */
 public class FavoriteFragmentBusList extends ListFragment {
 
+	private static final String TAG = "FavoriteFragmentBusList";
+	
 	private Context context;
 	private ArrayList<BusInfoNet> netList;
 	private ArrayList<BusInfo> busList;
@@ -137,7 +139,7 @@ public class FavoriteFragmentBusList extends ListFragment {
 			// 번호도 없음 -> 앞서 favorite 리스트에서 제거된 것이므로 여기서도 필요없음
 			if (netList.get(i).getBusId() == null) {
 				netList.remove(i);
-				Log.d("즐겨찾기 버스리스트", "전광판 정보가 하나 제거됨");
+				Log.d(TAG, "전광판 정보가 하나 제거됨");
 			}
 		}
 

@@ -14,16 +14,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.zoeas.qdeagubus.MainActivity.OnBackAction;
 import com.zoeas.qdeagubus.MyContentProvider;
 import com.zoeas.qdeagubus.R;
 
 public class Test2 extends ListFragment implements OnBackAction, LoaderCallbacks<Cursor> {
+	
+	private static final String TAG = "Test2";
 
 	LoopQuery<String> lq;
 	@Override
@@ -112,7 +112,7 @@ public class Test2 extends ListFragment implements OnBackAction, LoaderCallbacks
 	@Override
 	public void onLoadFinished(android.support.v4.content.Loader<Cursor> loader, Cursor data) {
 		data.moveToFirst();
-		Log.d("로더테스트", data.getString(0));
+		Log.d(TAG, data.getString(0));
 		if(!lq.isEnd())
 			lq.restart();
 	}

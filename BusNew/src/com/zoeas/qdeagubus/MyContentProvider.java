@@ -16,6 +16,7 @@ import android.util.Log;
  */
 public class MyContentProvider extends ContentProvider{
 	
+	private static final String TAG = "MyContentProvider";
 	// 테이블의 모든 이름
 	
 	public static final String STATION_NUMBER = "station_number";

@@ -7,9 +7,6 @@ import java.io.InputStream;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.os.Bundle;
-import android.support.v4.app.LoaderManager.LoaderCallbacks;
-import android.support.v4.content.Loader;
 import android.util.Log;
 
 
@@ -18,6 +15,8 @@ import android.util.Log;
  * 만약 DB가 없으면 asset에서 가져와 생성한다
  */
 class DbHelper extends SQLiteOpenHelper{
+	
+	private static final String TAG = "DbHelper";
 
 	public static final String DB_NAME = "StationDB.png";
 	Context mcontext;
@@ -26,12 +25,12 @@ class DbHelper extends SQLiteOpenHelper{
 		super(context, DB_NAME, null, 1);
 		mcontext = context;
 		copyDB();
-		Log.d("dbhelper", "called");
+		Log.d(TAG, "called");
 	}
 
 	@Override
 	public void onCreate(SQLiteDatabase db) {
-		Log.d("dbhelper", "onCreate called!! 몬가 잘못되었삼");
+		Log.d(TAG, "onCreate called!! 몬가 잘못되었삼");
 	}
 
 	@Override
@@ -39,7 +38,7 @@ class DbHelper extends SQLiteOpenHelper{
 	}
 
 	private void copyDB() {
-		Log.d("copyDB", "start");
+		Log.d(TAG, "copyDB start");
 		try {
 			final String DIR_PATH = "/data/data/" + mcontext.getPackageName()
 					+ "/databases/";
@@ -64,14 +63,14 @@ class DbHelper extends SQLiteOpenHelper{
 				is.close();
 				fos.close();
 
-				Log.d("File dir, File", String.valueOf(dir.exists()) + ","
+				Log.d(TAG, "File dir, File" + String.valueOf(dir.exists()) + ","
 						+ String.valueOf(db_file.exists()));
 			}
 		} catch (Exception e) {
-			Log.d("copyDB", "error");
+			Log.d(TAG, "copyDB error");
 			e.printStackTrace();
 		}
-		Log.d("copyDB", "complete");
+		Log.d(TAG, "copyDB complete");
 	}
 
 }

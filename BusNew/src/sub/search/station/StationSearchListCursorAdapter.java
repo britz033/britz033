@@ -27,6 +27,8 @@ import com.zoeas.qdeagubus.R;
 
 //리스트뷰에 들어갈 어뎁터
 public class StationSearchListCursorAdapter extends CursorAdapter {
+	
+	private static final String TAG = "StationSearchListCursorAdapter";
 
 	private Context mcontext;
 	private OnCommunicationActivity communication; // 즐겨찾기 되면 액티비티에 구현한 리스너가
@@ -51,7 +53,7 @@ public class StationSearchListCursorAdapter extends CursorAdapter {
 	}
 	
 	public void setDummyHeight(int height){
-		Log.d("아이템클릭 리사이즈","불려짐");
+		Log.d(TAG, "아이템클릭 리사이즈 불려짐");
 		dummyHeight = height;
 //		notifyDataSetChanged();
 	}
@@ -98,7 +100,7 @@ public class StationSearchListCursorAdapter extends CursorAdapter {
 		// 아이디 값을 기준으로 업데이트
 		Uri singleUri = ContentUris.withAppendedId(MyContentProvider.CONTENT_URI_STATION, id);
 
-		Log.d("정류장검색 커서어뎁터","즐겨찾기 업데이트 호출됨");
+		Log.d(TAG,"즐겨찾기 업데이트 호출됨");
 		mcontext.getContentResolver().update(singleUri, value, null, null);
 
 	}
@@ -174,7 +176,7 @@ public class StationSearchListCursorAdapter extends CursorAdapter {
 		holder.dummy = view.findViewById((R.id.dummy_station_item_favorite));
 //		LayoutParams params = holder.dummy.getLayoutParams();
 //		params.height = dummyHeight;
-//		Log.d("New View 호출됨",""+dummyHeight);
+//		Log.d(TAG,""+dummyHeight);
 //		holder.dummy.setLayoutParams(params);
 		
 		view.setTag(holder);

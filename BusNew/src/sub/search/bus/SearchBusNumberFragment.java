@@ -50,6 +50,8 @@ import com.zoeas.qdeagubus.R;
 public class SearchBusNumberFragment extends ListFragment implements LoaderCallbacks<Cursor>, TextWatcher,
 		OnKeyListener, OnBackAction, OnCommunicationReceive{
 
+	private static final String TAG = "SearchBusNumberFragment";
+	
 	private Context context;
 	private BusSearchListCursorAdapter busAdapter;
 	private EditText et;
@@ -173,7 +175,7 @@ public class SearchBusNumberFragment extends ListFragment implements LoaderCallb
 	// Rect rect = new Rect();
 	// et.getGlobalVisibleRect(rect);
 	//
-	// Log.d("온터치","불려짐");
+	// Log.d(TAG,"불려짐");
 	//
 	// if(!rect.contains((int)event.getRawX(), (int)event.getRawY())){
 	// et.clearFocus();

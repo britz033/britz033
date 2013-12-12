@@ -42,6 +42,8 @@ import com.zoeas.qdeagubus.R;
 public class GMapFragment extends Fragment implements CallFragmentMethod, LoaderCallbacks<Cursor>,
 		OnMarkerClickListener, OnMapReadyListener, OnBackAction {
 
+	private static final String TAG = "GMapFragment";
+	
 	public static final String TAG_MYLOCATION_MAP = "myLocation";
 	public static final double DEFAULT_BOUND = 0.005; // 검색범위
 	private Context context;
@@ -114,7 +116,7 @@ public class GMapFragment extends Fragment implements CallFragmentMethod, Loader
 	@Override
 	public void OnCalled() {
 		if (isGoogleServiceInstalled) {
-			Log.d("G맵", "oncalled 인터페이스메소드 호출");
+			Log.d(TAG, "oncalled 인터페이스메소드 호출");
 			loadingLayout.setVisibility(View.VISIBLE);
 
 			// MyLocation 클래스 콜백 리스너. gps나 네트웤 위치 신호가 오기까지 기다리다가 onchange 리스너가
@@ -147,7 +149,6 @@ public class GMapFragment extends Fragment implements CallFragmentMethod, Loader
 
 	@Override
 	public Loader<Cursor> onCreateLoader(int id, Bundle arg1) {
-		Log.d("onCreateLoader", "called");
 
 		Uri uri = MyContentProvider.CONTENT_URI_STATION;
 
@@ -165,7 +166,6 @@ public class GMapFragment extends Fragment implements CallFragmentMethod, Loader
 
 	@Override
 	public void onLoadFinished(Loader<Cursor> loader, Cursor c) {
-		Log.d("onLoadFininshed", "called");
 
 		Handler handler = new Handler();
 		// 기존의 cursor를 그대로 불러오기 때문에 시작시 반드시 커서위치를 처음으로 되돌려줘야함
@@ -197,7 +197,6 @@ public class GMapFragment extends Fragment implements CallFragmentMethod, Loader
 
 	@Override
 	public void onLoaderReset(Loader<Cursor> loader) {
-		Log.d("loaderReset", "called");
 	}
 
 	@Override

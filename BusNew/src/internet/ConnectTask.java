@@ -4,19 +4,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
 import org.xmlpull.v1.XmlPullParser;
 
-import android.app.ProgressDialog;
 import android.content.Context;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.util.Log;
-import android.widget.Toast;
 
 /*
  * BackHttpConnection, BackXmlParser,BusStationParsing  클래스로
@@ -27,6 +19,8 @@ import android.widget.Toast;
  */
 public class ConnectTask extends AsyncTask<String, Integer, ArrayList<BusInfoNet>> {
 
+	private static final String TAG = "ConnectTask";
+	
 	public static final String BUS_URL = "http://businfo.daegu.go.kr/ba/arrbus/arrbus.do?act=arrbus&winc_id=";
 
 	private Context context;
@@ -72,7 +66,7 @@ public class ConnectTask extends AsyncTask<String, Integer, ArrayList<BusInfoNet
 		super.onPostExecute(result);
 
 		if (result == null) {
-			Log.d("BusInfoDownLoaderTask.onPostExecute", "결과값이 null");
+			Log.d(TAG, "결과값이 null");
 		}
 		
 		proxy.onTaskFinish(result, errorMessage);

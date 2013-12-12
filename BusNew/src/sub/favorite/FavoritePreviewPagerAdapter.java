@@ -21,8 +21,10 @@ import com.zoeas.qdeagubus.R;
  * 프리뷰 미리보기 페이져 어뎁터
  * 현재는 일단 글자만 표현
  */
-public class FavoritePreviewPagerAdatper extends PagerAdapter {
+public class FavoritePreviewPagerAdapter extends PagerAdapter {
 
+	private static final String TAG = "FavoritePreviewPagerAdapter";
+	
 	private Context context;
 	private Cursor cursor;
 	private Drawable img;
@@ -30,7 +32,7 @@ public class FavoritePreviewPagerAdatper extends PagerAdapter {
 	private FavoriteDummyPagerAdapter dummy;
 	private boolean startSetting;
 
-	public FavoritePreviewPagerAdatper(Context context, Cursor c) {
+	public FavoritePreviewPagerAdapter(Context context, Cursor c) {
 		this.context = context;
 		this.cursor = c;
 		// if (cursor != null)
@@ -48,7 +50,7 @@ public class FavoritePreviewPagerAdatper extends PagerAdapter {
 
 	@Override
 	public Object instantiateItem(ViewGroup container, int position) {
-		Log.d("data", "불려짐");
+		Log.d(TAG, "불려짐");
 		if (cursor == null)
 			return null;
 
@@ -128,7 +130,7 @@ public class FavoritePreviewPagerAdatper extends PagerAdapter {
 		if (this.cursor == cursor)
 			return;
 		if (cursor != null)
-			Log.d("어뎁터에서 커서스왑, 커서 count", String.valueOf(cursor.getCount()));
+			Log.d(TAG, String.valueOf(cursor.getCount()));
 		this.cursor = cursor;
 		dummy.swapAdapter(this);
 		notifyDataSetChanged();

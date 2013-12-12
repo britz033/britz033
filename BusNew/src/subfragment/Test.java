@@ -13,7 +13,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.util.TimingLogger;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -42,6 +41,8 @@ import com.zoeas.qdeagubus.R;
  * 후에 지울때 애니메이션 관련은 공부를 위해서 보전
  */
 public class Test extends Fragment implements OnBackAction {
+	
+	private static final String TAG = "Test";
 
 	private View view;
 	private SlideLayoutBackGround slideLayout;
@@ -238,7 +239,6 @@ class CaptureTask extends AsyncTask<Void, Void, Bitmap> {
 		for(int i=0; i<above.length; i++)
 			above[i].setVisibility(View.VISIBLE);
 		
-		Log.d("보인후 넓이",String.valueOf(above[0].getWidth()));
 		
 		slideLayout.setBlurBitmap(result);
 		aniSet.start();

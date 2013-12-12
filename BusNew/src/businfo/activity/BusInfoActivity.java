@@ -62,6 +62,8 @@ import com.zoeas.qdeagubus.R;
 public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks<Cursor>, OnPageChangeListener, OnClickListener,
 		OnActionInfoWindowClickListener<Integer> {
 
+	private static final String TAG = "BusInfoActivity";
+	
 	public static final String KEY_BUS_ID = "BUSID";
 	public static final String KEY_BUS_NAME = "BUSNAME";
 	public static final String KEY_CURRENT_STATION_NAME = "STATION";
@@ -179,7 +181,7 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 		// 정방향 역방향의 모든 버스정류장 이름을 추출
 		getSupportLoaderManager().initLoader(LOADER_ID_INIT, getIntent().getExtras(), this);
 
-		Log.d("버스인포", "onCreate 호출");
+		Log.d(TAG, "onCreate 호출");
 	}
 
 	@Override
@@ -205,7 +207,7 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 
 	// 모든 버스 정류장 이름이 추출된 후 호출됨, 여기서 스위치에 따라 정방향,역방향을 구분, 처음 시작시 한번만 호출
 	private void initBusInfo() {
-		Log.d("버스인포", "busInfo 초기화불려짐 이것은 한번만 불려져야함");
+		Log.d(TAG, "busInfo 초기화불려짐 이것은 한번만 불려져야함");
 		try {
 			mcursor.moveToFirst();
 
@@ -215,7 +217,7 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 			busFavorite = mcursor.getInt(4);
 			busId = mcursor.getInt(0);
 
-			Log.d("즐겨찾기여부", "" + busFavorite);
+			Log.d(TAG, "즐겨찾기 여부 : " + busFavorite);
 			if (busFavorite == 0) {
 				favoriteAddBtn.setImageResource(R.drawable.btn_station_list_item_off_selector);
 			} else {
@@ -292,7 +294,7 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 		// 1번은 들어오는 정류장이름으로 좌표 추출, 2번은 즐겨찾기추가 업데이트
 		switch (id) {
 		case LOADER_ID_INIT:
-			Log.d("버스인포", "로더 초기화 생성");
+			Log.d(TAG, "로더 초기화 생성");
 			uri = MyContentProvider.CONTENT_URI_BUS;
 			projection = new String[] { "_id", "bus_interval", "bus_forward", "bus_backward", "bus_favorite" };
 			selection = "bus_id='" + data.getString(KEY_BUS_ID) + "'";
@@ -333,7 +335,7 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 		case LoopQuery.DEFAULT_LOOP_QUERY_ID:
 			try {
 				cursor.moveToNext();
-				Log.d("버스인포",cursor.getString(1));
+				Log.d(TAG,cursor.getString(1));
 				LatLng latLng = new LatLng(cursor.getDouble(2), cursor.getDouble(3));
 				actionMapDirection.addLinePoint(latLng);
 				passBusHash.put(cursor.getInt(0), cursor.getString(4)); // 나중에 꺼낼 pass 저장, id별로 저장
@@ -341,7 +343,7 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 
 				// 일단 양쪽 모두 돌리는데 정류장이 발견되면 현재 돌고 있는 방향을 저장
 				if (cursor.getString(1).equals(currentStationName)) {
-					Log.d("버스인포액티비티", "정류장 존재");
+					Log.d(TAG, "정류장 존재");
 					actionMapDirection.aniMap(latLng);
 					saveIndex = loopQueryStation.getCount() - 1;
 					busDirection = currentDirection;
@@ -349,7 +351,7 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 				if (!loopQueryStation.isEnd()) {
 					loopQueryStation.restart();
 				} else if (currentDirection != BACKWARD && pathBackward.size() != 0) {
-					Log.d("버스인포액티비티", "역방향으로 체인지");
+					Log.d(TAG, "역방향으로 체인지");
 					currentDirection = BACKWARD;
 					settingSwitch(BACKWARD);
 					String[] newPath = pathDirection.toArray(new String[pathDirection.size()]);
@@ -401,7 +403,7 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 
 	@Override
 	public void onLoaderReset(Loader<Cursor> arg0) {
-		Log.d("로더리셋", "불려짐");
+		Log.d(TAG, "LOADER RESET 불려짐");
 	}
 
 	@Override
@@ -466,7 +468,7 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 	public void onClick(View v) {
 		switch (v.getId()) {
 		case R.id.btn_activity_businfo_addfavorite:
-			Log.d("즐겨찾기추가", "됨");
+			Log.d(TAG, "즐겨찾기 추가 됨");
 			Uri uri = ContentUris.withAppendedId(MyContentProvider.CONTENT_URI_BUS, busId);
 			ContentValues value = new ContentValues();
 			if (busFavorite == 0) {

@@ -7,6 +7,7 @@ import android.os.Parcelable;
  * 다른것을 재검색할 수 있는 각종 키워드가 포함된 버스정보. 경유 정거장 제외
  */
 public class BusInfo implements Parcelable{
+	
 	private String busName;
 	private String busId;
 	private String busNum;

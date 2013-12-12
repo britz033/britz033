@@ -19,6 +19,8 @@ import android.widget.Toast;
 
 public class BusWidget extends AppWidgetProvider implements ResponseTask{
 
+	private static final String TAG = "BusWidget";
+	
 	private Context context;
 	private AppWidgetManager appw;
 	private int[] ids;
@@ -31,7 +33,7 @@ public class BusWidget extends AppWidgetProvider implements ResponseTask{
 		SharedPreferences setting = context.getSharedPreferences(MainActivity.PREF_NAME, 0);
 		String stationNumber = setting.getString("station_number", "error");
 		
-		Log.d("number", stationNumber);
+		Log.d(TAG,"NUMBER " + stationNumber);
 		ConnectTask busInfoTask = new ConnectTask(context, stationNumber); // 정보얻기 위한 task 실행
 		// 테스크에서 소환한 인터페이스에 본클래스를 등록시켜서 저쪽이 이쪽을 호출 가능하도록 함.. 아래 onTaskFinish 가 그거
 		busInfoTask.proxy = this;

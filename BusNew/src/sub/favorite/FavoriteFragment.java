@@ -51,6 +51,8 @@ import com.zoeas.qdeagubus.R;
 
 public class FavoriteFragment extends Fragment implements ResponseTask, LoaderCallbacks<Cursor>, OnBackAction {
 
+	private static final String TAG = "FavoriteFragment";
+	
 	public static final String KEY_BUS_NET_INFO_LIST = "busNETlist";
 	public static final String KEY_BUS_INFO_LIST = "buslist";
 	public static final String KEY_STATION_NAME = "station";
@@ -64,7 +66,7 @@ public class FavoriteFragment extends Fragment implements ResponseTask, LoaderCa
 	private ArrayList<BusInfo> busInfoList;
 	private String[] dbPassBusId;
 	private View view;
-	private FavoritePreviewPagerAdatper adapter;
+	private FavoritePreviewPagerAdapter adapter;
 	private ViewPager pager;
 	private RelativeLayout loadingContainer;
 	private LoopQuery<String> loopQueryBus;
@@ -82,7 +84,6 @@ public class FavoriteFragment extends Fragment implements ResponseTask, LoaderCa
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		density = context.getResources().getDisplayMetrics().density;
-		Log.d("즐겨찾기 onCreate","불려짐");
 	}
 
 	@Override
@@ -109,7 +110,7 @@ public class FavoriteFragment extends Fragment implements ResponseTask, LoaderCa
 			}
 		});
 		
-		Log.d("컨테이너크기", container.toString());
+		Log.d(TAG, "컨테이너크기" + container.toString());
 
 		viewPagerSetting(view);
 		
@@ -125,7 +126,7 @@ public class FavoriteFragment extends Fragment implements ResponseTask, LoaderCa
 		PagerTitleStrip titlepager = (PagerTitleStrip) view.findViewById(R.id.pager_title_strip);
 		titlepager.setTextSpacing(dip);
 
-		adapter = new FavoritePreviewPagerAdatper(context, null);
+		adapter = new FavoritePreviewPagerAdapter(context, null);
 		pager = (ViewPager) view.findViewById(R.id.viewpager_favorite);
 		pager.setAdapter(adapter);
 
@@ -149,7 +150,7 @@ public class FavoriteFragment extends Fragment implements ResponseTask, LoaderCa
 				// 페이지가 선택되면 선택된 번호로 커서를 이동시켜 정류소 번호를 가져온다음 showInfo로 보내준다
 				cursor.moveToPosition(position);
 				settingInfo();
-				Log.d("onPageSelected", "갱신");
+				Log.d(TAG, "onPageSelected");
 				dummy.setCurrentItem(position, true);
 			}
 
@@ -169,7 +170,7 @@ public class FavoriteFragment extends Fragment implements ResponseTask, LoaderCa
 
 		adapter.setDummy(dummyAdapter);
 
-		Log.d("즐겨찾기 미리보기", "페이저세팅 끝");
+		Log.d(TAG, "페이저세팅 끝");
 	}
 
 	/*
@@ -243,7 +244,7 @@ public class FavoriteFragment extends Fragment implements ResponseTask, LoaderCa
 		if (stationPass.length() != 0) {
 			dbPassBusId = stationPass.split(",");
 			
-			Log.d("즐겨찾기", "버스숫자 " + dbPassBusId.length);
+			Log.d(TAG, "버스숫자 " + dbPassBusId.length);
 
 			
 			loopQueryBus = new LoopQuery<String>(getLoaderManager(), dbPassBusId, this);
@@ -257,7 +258,6 @@ public class FavoriteFragment extends Fragment implements ResponseTask, LoaderCa
 	// 즐겨찾기 미리보기를 할 즐겨찾기된 스테이션을 모두 검색, 이름,번호, 그리고 등록된 버스들
 	@Override
 	public Loader<Cursor> onCreateLoader(int id, Bundle data) {
-		// Log.d("즐겨찾기 미리보기", "로더생성");
 		Uri uri = null;
 		String[] projection = null;
 		String selection = null;
@@ -294,7 +294,7 @@ public class FavoriteFragment extends Fragment implements ResponseTask, LoaderCa
 		
 		switch (loader.getId()) {
 		case 0:
-			Log.d("즐겨찾기 미리보기", "스왑작동");
+			Log.d(TAG, "스왑작동");
 			adapter.swapCursor(cursor);
 			this.cursor = cursor;
 			if (cursor.getCount() == 0)
@@ -321,7 +321,7 @@ public class FavoriteFragment extends Fragment implements ResponseTask, LoaderCa
 				busInfo.setBusName(cursor.getString(1));
 				busInfo.setBusFavorite(cursor.getInt(2));
 				busInfoList.add(busInfo);
-				Log.d("즐겨찾기",busInfo.getBusName() + ":" + busInfo.getBusNum());
+				Log.d(TAG,busInfo.getBusName() + ":" + busInfo.getBusNum());
 			} 
 			
 			if (!loopQueryBus.isEnd()) {

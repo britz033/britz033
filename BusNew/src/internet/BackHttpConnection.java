@@ -10,15 +10,14 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 
-import sub.search.station.SearchStationFragment;
-
-
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.util.Log;
 
 public class BackHttpConnection {
+	
+	private static final String TAG = "BackHttpConnection";
 
 	private InputStream is = null;
 
@@ -56,7 +55,7 @@ public class BackHttpConnection {
 		} catch (ConnectTimeoutException e){
 			throw new Exception("홈페이지에 부하가 걸려 접속이 원할 하지 않습니다. 다시 접속해주세요");
 		} catch (Exception e) {
-			Log.d("http 연결", "실패했습니다");
+			Log.d(TAG, "http 연결 실패했습니다");
 			e.printStackTrace();
 			throw new Exception("인터넷 연결이 되어 있지 않습니다");
 		}

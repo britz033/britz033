@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import org.xmlpull.v1.XmlPullParser;
 
 import android.util.Log;
-import android.widget.Toast;
 
 /*
  * <div class="arrlist">
@@ -32,6 +31,8 @@ import android.widget.Toast;
  */
 
 public class BusStationParsing {
+	
+	private static final String TAG = "BusStationParsing";
 
 	public BusStationParsing(XmlPullParser parser, ArrayList<BusInfoNet> busInfoArray) throws Exception {
 		parser.next(); // 문서의 시작은 넘어감
@@ -43,7 +44,7 @@ public class BusStationParsing {
 		boolean end_flag = false;
 		// busInfoArray = new ArrayList<BusInfo>();
 
-		Log.d("BusstaionParsing", "시작합니다");
+		Log.d(TAG, "시작합니다");
 		// 문서끝에 닿을때까지 돌림
 
 		String busStation = null;
@@ -112,7 +113,7 @@ public class BusStationParsing {
 
 			status = parser.next();
 		}
-		Log.d("BusstaionParsing", "종료했습니다");
+		Log.d(TAG, "종료했습니다");
 	}
 
 	private void nextCount(XmlPullParser html, int count) throws Exception {
