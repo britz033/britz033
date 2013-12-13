@@ -11,13 +11,17 @@ import org.xmlpull.v1.XmlPullParserException;
 import sub.search.bus.SearchBusNumberFragment;
 import adapter.OnCommunicationActivity;
 import android.app.AlertDialog;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.XmlResourceParser;
+import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
+import android.support.v4.app.LoaderManager.LoaderCallbacks;
+import android.support.v4.content.Loader;
 import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
 import android.text.style.ForegroundColorSpan;
@@ -27,6 +31,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AbsListView.LayoutParams;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
@@ -38,11 +44,12 @@ import com.zoeas.qdeagubus.R;
 
 /**
  * 즐겨찾기의 정류소별 전광판 정보를 리스트뷰로 뿌림
+ * busList 가 null 로 오는 것때문에 골치.. error 값부터 새로 만들어야할듯
  * 
  * @author lol
  * 
  */
-public class FavoriteFragmentBusList extends ListFragment {
+public class FavoriteFragmentBusList extends ListFragment implements LoaderCallbacks<Cursor>{
 
 	private static final String TAG = "FavoriteFragmentBusList";
 	
@@ -67,9 +74,8 @@ public class FavoriteFragmentBusList extends ListFragment {
 		busList = data.getParcelableArrayList(FavoriteFragment.KEY_BUS_INFO_LIST);
 		stationName = data.getString(FavoriteFragment.KEY_STATION_NAME);
 
-		busListCopy = (ArrayList<BusInfo>) busList.clone();
-
-		if (error == null)
+		if (error == null){
+			busListCopy = (ArrayList<BusInfo>) busList.clone();
 			if (busListCopy.size() != 0) {
 				if (netList == null) {
 					netSize = 0;
@@ -83,7 +89,9 @@ public class FavoriteFragmentBusList extends ListFragment {
 				setListAdapter(null);
 				setEmptyText("현재 버스정보가 없는 정류소입니다");
 			}
+		}
 		else if (error.equals("0")) { // 버스가 끊김. 버스목록만 보여줌
+			busListCopy = (ArrayList<BusInfo>) busList.clone();
 			netSize = 0;
 			busSize = busListCopy.size();
 
@@ -92,7 +100,6 @@ public class FavoriteFragmentBusList extends ListFragment {
 			setListAdapter(null);
 			setEmptyText(error);
 		}
-
 	}
 
 	/**
@@ -177,10 +184,25 @@ public class FavoriteFragmentBusList extends ListFragment {
 	}
 
 	public void onDialogOpen() {
+		final ContentResolver cr = getActivity().getContentResolver();
 		AlertDialog ad = new AlertDialog.Builder(context).setTitle("보여질 버스를 체크하세요").setNeutralButton("확인", null)
 				.setAdapter(new BusListCheckDialogAdapter(), null).create();
-		ad.getListView().setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
+		ListView checkListView = ad.getListView();
+		checkListView.setOnItemClickListener(new OnItemClickListener() {
+
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+				int busFavorite = busList.get(position).isBusFavorite() ? 0 : 1; 
+				busList.get(position).setBusFavorite(busFavorite);
+				
+			}
+			
+		});
+		checkListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
 		ad.show();
+		for(int i=0; i<checkListView.getCount(); i++){
+			checkListView.setItemChecked(i, busList.get(i).isBusFavorite());
+		}
 	}
 
 	class BusListAdapter extends BaseAdapter {
@@ -232,8 +254,7 @@ public class FavoriteFragmentBusList extends ListFragment {
 
 	}
 
-	class BusListCheckDialogAdapter extends BaseAdapter {
-
+	private class BusListCheckDialogAdapter extends BaseAdapter{
 
 		@Override
 		public int getCount() {
@@ -289,9 +310,40 @@ public class FavoriteFragmentBusList extends ListFragment {
 			
 			tv = (TextView) view.getTag();
 			tv.setText(busList.get(position).getBusName());
-
+			
 			return view;
 		}
-
 	}
+	
+	private class BusUpdateLoader extends SQLiteCursorLoader{
+
+		public BusUpdateLoader(Context context) {
+			super(context);
+		}
+
+		@Override
+		protected Cursor loadCursor() {
+			return null;
+		}
+		
+	}
+
+	@Override
+	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onLoaderReset(Loader<Cursor> loader) {
+		// TODO Auto-generated method stub
+		
+	}
+	
 }

@@ -104,6 +104,7 @@ public class SearchStationFragment extends ListFragment implements LoaderCallbac
 		context = activity;
 		imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
 	}
+	
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {

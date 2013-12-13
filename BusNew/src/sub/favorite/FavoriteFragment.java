@@ -7,7 +7,6 @@ import internet.ResponseTask;
 import java.util.ArrayList;
 
 import util.LoopQuery;
-import adapter.OnCommunicationReceive;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -31,7 +30,8 @@ import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.RelativeLayout;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.zoeas.qdeagubus.MainActivity.OnBackAction;
 import com.zoeas.qdeagubus.MyContentProvider;
@@ -68,11 +68,12 @@ public class FavoriteFragment extends Fragment implements ResponseTask, LoaderCa
 	private View view;
 	private FavoritePreviewPagerAdapter adapter;
 	private ViewPager pager;
-	private RelativeLayout loadingContainer;
 	private LoopQuery<String> loopQueryBus;
 	private float density;
 	private boolean isFirst;
 	private FavoriteFragmentBusList busListFragment; 
+	private ProgressBar loadingBar;
+	private TextView loadingText;
 
 	@Override
 	public void onAttach(Activity activity) {
@@ -83,6 +84,7 @@ public class FavoriteFragment extends Fragment implements ResponseTask, LoaderCa
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+//		setRetainInstance(true);	유보는 액티비티당 하나만 되는듯. FragmentViewPager의 경우는 안되는듯
 		density = context.getResources().getDisplayMetrics().density;
 	}
 
@@ -90,8 +92,9 @@ public class FavoriteFragment extends Fragment implements ResponseTask, LoaderCa
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		isFirst = true;
 		view = inflater.inflate(R.layout.fragment_favorite_layout, container,false);
-		getLoaderManager().initLoader(0, null, this);
-		loadingContainer = (RelativeLayout) view.findViewById(R.id.layout_favorite_buslist_loadingcontainer);
+//		getLoaderManager().initLoader(0, null, this);
+		loadingBar = (ProgressBar) view.findViewById(R.id.progressbar_favorite_buslist_loading);
+		loadingText = (TextView) view.findViewById(R.id.text_favorite_busList_loading);
 		Button btn = (Button) view.findViewById(R.id.btn_testreflash);
 		Button btn2 = (Button) view.findViewById(R.id.btn_favorite_bus_check_open);
 		btn.setOnClickListener(new OnClickListener() {
@@ -185,6 +188,11 @@ public class FavoriteFragment extends Fragment implements ResponseTask, LoaderCa
 		busInfoTask.execute();
 
 	}
+	
+	private void loadingVisible(int visibility){
+		loadingBar.setVisibility(visibility);
+		loadingText.setVisibility(visibility);
+	}
 
 	/*
 	 * 위에서 인터넷에서 버스정보 가져오기 작업이 끝났을때 호출되는 인터페이스, 최종결과를 뿌린다 주의점 !!!! commit가 아니라
@@ -192,7 +200,7 @@ public class FavoriteFragment extends Fragment implements ResponseTask, LoaderCa
 	 */
 	@Override
 	public void onTaskFinish(ArrayList<BusInfoNet> list, String error) {
-		loadingContainer.setVisibility(View.INVISIBLE);
+		loadingVisible(View.INVISIBLE);
 		busListFragment = new FavoriteFragmentBusList();
 		Bundle initData = new Bundle();
 
@@ -228,7 +236,7 @@ public class FavoriteFragment extends Fragment implements ResponseTask, LoaderCa
 
 	// 리스트뷰를 보여주기 위한 시작, 루프의 시작
 	private void settingInfo() {
-		loadingContainer.setVisibility(View.VISIBLE);
+		loadingVisible(View.VISIBLE);
 		if (cursor != null && cursor.getCount() > 0) {
 			stationNum = cursor.getString(0);
 			stationName = cursor.getString(1);
@@ -331,6 +339,12 @@ public class FavoriteFragment extends Fragment implements ResponseTask, LoaderCa
 			}
 			break;
 		}
+	}
+	
+	@Override
+	public void onResume() {
+		super.onResume();
+		getLoaderManager().initLoader(0, null, this);
 	}
 
 	@Override

@@ -29,6 +29,10 @@ public class BusInfo implements Parcelable{
 		busOption = in.readString();
 		busFavorite = in.readInt();
 	}
+	
+	public boolean isBusFavorite(){
+		return (busFavorite == 1) ? true : false;
+	}
 
 	public String getBusName() {
 		return busName;
