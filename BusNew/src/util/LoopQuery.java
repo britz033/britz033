@@ -33,6 +33,7 @@ public class LoopQuery<T> {
 	private int count;
 	private int id;
 	private Bundle bundle;
+	private boolean isUpdate;
 
 	/**
 	 * 
@@ -44,16 +45,8 @@ public class LoopQuery<T> {
 	 *            콜백인스턴스
 	 */
 	public LoopQuery(LoaderManager lm, T[] sourceArray, LoaderCallbacks<Cursor> callback) {
-		loaderManager = lm;
-		this.callback = callback;
-		bundle = new Bundle();
-		length = sourceArray.length;
 		this.id = DEFAULT_LOOP_QUERY_ID;
-		this.sourceArray = sourceArray;
-		this.dataSet = new ArrayList<String[]>();
-		if (sourceArray != null && length == 0) {
-			Log.d("LoopQuery", "자료입력이 잘못되었습니다");
-		}
+		init(lm,sourceArray,callback);
 	}
 
 	/**
@@ -68,13 +61,19 @@ public class LoopQuery<T> {
 	 *            만약 하나의 프레그먼트나 액티비티에서 사용시 getId 에서의 구분을 위한 새로운 id를 부여해야한다
 	 */
 	public LoopQuery(LoaderManager lm, T[] sourceArray, LoaderCallbacks<Cursor> callback, int id) {
-		loaderManager = lm;
-		this.callback = callback;
-		bundle = new Bundle();
-		length = sourceArray.length;
 		this.id = id;
+		init(lm,sourceArray,callback);
+		
+	}
+	
+	private void init(LoaderManager lm, T[] sourceArray, LoaderCallbacks<Cursor> callback){
+		this.loaderManager = lm;
+		this.callback = callback;
+		this.bundle = new Bundle();
+		this.length = sourceArray.length;
 		this.sourceArray = sourceArray;
 		this.dataSet = new ArrayList<String[]>();
+		this.isUpdate = false;
 		if (sourceArray != null && length == 0) {
 			Log.d("LoopQuery", "자료입력이 잘못되었습니다");
 		}
@@ -148,6 +147,18 @@ public class LoopQuery<T> {
 	 */
 	public T getBundleData() {
 		return (T) bundle.get(KEY);
+	}
+
+	/**
+	 * 직접적인 쿼리로 오는 것인지 캐쉬로 로더가 다시 들어오는 것인지 판단한다
+	 * @return
+	 */
+	public boolean isUpdate() {
+		return isUpdate;
+	}
+
+	public void setUpdate(boolean isUpdate) {
+		this.isUpdate = isUpdate;
 	}
 
 }

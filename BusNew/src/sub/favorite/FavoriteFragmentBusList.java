@@ -12,16 +12,18 @@ import sub.search.bus.SearchBusNumberFragment;
 import adapter.OnCommunicationActivity;
 import android.app.AlertDialog;
 import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.content.res.XmlResourceParser;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
-import android.support.v4.app.LoaderManager.LoaderCallbacks;
-import android.support.v4.content.Loader;
 import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
 import android.text.style.ForegroundColorSpan;
@@ -40,6 +42,7 @@ import android.widget.TextView;
 import businfo.activity.BusInfoActivity;
 
 import com.zoeas.qdeagubus.MainActivity;
+import com.zoeas.qdeagubus.MyContentProvider;
 import com.zoeas.qdeagubus.R;
 
 /**
@@ -49,7 +52,7 @@ import com.zoeas.qdeagubus.R;
  * @author lol
  * 
  */
-public class FavoriteFragmentBusList extends ListFragment implements LoaderCallbacks<Cursor>{
+public class FavoriteFragmentBusList extends ListFragment{
 
 	private static final String TAG = "FavoriteFragmentBusList";
 	
@@ -115,6 +118,7 @@ public class FavoriteFragmentBusList extends ListFragment implements LoaderCallb
 		for (int k = 0; k < busListCopy.size(); k++) {
 			if (busListCopy.get(k).getBusFavorite() == 0) {
 				busListCopy.remove(k);
+				k--;
 			}
 		}
 
@@ -133,6 +137,7 @@ public class FavoriteFragmentBusList extends ListFragment implements LoaderCallb
 						// 완전 일치시
 						netInfo.setBusId(busListCopy.get(j).getBusId());
 						busListCopy.remove(j);
+						j--;
 						break;
 					} else {
 						// 버스 이름만 일치시, net은 이동전용 id를 붙여주고, busList의 인덱스는 저장
@@ -145,7 +150,7 @@ public class FavoriteFragmentBusList extends ListFragment implements LoaderCallb
 			}
 			// 번호도 없음 -> 앞서 favorite 리스트에서 제거된 것이므로 여기서도 필요없음
 			if (netList.get(i).getBusId() == null) {
-				netList.remove(i);
+				netList.remove(i--);
 				Log.d(TAG, "전광판 정보가 하나 제거됨");
 			}
 		}
@@ -183,10 +188,17 @@ public class FavoriteFragmentBusList extends ListFragment implements LoaderCallb
 		startActivity(intent);
 	}
 
+	
 	public void onDialogOpen() {
 		final ContentResolver cr = getActivity().getContentResolver();
-		AlertDialog ad = new AlertDialog.Builder(context).setTitle("보여질 버스를 체크하세요").setNeutralButton("확인", null)
-				.setAdapter(new BusListCheckDialogAdapter(), null).create();
+		AlertDialog ad = new AlertDialog.Builder(context).setTitle("보여질 버스를 체크하세요").setAdapter(new BusListCheckDialogAdapter(), null)
+				.setNeutralButton("확인", new OnClickListener() {
+					
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						
+					}
+				}).create();
 		ListView checkListView = ad.getListView();
 		checkListView.setOnItemClickListener(new OnItemClickListener() {
 
@@ -195,6 +207,12 @@ public class FavoriteFragmentBusList extends ListFragment implements LoaderCallb
 				int busFavorite = busList.get(position).isBusFavorite() ? 0 : 1; 
 				busList.get(position).setBusFavorite(busFavorite);
 				
+				StringBuilder sb = new StringBuilder(MyContentProvider.BUS_ID);
+				sb.append("='").append(busList.get(position).getBusId()).append("'");
+				ContentValues cv = new ContentValues();
+				cv.put(MyContentProvider.BUS_FAVORITE, busFavorite);
+				Uri uri = MyContentProvider.CONTENT_URI_BUS;
+				cr.update(uri, cv, sb.toString() , null);
 			}
 			
 		});
@@ -328,22 +346,5 @@ public class FavoriteFragmentBusList extends ListFragment implements LoaderCallb
 		
 	}
 
-	@Override
-	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void onLoaderReset(Loader<Cursor> loader) {
-		// TODO Auto-generated method stub
-		
-	}
 	
 }

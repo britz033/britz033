@@ -71,6 +71,7 @@ public class FavoriteFragment extends Fragment implements ResponseTask, LoaderCa
 	private LoopQuery<String> loopQueryBus;
 	private float density;
 	private boolean isFirst;
+	private boolean isUpdate;
 	private FavoriteFragmentBusList busListFragment; 
 	private ProgressBar loadingBar;
 	private TextView loadingText;
@@ -91,6 +92,7 @@ public class FavoriteFragment extends Fragment implements ResponseTask, LoaderCa
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		isFirst = true;
+		isUpdate = true;
 		view = inflater.inflate(R.layout.fragment_favorite_layout, container,false);
 //		getLoaderManager().initLoader(0, null, this);
 		loadingBar = (ProgressBar) view.findViewById(R.id.progressbar_favorite_buslist_loading);
@@ -270,6 +272,7 @@ public class FavoriteFragment extends Fragment implements ResponseTask, LoaderCa
 		String[] projection = null;
 		String selection = null;
 		String[] selectionArgs = null;
+		isUpdate = false;
 
 		switch (id) {
 		case 0:
@@ -313,6 +316,11 @@ public class FavoriteFragment extends Fragment implements ResponseTask, LoaderCa
 			}
 			break;
 		case LoopQuery.DEFAULT_LOOP_QUERY_ID:
+			if(isUpdate){
+				return;
+			}
+			
+			Log.d(TAG, "루프쿼리");
 			/*
 			 * for (int i = 0; i < busCount; i++) {
 			 * bus.putString(KEY_STATION_PASS, passBus[i]);
@@ -339,6 +347,8 @@ public class FavoriteFragment extends Fragment implements ResponseTask, LoaderCa
 			}
 			break;
 		}
+		
+		isUpdate = true;
 	}
 	
 	@Override
