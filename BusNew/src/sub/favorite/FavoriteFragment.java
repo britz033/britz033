@@ -52,7 +52,7 @@ import com.zoeas.qdeagubus.R;
 public class FavoriteFragment extends Fragment implements ResponseTask, LoaderCallbacks<Cursor>, OnBackAction {
 
 	private static final String TAG = "FavoriteFragment";
-	
+
 	public static final String KEY_BUS_NET_INFO_LIST = "busNETlist";
 	public static final String KEY_BUS_INFO_LIST = "buslist";
 	public static final String KEY_STATION_NAME = "station";
@@ -71,8 +71,7 @@ public class FavoriteFragment extends Fragment implements ResponseTask, LoaderCa
 	private LoopQuery<String> loopQueryBus;
 	private float density;
 	private boolean isFirst;
-	private boolean isUpdate;
-	private FavoriteFragmentBusList busListFragment; 
+	private FavoriteFragmentBusList busListFragment;
 	private ProgressBar loadingBar;
 	private TextView loadingText;
 
@@ -81,20 +80,20 @@ public class FavoriteFragment extends Fragment implements ResponseTask, LoaderCa
 		super.onAttach(activity);
 		context = activity;
 	}
-	
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-//		setRetainInstance(true);	유보는 액티비티당 하나만 되는듯. FragmentViewPager의 경우는 안되는듯
+		// setRetainInstance(true); 유보는 액티비티당 하나만 되는듯. FragmentViewPager의 경우는
+		// 안되는듯
 		density = context.getResources().getDisplayMetrics().density;
 	}
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		isFirst = true;
-		isUpdate = true;
-		view = inflater.inflate(R.layout.fragment_favorite_layout, container,false);
-//		getLoaderManager().initLoader(0, null, this);
+		view = inflater.inflate(R.layout.fragment_favorite_layout, container, false);
+		// getLoaderManager().initLoader(0, null, this);
 		loadingBar = (ProgressBar) view.findViewById(R.id.progressbar_favorite_buslist_loading);
 		loadingText = (TextView) view.findViewById(R.id.text_favorite_busList_loading);
 		Button btn = (Button) view.findViewById(R.id.btn_testreflash);
@@ -107,18 +106,18 @@ public class FavoriteFragment extends Fragment implements ResponseTask, LoaderCa
 				settingInfo();
 			}
 		});
-		
+
 		btn2.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				busListFragment.onDialogOpen();
 			}
 		});
-		
+
 		Log.d(TAG, "컨테이너크기" + container.toString());
 
 		viewPagerSetting(view);
-		
+
 		return view;
 	}
 
@@ -190,8 +189,8 @@ public class FavoriteFragment extends Fragment implements ResponseTask, LoaderCa
 		busInfoTask.execute();
 
 	}
-	
-	private void loadingVisible(int visibility){
+
+	private void loadingVisible(int visibility) {
 		loadingBar.setVisibility(visibility);
 		loadingText.setVisibility(visibility);
 	}
@@ -202,6 +201,9 @@ public class FavoriteFragment extends Fragment implements ResponseTask, LoaderCa
 	 */
 	@Override
 	public void onTaskFinish(ArrayList<BusInfoNet> list, String error) {
+		if (loopQueryBus != null) {
+			loopQueryBus.setUpdate(true);
+		}
 		loadingVisible(View.INVISIBLE);
 		busListFragment = new FavoriteFragmentBusList();
 		Bundle initData = new Bundle();
@@ -213,10 +215,10 @@ public class FavoriteFragment extends Fragment implements ResponseTask, LoaderCa
 		} else if (error != null) {
 			// error 메세지가 있을 경우
 			initData.putString(KEY_ERROR, error);
-		} else if (busInfoList == null){
+		} else if (busInfoList == null) {
 			initData.putString(KEY_ERROR, "정보를 찾을 수 없습니다.");
 		}
-		
+
 		initData.putParcelableArrayList(KEY_BUS_INFO_LIST, busInfoList);
 		initData.putString(KEY_STATION_NAME, stationName);
 
@@ -229,8 +231,6 @@ public class FavoriteFragment extends Fragment implements ResponseTask, LoaderCa
 		ft.addToBackStack(null);
 		ft.commitAllowingStateLoss();
 	}
-	
-	
 
 	public void refreshPreview() {
 		getLoaderManager().restartLoader(0, null, this);
@@ -249,14 +249,13 @@ public class FavoriteFragment extends Fragment implements ResponseTask, LoaderCa
 		}
 
 		busInfoList = new ArrayList<BusInfo>();
-		
+
 		// 모든 버스 id는 10자리 쉼표포함해서 11자리, 마지막은 쉼표가 없으니 + 1, 해서 모든 버스id에서 버스정보를 추출한다
 		if (stationPass.length() != 0) {
 			dbPassBusId = stationPass.split(",");
-			
+
 			Log.d(TAG, "버스숫자 " + dbPassBusId.length);
 
-			
 			loopQueryBus = new LoopQuery<String>(getLoaderManager(), dbPassBusId, this);
 			loopQueryBus.start();
 		} else {
@@ -272,11 +271,10 @@ public class FavoriteFragment extends Fragment implements ResponseTask, LoaderCa
 		String[] projection = null;
 		String selection = null;
 		String[] selectionArgs = null;
-		isUpdate = false;
 
 		switch (id) {
 		case 0:
-			if(isFirst){
+			if (isFirst) {
 				isFirst = false;
 			}
 			uri = MyContentProvider.CONTENT_URI_STATION;
@@ -286,8 +284,10 @@ public class FavoriteFragment extends Fragment implements ResponseTask, LoaderCa
 			selectionArgs = new String[] { "1" };
 			break;
 		case LoopQuery.DEFAULT_LOOP_QUERY_ID:
+			loopQueryBus.setUpdate(false);
 			uri = MyContentProvider.CONTENT_URI_BUS;
-			projection = new String[] { MyContentProvider.BUS_ID, MyContentProvider.BUS_NUMBER, MyContentProvider.BUS_FAVORITE };
+			projection = new String[] { MyContentProvider.BUS_ID, MyContentProvider.BUS_NUMBER,
+					MyContentProvider.BUS_FAVORITE };
 			selection = MyContentProvider.BUS_ID + "=" + loopQueryBus.getBundleData();
 			break;
 		}
@@ -298,28 +298,28 @@ public class FavoriteFragment extends Fragment implements ResponseTask, LoaderCa
 	// 검색이 끝나면 settingInfo에서 찾은 정보를 세팅하고 그것들을 showInfo에서 보여줌
 	@Override
 	public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
-		
-		if(isFirst && loader.getId()!=0){
+
+		if (isFirst && loader.getId() != 0) {
 			return;
 		}
-		
+
 		switch (loader.getId()) {
 		case 0:
 			Log.d(TAG, "스왑작동");
 			adapter.swapCursor(cursor);
 			this.cursor = cursor;
 			if (cursor.getCount() == 0)
-				onTaskFinish(null,"정류장 즐겨찾기를 추가해주세요");
+				onTaskFinish(null, "정류장 즐겨찾기를 추가해주세요");
 			else {
 				cursor.moveToPosition(pager.getCurrentItem());
 				settingInfo();
 			}
 			break;
 		case LoopQuery.DEFAULT_LOOP_QUERY_ID:
-			if(isUpdate){
+			if (loopQueryBus.isUpdate()) {
 				return;
 			}
-			
+
 			Log.d(TAG, "루프쿼리");
 			/*
 			 * for (int i = 0; i < busCount; i++) {
@@ -328,7 +328,7 @@ public class FavoriteFragment extends Fragment implements ResponseTask, LoaderCa
 			 * restartLoader를 단번에 같은 id로 여러개를 호출하면 무한로딩에 들어감..;;
 			 */
 			// 결국.. 쿼리가 끝나면 하나 다시 restart 하고 하는 수밖에..ㅠㅠ;;
-			
+
 			// 버스번호가 검색이 안될때는 건너뜀 (앞으로의 예정버스임)
 			if (cursor.getCount() != 0) {
 				cursor.moveToFirst();
@@ -337,9 +337,9 @@ public class FavoriteFragment extends Fragment implements ResponseTask, LoaderCa
 				busInfo.setBusName(cursor.getString(1));
 				busInfo.setBusFavorite(cursor.getInt(2));
 				busInfoList.add(busInfo);
-				Log.d(TAG,busInfo.getBusName() + ":" + busInfo.getBusNum());
-			} 
-			
+				Log.d(TAG, busInfo.getBusName() + ":" + busInfo.getBusNum());
+			}
+
 			if (!loopQueryBus.isEnd()) {
 				loopQueryBus.restart();
 			} else {
@@ -347,10 +347,8 @@ public class FavoriteFragment extends Fragment implements ResponseTask, LoaderCa
 			}
 			break;
 		}
-		
-		isUpdate = true;
 	}
-	
+
 	@Override
 	public void onResume() {
 		super.onResume();
