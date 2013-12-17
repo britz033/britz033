@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="10dp"
+	>
+    <ImageView 
+        android:id="@+id/img_fragment_favorite_preview_item"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        />
+    <ImageButton 
+        android:id="@+id/imgbtn_fragment_favorite_preview_item"
+        android:layout_toRightOf="@+id/img_fragment_favorite_preview_item"
+        android:layout_width="100dp"
+        android:layout_height="30dp"
+        android:background="@drawable/tab_selected_pressed_deagubus"
+        android:padding="3dp"
+        />
+    <ImageButton 
+        android:id="@+id/imgbtn_fragment_favorite_preview_item2"
+        android:layout_toRightOf="@+id/img_fragment_favorite_preview_item"
+        android:layout_below="@+id/imgbtn_fragment_favorite_preview_item"
+        android:layout_width="100dp"
+        android:layout_height="30dp"
+        android:background="@drawable/tab_selected_pressed_deagubus"
+        android:padding="3dp"
+        />
+    <ImageButton 
+        android:id="@+id/imgbtn_fragment_favorite_preview_item3"
+        android:layout_toRightOf="@+id/img_fragment_favorite_preview_item"
+        android:layout_below="@+id/imgbtn_fragment_favorite_preview_item2"
+        android:layout_width="100dp"
+        android:layout_height="30dp"
+        android:background="@drawable/tab_selected_pressed_deagubus"
+        android:padding="3dp"
+        />
+    
+</RelativeLayout>    
+

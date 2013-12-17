@@ -237,7 +237,8 @@ public class FavoriteFragment extends Fragment implements ResponseTask, LoaderCa
 	}
 
 	// 리스트뷰를 보여주기 위한 시작, 루프의 시작
-	private void settingInfo() {
+	public void settingInfo() {
+		cursor.moveToPosition(pager.getCurrentItem());
 		loadingVisible(View.VISIBLE);
 		if (cursor != null && cursor.getCount() > 0) {
 			stationNum = cursor.getString(0);
@@ -337,7 +338,6 @@ public class FavoriteFragment extends Fragment implements ResponseTask, LoaderCa
 				busInfo.setBusName(cursor.getString(1));
 				busInfo.setBusFavorite(cursor.getInt(2));
 				busInfoList.add(busInfo);
-				Log.d(TAG, busInfo.getBusName() + ":" + busInfo.getBusNum());
 			}
 
 			if (!loopQueryBus.isEnd()) {
@@ -352,7 +352,7 @@ public class FavoriteFragment extends Fragment implements ResponseTask, LoaderCa
 	@Override
 	public void onResume() {
 		super.onResume();
-		getLoaderManager().initLoader(0, null, this);
+		getLoaderManager().restartLoader(0, null, this);
 	}
 
 	@Override

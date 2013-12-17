@@ -81,9 +81,6 @@ public class MainActivity extends ActionBarActivity implements TabListener, OnCo
 	}
 
 	private ViewPager vp;
-	private String stationNumber;
-	private String stationName;
-	private LatLng latlng;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {

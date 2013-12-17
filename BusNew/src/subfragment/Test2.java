@@ -98,6 +98,11 @@ public class Test2 extends ListFragment implements OnBackAction, LoaderCallbacks
 			ani.setStartOffset(50 * position);
 			
 			View view = LayoutInflater.from(context).inflate(R.layout.test2_list_item, null);
+			if(position%2==0){
+				view.setBackgroundColor(getResources().getColor(R.color.color_test));
+			} else {
+				view.setBackgroundColor(getResources().getColor(R.color.color_test2));
+			}
 			
 			TextView tv = (TextView) view.findViewById(R.id.text_listitem_test2);
 			tv.setText("아야이야오ㅑㅐㅣㅇ");

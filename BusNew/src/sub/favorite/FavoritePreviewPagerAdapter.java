@@ -74,11 +74,10 @@ public class FavoritePreviewPagerAdapter extends PagerAdapter {
 			
 			
 		} else {
-			Button btn = (Button) rl.findViewById(R.id.imgbutton_favorite_preview);
-			RelativeLayout inrl = (RelativeLayout) rl.findViewById(R.id.layout_favorite_preview_empty);
+			Button btn = (Button) rl.findViewById(R.id.imgbutton_favorite_preview_empty);
 			ImageView iv = (ImageView) rl.findViewById(R.id.img_favorite_preview);
 			iv.setVisibility(View.INVISIBLE);
-			inrl.setVisibility(View.VISIBLE);
+			btn.setVisibility(View.VISIBLE);
 			
 			btn.setOnClickListener(new OnClickListener() {
 				OnCommunicationActivity activityCall;

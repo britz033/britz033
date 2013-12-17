@@ -14,21 +14,31 @@
             android:id="@+id/viewpager_favorite"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@drawable/preview_back3" >
+            android:background="#3063d0" >
         </android.support.v4.view.ViewPager>
 
         <Button
             android:id="@+id/btn_testreflash"
-            android:layout_width="wrap_content"
+            android:layout_width="100dp"
             android:layout_height="wrap_content"
-            android:text="새로고침" />
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="11dp"
+            android:layout_marginRight="15dp"
+            android:background="@drawable/tab_selected_pressed_deagubus"
+            android:text="새로고침"
+            android:textColor="#ffffff" />
 
         <Button
             android:id="@+id/btn_favorite_bus_check_open"
-            android:layout_width="wrap_content"
+            android:layout_width="100dp"
             android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
             android:layout_below="@+id/btn_testreflash"
-            android:text="버스Check" />
+            android:layout_marginTop="5dp"
+            android:layout_marginRight="15dp"
+            android:background="@drawable/tab_selected_pressed_deagubus"
+            android:text="버스Check"
+            android:textColor="#ffffff" />
     </RelativeLayout>
 
     <android.support.v4.view.ViewPager
@@ -42,7 +52,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
-            android:background="#314781"
+            android:background="#25489b"
             android:fontFamily="sans-serif-condensed"
             android:paddingBottom="4dp"
             android:paddingTop="4dp"
@@ -69,7 +79,6 @@
             android:layout_height="wrap_content"
             android:layout_toRightOf="@+id/progressbar_favorite_buslist_loading"
             android:text="홈페이지에서 전광판정보를 읽어오는 중입니다" />
-        
     </RelativeLayout>
 
 </LinearLayout>

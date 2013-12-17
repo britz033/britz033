@@ -23,6 +23,7 @@ import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.ListFragment;
 import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
@@ -196,7 +197,7 @@ public class FavoriteFragmentBusList extends ListFragment{
 					
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
-						
+						((FavoriteFragment)getParentFragment()).settingInfo();
 					}
 				}).create();
 		ListView checkListView = ad.getListView();

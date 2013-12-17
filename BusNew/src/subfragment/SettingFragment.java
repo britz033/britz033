@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.ExpandableListView.OnChildClickListener;
+import android.widget.ExpandableListView.OnGroupClickListener;
 import android.widget.TextView;
 
 import com.zoeas.qdeagubus.MainActivity.OnBackAction;
@@ -24,7 +25,6 @@ public class SettingFragment extends Fragment implements OnBackAction{
 	    ExpandableListView elv = (ExpandableListView) view.findViewById(R.id.listtest);
 	    elv.setAdapter(new BaseExpandableAdapter(getActivity()));
 	    elv.setOnChildClickListener(new OnChildClickListener() {
-			
 			@Override
 			public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
 				Intent intent = new Intent(Intent.ACTION_PICK,android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
@@ -32,6 +32,15 @@ public class SettingFragment extends Fragment implements OnBackAction{
 				return false;
 			}
 		});
+	    elv.setOnGroupClickListener(new OnGroupClickListener() {
+			
+			@Override
+			public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
+				
+				return false;
+			}
+		});
+	    
 		return view;
 	}
 
