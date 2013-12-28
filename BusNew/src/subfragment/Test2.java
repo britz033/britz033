@@ -132,7 +132,7 @@ public class Test2 extends ListFragment implements OnBackAction, LoaderCallbacks
 	public android.support.v4.content.Loader<Cursor> onCreateLoader(int id, Bundle args) {
 		Uri uri = MyContentProvider.CONTENT_URI_BUS;
 		String[] projection = {"_id","bus_number","bus_id"};
-		String selection =  "bus_id=" +lq.getBundleData();
+		String selection =  "bus_id=" + args.getString(LoopQuery.KEY);
 		return new CursorLoader(getActivity(), uri, projection, selection, null, null);
 	}
 }

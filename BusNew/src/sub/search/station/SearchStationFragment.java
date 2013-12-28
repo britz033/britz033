@@ -354,7 +354,7 @@ public class SearchStationFragment extends ListFragment implements LoaderCallbac
 		case LoopQuery.DEFAULT_LOOP_QUERY_ID:
 			baseUri = MyContentProvider.CONTENT_URI_BUS;
 			projection = new String[] { "_id", MyContentProvider.BUS_NUMBER, MyContentProvider.BUS_ID };
-			selection = "bus_id=" + busNumloopQuery.getBundleData();
+			selection = "bus_id=" + args.getString(LoopQuery.KEY);
 			break;
 		}
 

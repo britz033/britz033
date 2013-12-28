@@ -111,8 +111,8 @@ public class FavoriteFragment extends Fragment implements ResponseTask, LoaderCa
 		Button btn = (Button) view.findViewById(R.id.btn_testreflash);
 		Button btn2 = (Button) view.findViewById(R.id.btn_favorite_bus_check_open);
 		Button btn3 = (Button) view.findViewById(R.id.btn_favorite_bus_peekup);
-		
-		ButtonSetting(btn,btn2,btn3);
+
+		ButtonSetting(btn, btn2, btn3);
 		viewPagerSetting(view);
 
 		return view;
@@ -134,80 +134,84 @@ public class FavoriteFragment extends Fragment implements ResponseTask, LoaderCa
 				busListFragment.onDialogOpen();
 			}
 		});
-		
+
 		btn3.setOnClickListener(new OnClickListener() {
-			
+
 			@Override
 			public void onClick(View v) {
-				
+
 				ArrayList<String> data = new ArrayList<String>();
 				data.add("갤러리에서 가져오기");
 				data.add("카메라로 찍기");
-				
-				ArrayAdapter<String> menu = new ArrayAdapter<String>(context, android.R.layout.simple_list_item_1, data);
-				
-				new AlertDialog.Builder(context).setNeutralButton("취소", null).setAdapter(menu, new DialogInterface.OnClickListener() {
-					
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						
-						savedFile = createPreviewFile();
-						
-						switch(which){
-						case 0 : 
-							Intent i = new Intent(Intent.ACTION_PICK);
-							i.setType(android.provider.MediaStore.Images.Media.CONTENT_TYPE);
-							i.setData(android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-							startActivityForResult(i, 2001);
-							break;
-						case 1:
-							Intent intent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-							
-							intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(savedFile));
-							intent.putExtra("return-data", true);
-							startActivityForResult(intent, 2002);
-							break;
-						}
-					}
 
-				}).create().show(); 
+				ArrayAdapter<String> menu = new ArrayAdapter<String>(context, android.R.layout.simple_list_item_1, data);
+
+				new AlertDialog.Builder(context).setNeutralButton("취소", null)
+						.setAdapter(menu, new DialogInterface.OnClickListener() {
+
+							@Override
+							public void onClick(DialogInterface dialog, int which) {
+
+								savedFile = createPreviewFile();
+
+								switch (which) {
+								case 0:
+									Intent i = new Intent(Intent.ACTION_PICK);
+									i.setType(android.provider.MediaStore.Images.Media.CONTENT_TYPE);
+									i.setData(android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+									startActivityForResult(i, 2001);
+									break;
+								case 1:
+									Intent intent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+
+									intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(savedFile));
+									intent.putExtra("return-data", true);
+									startActivityForResult(intent, 2002);
+									break;
+								}
+							}
+
+						}).create().show();
 			}
 		});
 	}
-	
-	private File createPreviewFile(){
-		File path = new File(Environment.getExternalStorageDirectory() + "/android/data/" + context.getPackageName() + "/preview/");
-		
-		if(!path.exists()){
+
+	private File createPreviewFile() {
+		File path = new File(Environment.getExternalStorageDirectory() + "/android/data/" + context.getPackageName()
+				+ "/preview/");
+
+		if (!path.exists()) {
 			path.mkdir();
 		}
-		
-		File saveImage = new File(path,stationNum + ".png");
+
+		File saveImage = new File(path, stationNum + ".png");
 		return saveImage;
 	}
-	
+
 	// 사진변경 메뉴선택 반환
 	// 사진으로 저장된 파일을 용량 줄여서 다시 저장
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
-		
-		switch(requestCode){
-		case 2001:
-			
-			ImageUtil galleryImage = new ImageUtil(savedFile, context);
-			galleryImage.startGallery(data.getData());
-			
-			break;
-		case 2002:
-			
-			ImageUtil cameraImage = new ImageUtil(savedFile, context);
-			cameraImage.startCamera();
-			
-			adapter.notifyDataSetChanged();
-			break;
+
+		if (resultCode == Activity.RESULT_OK) {
+			switch (requestCode) {
+			case 2001:
+
+				ImageUtil galleryImage = new ImageUtil(savedFile, context);
+				galleryImage.startGallery(data.getData());
+
+				break;
+			case 2002:
+
+				ImageUtil cameraImage = new ImageUtil(savedFile, context);
+				cameraImage.startCamera();
+
+				adapter.notifyDataSetChanged();
+				break;
+			}
 		}
-		
+
 	}
 
 	// 여기서 정류장 번호를 받는다.
@@ -378,7 +382,7 @@ public class FavoriteFragment extends Fragment implements ResponseTask, LoaderCa
 			uri = MyContentProvider.CONTENT_URI_BUS;
 			projection = new String[] { MyContentProvider.BUS_ID, MyContentProvider.BUS_NUMBER,
 					MyContentProvider.BUS_FAVORITE };
-			selection = MyContentProvider.BUS_ID + "=" + loopQueryBus.getBundleData();
+			selection = MyContentProvider.BUS_ID + "=" + data.getString(LoopQuery.KEY);
 			break;
 		}
 

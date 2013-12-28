@@ -10,6 +10,7 @@ import util.ActionMap.OnActionInfoWindowClickListener;
 import util.BackPressStack;
 import util.LoopQuery;
 import util.Switch;
+import adapter.SlidingMenuAdapter;
 import android.app.AlertDialog;
 import android.content.ContentUris;
 import android.content.ContentValues;
@@ -31,6 +32,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnKeyListener;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
@@ -40,6 +42,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -50,6 +53,7 @@ import com.nineoldandroids.animation.Animator;
 import com.nineoldandroids.animation.AnimatorListenerAdapter;
 import com.nineoldandroids.animation.AnimatorSet;
 import com.nineoldandroids.animation.ObjectAnimator;
+import com.zoeas.qdeagubus.MainActivity;
 import com.zoeas.qdeagubus.MyContentProvider;
 import com.zoeas.qdeagubus.R;
 
@@ -303,7 +307,12 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 		case LoopQuery.DEFAULT_LOOP_QUERY_ID:
 			uri = MyContentProvider.CONTENT_URI_STATION;
 			projection = new String[] { "_id", "station_name", "station_latitude", "station_longitude", "station_pass" };
-			selection = "station_name='" + loopQueryStation.getBundleData() + "'";
+			selection = "station_name='" + data.getString(LoopQuery.KEY) + "'";
+			break;
+		case LoopQuery.LOOP_QUERY_ID_2:
+			uri = MyContentProvider.CONTENT_URI_BUS;
+			projection = new String[] { MyContentProvider.BUS_NUMBER, MyContentProvider.BUS_ID };
+			selection = "bus_id='" + data.getString(LoopQuery.KEY) + "'";
 			break;
 		}
 
@@ -365,7 +374,37 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 				new AlertDialog.Builder(this).setTitle("경로데이터가 부족합니다").create().show();
 			}
 			break;
+			
+		case LoopQuery.LOOP_QUERY_ID_2:
+			if (cursor.getCount() != 0) { // 대구버스통계가 뭐 같아서.. 아직 만들지도 않은 버스를 미리
+											// 넣어놨을 경우 없다고 뜸 ㅡ,.ㅡ;;;
+				cursor.moveToNext();
+				loopQueryBusnum.addResultData(cursor.getString(0), cursor.getString(1));
+			}
+			
+			if (!loopQueryBusnum.isEnd()) {
+				loopQueryBusnum.restart();
+			} else {
+				finishSlidingMenuQuery();
+			}
+			
 		}
+	}
+	
+	private RelativeLayout slidingBusListView;
+	
+	private void finishSlidingMenuQuery() {
+		ViewGroup view = (ViewGroup) findViewById(R.id.layout_activity_businfo_root);
+		slidingBusListView = (RelativeLayout) LayoutInflater.from(this).inflate(R.layout.layout_sliding_menu, view, false);
+		slidingBusListView.setClickable(true);
+		ListView slidingList = (ListView) slidingBusListView.findViewById(R.id.listview_sliding_menu);
+		SlidingMenuAdapter slidingAdapter = new SlidingMenuAdapter(this, loopQueryBusnum.getResultData());
+		slidingList.setOnItemClickListener(slidingAdapter);
+		slidingList.setAdapter(slidingAdapter);
+		view.addView(slidingBusListView);
+		Animator ani = ObjectAnimator.ofFloat(slidingBusListView, "translationX", -300, 0);
+		ani.setDuration(300);
+		ani.start();
 	}
 
 	// 모든 로딩이 끝나고 저장된 마커정보를 바탕으로 마커를 찍고 경로를 그림
@@ -573,7 +612,7 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 		Toast.makeText(this, passBusHash.get(markerAdditionalinfo), 0).show();
 		
 		String[] arrayBusId = passBusHash.get(markerAdditionalinfo).split(",");
-		loopQueryBusnum = new LoopQuery<String>(getSupportLoaderManager(), arrayBusId, this);
+		loopQueryBusnum = new LoopQuery<String>(getSupportLoaderManager(), arrayBusId, this, LoopQuery.LOOP_QUERY_ID_2);
 		loopQueryBusnum.start();
 	}
 

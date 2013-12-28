@@ -141,13 +141,14 @@ public class LoopQuery<T> {
 		return count;
 	}
 
-	/**
-	 * 생성자에서 입력된 소스중 sourceArray[count-1] 에 해당하는 값을 반환한다
-	 * @return	
-	 */
-	public T getBundleData() {
-		return (T) bundle.get(KEY);
-	}
+//	/**
+//	 * 생성자에서 입력된 소스중 sourceArray[count-1] 에 해당하는 값을 반환한다
+//	 * 왜 넣었는지 스스로도 의문.. 일단 지우는거 보류
+//	 * @return	
+//	 */
+//	public T getBundleData() {
+//		return (T) bundle.get(KEY);
+//	}
 
 	/**
 	 * 직접적인 쿼리로 오는 것인지 캐쉬로 로더가 다시 들어오는 것인지 판단한다
