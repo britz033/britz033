@@ -1,7 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ListView xmlns:android="http://schemas.android.com/apk/res/android" 
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:background="#44ffffff"
-    />
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/layout_sliding_menu"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
 
+    <ListView
+        android:id="@+id/listview_sliding_menu"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:background="#ffffff" />
+
+</RelativeLayout>

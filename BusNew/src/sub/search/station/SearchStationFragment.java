@@ -1,6 +1,7 @@
 package sub.search.station;
 
 import java.util.ArrayList;
+import java.util.zip.Inflater;
 
 import subfragment.CustomMapFragment;
 import subfragment.CustomMapFragment.OnMapReadyListener;
@@ -43,6 +44,7 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.FrameLayout.LayoutParams;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
@@ -83,7 +85,7 @@ public class SearchStationFragment extends ListFragment implements LoaderCallbac
 	public static final int STATION_FAVORITE_INDEX = 5;
 
 	private StationSearchListCursorAdapter madapter;
-	private ListView slidingBusListView;
+	private RelativeLayout slidingBusListView;
 	private LoopQuery<String> busNumloopQuery;
 	private EditText et;
 	private Context context;
@@ -111,6 +113,7 @@ public class SearchStationFragment extends ListFragment implements LoaderCallbac
 		view = (FrameLayout) inflater.inflate(R.layout.fragment_search_station_layout, null);
 		isFirst = true;
 		wideMarkerList = new ArrayList<Marker>();
+		
 		et = (EditText) view.findViewById(R.id.edit_search_sub2fragment);
 		et.addTextChangedListener(new MyWatcher());
 		et.setOnKeyListener(this);
@@ -442,10 +445,13 @@ public class SearchStationFragment extends ListFragment implements LoaderCallbac
 
 	private void finishSlidingMenuQuery() {
 		MainActivity.backAction.push();
-		slidingBusListView = new ListView(context);
-		slidingBusListView.setLayoutParams(new LayoutParams(300, LayoutParams.WRAP_CONTENT));
-		slidingBusListView.setAdapter(new SlidingMenuAdapter(context, busNumloopQuery.getResultData()));
-		slidingBusListView.setBackgroundColor(Color.argb(130, 255, 255, 255));
+		
+		slidingBusListView = (RelativeLayout) LayoutInflater.from(context).inflate(R.layout.layout_sliding_menu, view, false);
+		slidingBusListView.setClickable(true);
+		ListView slidingList = (ListView) slidingBusListView.findViewById(R.id.listview_sliding_menu);
+		SlidingMenuAdapter slidingAdapter = new SlidingMenuAdapter(context, busNumloopQuery.getResultData());
+		slidingList.setOnItemClickListener(slidingAdapter);
+		slidingList.setAdapter(slidingAdapter);
 		view.addView(slidingBusListView);
 		Animator ani = ObjectAnimator.ofFloat(slidingBusListView, "translationX", -300, 0);
 		ani.setDuration(300);
@@ -513,14 +519,23 @@ public class SearchStationFragment extends ListFragment implements LoaderCallbac
 												// removeView는 동작치 않음
 	}
 
+	
+	/** 마커 정보창 클릭시 버스리스트 나옴
+	 * 쿼리루프를 돌면서 모든 버스리스트를 얻고
+	 * finishSlidingMenuQuery에서 슬라이딩 작동
+	 * 그리고 만약 푸시상태라면 
+	 */
+	
 	@Override
 	public void onInfoWindowClick(Marker marker, Integer id) {
-		if (!MainActivity.backAction.isAlreadyPushed()) {
-			isMarkerClick = true;
-			Bundle stationId = new Bundle();
-			stationId.putInt(KEY_STATION_ID, id);
-			getLoaderManager().restartLoader(SEARCH_STATION_PASSBUS, stationId, this);
-		}
+//		if (!MainActivity.backAction.isAlreadyPushed()) {
+//			
+//		}
+		
+		isMarkerClick = true;
+		Bundle stationId = new Bundle();
+		stationId.putInt(KEY_STATION_ID, id);
+		getLoaderManager().restartLoader(SEARCH_STATION_PASSBUS, stationId, this);
 	}
 
 	@Override

@@ -4,12 +4,20 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
+import businfo.activity.BusInfoActivity;
+
+import com.zoeas.qdeagubus.MainActivity;
+import com.zoeas.qdeagubus.R;
+
 import android.content.Context;
+import android.content.Intent;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -47,22 +55,29 @@ public class SlidingMenuAdapter extends BaseAdapter implements OnItemClickListen
 
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
+		
+		RelativeLayout rl = null;
 		TextView tv = null;
 		
 		if (convertView == null) {
-			tv = new TextView(context);
+			rl = (RelativeLayout) LayoutInflater.from(context).inflate(R.layout.sliding_item,null);
 		} else {
-			tv = (TextView) convertView;
+			rl = (RelativeLayout) convertView;
 		}
 		
+		tv = (TextView) rl.findViewById(R.id.text_sliding_menu);
 		tv.setText(data.get(position)[0]);
 		
-		return tv;
+		return rl;
 	}
 
 	@Override
 	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-		Toast.makeText(context, data.get(position)[1], 0).show();
+		MainActivity.backAction.init();
+		Intent intent = new Intent(context, BusInfoActivity.class);
+		intent.putExtra(BusInfoActivity.KEY_BUS_ID, data.get(position)[1]);
+		intent.putExtra(BusInfoActivity.KEY_BUS_NAME, data.get(position)[0]);
+		context.startActivity(intent);
 	}
 
 }
