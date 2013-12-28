@@ -1,9 +1,13 @@
 package sub.favorite;
 
+import java.io.File;
+
 import adapter.OnCommunicationActivity;
 import android.content.Context;
 import android.database.Cursor;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.os.Environment;
 import android.support.v4.view.PagerAdapter;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -13,6 +17,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import com.zoeas.qdeagubus.MainActivity;
 import com.zoeas.qdeagubus.R;
@@ -24,10 +29,9 @@ import com.zoeas.qdeagubus.R;
 public class FavoritePreviewPagerAdapter extends PagerAdapter {
 
 	private static final String TAG = "FavoritePreviewPagerAdapter";
-	
+
 	private Context context;
 	private Cursor cursor;
-	private Drawable img;
 	private LayoutInflater inflater;
 	private FavoriteDummyPagerAdapter dummy;
 	private boolean startSetting;
@@ -55,36 +59,36 @@ public class FavoritePreviewPagerAdapter extends PagerAdapter {
 			return null;
 
 		RelativeLayout rl = (RelativeLayout) inflater.inflate(R.layout.viewpager_favorite_preview, null);
-		
 
 		if (!startSetting) {
-			int id = 0;
 			ImageView iv = (ImageView) rl.findViewById(R.id.img_favorite_preview);
-			
+
 			cursor.moveToPosition(position);
 
-			StringBuilder sb = new StringBuilder("station");
-			sb.append(cursor.getString(0));
-			id = context.getResources().getIdentifier(sb.toString(), "drawable", context.getPackageName());
-			if (id == 0)
-				id = R.drawable.station00005;
-			
-			img = context.getResources().getDrawable(id);
-			iv.setImageDrawable(img);
-			
-			
+			StringBuilder sb = new StringBuilder(Environment.getExternalStorageDirectory() + "/android/data/" + context.getPackageName()
+					+ "/preview/" + cursor.getString(0) + ".png");
+			File preImageFile = new File(sb.toString());
+			Log.d(TAG,"프리뷰참고경로" + preImageFile.getAbsolutePath());
+			if (preImageFile.exists()) {
+				BitmapDrawable bd = new BitmapDrawable(preImageFile.getAbsolutePath());
+				iv.setImageDrawable(bd);
+			} else {
+				iv.setImageDrawable(context.getResources().getDrawable(R.drawable.station00005));
+			}
+
 		} else {
 			Button btn = (Button) rl.findViewById(R.id.imgbutton_favorite_preview_empty);
 			ImageView iv = (ImageView) rl.findViewById(R.id.img_favorite_preview);
 			iv.setVisibility(View.INVISIBLE);
 			btn.setVisibility(View.VISIBLE);
-			
+
 			btn.setOnClickListener(new OnClickListener() {
 				OnCommunicationActivity activityCall;
+
 				@Override
 				public void onClick(View v) {
 					activityCall = (MainActivity) context;
-					activityCall.OnTabMove(MainActivity.MyTabs.STATION_LISTVIEW,null);
+					activityCall.OnTabMove(MainActivity.MyTabs.STATION_LISTVIEW, null);
 				}
 			});
 		}

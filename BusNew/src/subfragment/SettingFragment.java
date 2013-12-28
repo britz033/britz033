@@ -85,11 +85,11 @@ public class SettingFragment extends Fragment implements OnBackAction{
 	}
 
 	private File getTempImageFile() {
-		File path = new File(Environment.getExternalStorageDirectory() + "/Android/data/" + getActivity().getPackageName() + "/temp/");
+		File path = new File(Environment.getExternalStorageDirectory() + "/Android/data/" + getActivity().getPackageName() + "/preview/");
 		if (!path.exists()) {
 			path.mkdirs();
 		}
-		File file = new File(path, "tempimage.png");
+		File file = new File(path, "temp.png");
 		return file;
 	}
 
