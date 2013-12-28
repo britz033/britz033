@@ -65,7 +65,7 @@ public class BusStationParsing {
 						bus.setSoon(false);
 					} else if (attr.equals("noop")) {
 						busInfoArray = null;
-						throw new Exception("0");
+						return;
 					}
 
 					nextCount(parser, 3);

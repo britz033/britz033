@@ -12,14 +12,12 @@ public class BusInfo implements Parcelable{
 	private String busId;
 	private String busNum;
 	private String busOption;
-	private int busFavorite;
 	
 	public BusInfo(){
 		busName = null;
 		busId = null;
 		busNum = null;
 		busOption = "";
-		busFavorite = 0;
 	}
 	
 	public BusInfo(Parcel in) {
@@ -27,11 +25,6 @@ public class BusInfo implements Parcelable{
 		busId = in.readString();
 		busNum = in.readString();
 		busOption = in.readString();
-		busFavorite = in.readInt();
-	}
-	
-	public boolean isBusFavorite(){
-		return (busFavorite == 1) ? true : false;
 	}
 
 	public String getBusName() {
@@ -65,12 +58,6 @@ public class BusInfo implements Parcelable{
 	public void setBusOption(String busOption) {
 		this.busOption = busOption;
 	}
-	public int getBusFavorite() {
-		return busFavorite;
-	}
-	public void setBusFavorite(int busFavorite) {
-		this.busFavorite = busFavorite;
-	}
 
 	@Override
 	public int describeContents() {
@@ -90,7 +77,6 @@ public class BusInfo implements Parcelable{
 		dest.writeString(busId);
 		dest.writeString(busNum);
 		dest.writeString(busOption);
-		dest.writeInt(busFavorite);
 	}
 
 	public static final Parcelable.Creator<BusInfo> CREATOR = new Parcelable.Creator<BusInfo>() {

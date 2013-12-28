@@ -21,16 +21,18 @@ public class MyContentProvider extends ContentProvider{
 	
 	public static final String STATION_NUMBER = "station_number";
 	public static final String STATION_NAME = "station_name";
+	public static final String STATION_ID = "station_id";
 	public static final String STATION_LATITUDE = "station_longitude";
 	public static final String STATION_LONGITUDE = "station_latitude";
 	public static final String STATION_FAVORITE = "station_favorite";
 	public static final String STATION_PASS = "station_pass";
+	public static final String PASS_FAVORITE = "pass_favorite";
+	
 	
 	public static final String BUS_NUMBER = "bus_number";
 	public static final String BUS_INTERVAL = "bus_interval";
 	public static final String BUS_FORWARD = "bus_forward";
 	public static final String BUS_BACKWARD = "bus_backward";
-	public static final String BUS_FAVORITE = "bus_favorite";
 	public static final String BUS_ID = "bus_id";
 	
 	// db는 이미 openhelper에서 DB이름으로 열었으니 여기선 테이블 네임을 중심으로 하면됨.

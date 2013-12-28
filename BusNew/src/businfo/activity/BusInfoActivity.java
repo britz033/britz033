@@ -98,9 +98,7 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 	private String currentStationName;
 	private boolean userControlAllowed;
 	private Switch pathSwitchWidget;
-	private ImageButton favoriteAddBtn;
 	private Drawable[] drawables;
-	private int busFavorite;
 	private int busId;
 	private BackPressStack backPressStack;
 	private FrameLayout stationListViewContainer;
@@ -138,11 +136,9 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 		TextView textStationName = (TextView) findViewById(R.id.text_activity_businfo_stationname);
 		TextView textOption = (TextView) findViewById(R.id.text_activity_businfo_option);
 		Button searchBtn = (Button) findViewById(R.id.btn_activity_businfo_pathsearch);
-		favoriteAddBtn = (ImageButton) findViewById(R.id.btn_activity_businfo_addfavorite);
 		stationListViewContainer = (FrameLayout) findViewById(R.id.layout_activity_businfo_path_container);
 		stationListView = new ListView(this);
 		searchBtn.setOnClickListener(this);
-		favoriteAddBtn.setOnClickListener(this);
 
 		String busOption = "";
 		Pattern pattern = Pattern.compile("^(.+) \\((.+)\\)$");
@@ -219,15 +215,7 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 			String busInterval = mcursor.getString(1);
 			String busForward = mcursor.getString(2);
 			String busBackward = mcursor.getString(3);
-			busFavorite = mcursor.getInt(4);
 			busId = mcursor.getInt(0);
-
-			Log.d(TAG, "즐겨찾기 여부 : " + busFavorite);
-			if (busFavorite == 0) {
-				favoriteAddBtn.setImageResource(R.drawable.btn_station_list_item_off_selector);
-			} else {
-				favoriteAddBtn.setImageResource(R.drawable.btn_station_list_item_on_selector);
-			}
 
 			Pattern pattern = Pattern.compile("([^;]+);");
 			Matcher matcherForward = pattern.matcher(busForward);
@@ -301,7 +289,7 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 		case LOADER_ID_INIT:
 			Log.d(TAG, "로더 초기화 생성");
 			uri = MyContentProvider.CONTENT_URI_BUS;
-			projection = new String[] { "_id", "bus_interval", "bus_forward", "bus_backward", "bus_favorite" };
+			projection = new String[] { "_id", "bus_interval", "bus_forward", "bus_backward" };
 			selection = "bus_id='" + data.getString(KEY_BUS_ID) + "'";
 			break;
 		case LoopQuery.DEFAULT_LOOP_QUERY_ID:
@@ -333,7 +321,6 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 				initBusInfo();
 			} else {
 				cursor.moveToFirst();
-				busFavorite = cursor.getInt(4);
 			}
 			
 			if(isFirst){
@@ -507,19 +494,6 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 	@Override
 	public void onClick(View v) {
 		switch (v.getId()) {
-		case R.id.btn_activity_businfo_addfavorite:
-			Log.d(TAG, "즐겨찾기 추가 됨");
-			Uri uri = ContentUris.withAppendedId(MyContentProvider.CONTENT_URI_BUS, busId);
-			ContentValues value = new ContentValues();
-			if (busFavorite == 0) {
-				value.put("bus_favorite", 1);
-				((ImageButton) v).setImageResource(R.drawable.btn_station_list_item_on_selector);
-			} else {
-				value.put("bus_favorite", 0);
-				((ImageButton) v).setImageResource(R.drawable.btn_station_list_item_off_selector);
-			}
-			getContentResolver().update(uri, value, null, null);
-			break;
 		case R.id.btn_activity_businfo_pathsearch:
 			LayoutInflater inflater = LayoutInflater.from(this);
 			LinearLayout ll = (LinearLayout) inflater.inflate(R.layout.edittext_businfo_search, null);

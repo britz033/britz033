@@ -64,16 +64,20 @@ public class FavoriteFragment extends Fragment implements ResponseTask, LoaderCa
 
 	private static final String TAG = "FavoriteFragment";
 
-	public static final String KEY_BUS_NET_INFO_LIST = "busNETlist";
-	public static final String KEY_BUS_INFO_LIST = "buslist";
-	public static final String KEY_STATION_NAME = "station";
+	public static final String KEY_BUS_NET_INFO_LIST = "qbus.busNETlist";
+	public static final String KEY_BUS_INFO_LIST = "qbus.buslist";
+	public static final String KEY_STATION_NAME = "qbus.station";
+	public static final String KEY_STATION_ID = "qbus.stationID";
+	public static final String KEY_PASS_FAVORITE = "qbus.passFavorite";
 	public static final String KEY_ERROR = "error";
 
 	private Context context;
 	private Cursor cursor;
 	private String stationNum;
 	private String stationName;
+	private String stationID;
 	private String stationPass; // 이 정류장을 거치는 버스들 id
+	private String pass_favorite; // 그 버스들의 즐겨찾기여부
 	private ArrayList<BusInfo> busInfoList;
 	private String[] dbPassBusId;
 	private View view;
@@ -314,6 +318,8 @@ public class FavoriteFragment extends Fragment implements ResponseTask, LoaderCa
 
 		initData.putParcelableArrayList(KEY_BUS_INFO_LIST, busInfoList);
 		initData.putString(KEY_STATION_NAME, stationName);
+		initData.putString(KEY_STATION_ID, stationID);
+		initData.putString(KEY_PASS_FAVORITE, pass_favorite);
 
 		// 리스트뷰로 보내는 버스의 모든정보
 		busListFragment.setArguments(initData);
@@ -337,6 +343,8 @@ public class FavoriteFragment extends Fragment implements ResponseTask, LoaderCa
 			stationNum = cursor.getString(0);
 			stationName = cursor.getString(1);
 			stationPass = cursor.getString(2);
+			pass_favorite = cursor.getString(3);
+			stationID = cursor.getString(4);
 		} else {
 			new AlertDialog.Builder(context).setTitle("정보 갱신에 문제가 있습니다").setIcon(android.R.drawable.ic_dialog_alert)
 					.create().show();
@@ -373,15 +381,14 @@ public class FavoriteFragment extends Fragment implements ResponseTask, LoaderCa
 			}
 			uri = MyContentProvider.CONTENT_URI_STATION;
 			projection = new String[] { MyContentProvider.STATION_NUMBER, MyContentProvider.STATION_NAME,
-					MyContentProvider.STATION_PASS };
+					MyContentProvider.STATION_PASS, MyContentProvider.PASS_FAVORITE, MyContentProvider.STATION_ID };
 			selection = MyContentProvider.STATION_FAVORITE + "=?";
 			selectionArgs = new String[] { "1" };
 			break;
 		case LoopQuery.DEFAULT_LOOP_QUERY_ID:
 			loopQueryBus.setUpdate(false);
 			uri = MyContentProvider.CONTENT_URI_BUS;
-			projection = new String[] { MyContentProvider.BUS_ID, MyContentProvider.BUS_NUMBER,
-					MyContentProvider.BUS_FAVORITE };
+			projection = new String[] { MyContentProvider.BUS_ID, MyContentProvider.BUS_NUMBER};
 			selection = MyContentProvider.BUS_ID + "=" + data.getString(LoopQuery.KEY);
 			break;
 		}
@@ -414,7 +421,6 @@ public class FavoriteFragment extends Fragment implements ResponseTask, LoaderCa
 				return;
 			}
 
-			Log.d(TAG, "루프쿼리");
 			/*
 			 * for (int i = 0; i < busCount; i++) {
 			 * bus.putString(KEY_STATION_PASS, passBus[i]);
@@ -429,7 +435,6 @@ public class FavoriteFragment extends Fragment implements ResponseTask, LoaderCa
 				BusInfo busInfo = new BusInfo();
 				busInfo.setBusId(cursor.getString(0));
 				busInfo.setBusName(cursor.getString(1));
-				busInfo.setBusFavorite(cursor.getInt(2));
 				busInfoList.add(busInfo);
 			}
 

@@ -19,10 +19,12 @@ import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.content.res.XmlResourceParser;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.OpenableColumns;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.ListFragment;
 import android.text.SpannableString;
@@ -47,21 +49,22 @@ import com.zoeas.qdeagubus.MyContentProvider;
 import com.zoeas.qdeagubus.R;
 
 /**
- * 즐겨찾기의 정류소별 전광판 정보를 리스트뷰로 뿌림
- * busList 가 null 로 오는 것때문에 골치.. error 값부터 새로 만들어야할듯
+ * 즐겨찾기의 정류소별 전광판 정보를 리스트뷰로 뿌림 busList 가 null 로 오는 것때문에 골치.. error 값부터 새로 만들어야할듯
  * 
  * @author lol
  * 
  */
-public class FavoriteFragmentBusList extends ListFragment{
+public class FavoriteFragmentBusList extends ListFragment {
 
 	private static final String TAG = "FavoriteFragmentBusList";
-	
+
 	private Context context;
 	private ArrayList<BusInfoNet> netList;
 	private ArrayList<BusInfo> busList;
 	private ArrayList<BusInfo> busListCopy;
 	private String stationName;
+	private String stationID;
+	private String passFavorite;
 	private float density;
 	private int netSize;
 	private int busSize;
@@ -77,29 +80,19 @@ public class FavoriteFragmentBusList extends ListFragment{
 		netList = data.getParcelableArrayList(FavoriteFragment.KEY_BUS_NET_INFO_LIST);
 		busList = data.getParcelableArrayList(FavoriteFragment.KEY_BUS_INFO_LIST);
 		stationName = data.getString(FavoriteFragment.KEY_STATION_NAME);
+		stationID = data.getString(FavoriteFragment.KEY_STATION_ID);
+		passFavorite = data.getString(FavoriteFragment.KEY_PASS_FAVORITE);
 
-		if (error == null){
+		if (error == null) {
 			busListCopy = (ArrayList<BusInfo>) busList.clone();
+			
 			if (busListCopy.size() != 0) {
-				if (netList == null) {
-					netSize = 0;
-					busSize = busListCopy.size();
-				} else {
-					bindInfo();
-				}
-
+				bindInfo();
 				setListAdapter(new BusListAdapter());
 			} else {
 				setListAdapter(null);
 				setEmptyText("현재 버스정보가 없는 정류소입니다");
 			}
-		}
-		else if (error.equals("0")) { // 버스가 끊김. 버스목록만 보여줌
-			busListCopy = (ArrayList<BusInfo>) busList.clone();
-			netSize = 0;
-			busSize = busListCopy.size();
-
-			setListAdapter(new BusListAdapter());
 		} else {
 			setListAdapter(null);
 			setEmptyText(error);
@@ -107,20 +100,39 @@ public class FavoriteFragmentBusList extends ListFragment{
 	}
 
 	/**
-	 * 제거 체크가 되어 있는지 확인하고 체크되어 있으면 체크된 것을 제거하고 남은 것들로 보여주기를 시작한다 이때 전광판에서 정보가 오지
-	 * 않은 것들은 회색으로 뿌리고 그외는 정보표시를 한다. 이때 전광판에서 정보와 버스리스트가 매치되지 않으면 전광판에 나타난 번호를
-	 * 기준으로 버스리스트를 다 지워버린다 예를들어 300번이 있는데 버스리스트는 300(냥) 300(스파르타)라고 있으면 이 둘은
-	 * 통합되어 있다보고 삭제시킨다 만약 300과 300(냥)이 전광판에 뜬다면 300(냥)과 300은 그냥 뜨고 300(스파르타) 가
-	 * 삭제된다 혹시 300과 300(냥)과 300(스파르타)가 다 전광판에 나오는데 이번에만 300이 떠서 나머지가 삭제된 경우라고
-	 * 치더라도 어쩔수 없다 다만 그렇게 삭제되더라도 다음에 매치시 나올테니 그걸로 위안 삼는다
+	 * 제거 체크가 되어 있는지 확인하고 체크되어 있으면 체크된 것을 제거하고 남은 것들로 보여주기를 시작한다 이때 전광판에서 정보가 오지 않은 것들은 회색으로 뿌리고 그외는 정보표시를 한다. 이때 전광판에서 정보와 버스리스트가 매치되지 않으면 전광판에 나타난 번호를 기준으로 버스리스트를 다 지워버린다 예를들어
+	 * 300번이 있는데 버스리스트는 300(냥) 300(스파르타)라고 있으면 이 둘은 통합되어 있다보고 삭제시킨다 만약 300과 300(냥)이 전광판에 뜬다면 300(냥)과 300은 그냥 뜨고 300(스파르타) 가 삭제된다 혹시 300과 300(냥)과 300(스파르타)가 다 전광판에 나오는데 이번에만 300이 떠서
+	 * 나머지가 삭제된 경우라고 치더라도 어쩔수 없다 다만 그렇게 삭제되더라도 다음에 매치시 나올테니 그걸로 위안 삼는다
 	 * */
 	private void bindInfo() {
 
-		for (int k = 0; k < busListCopy.size(); k++) {
-			if (busListCopy.get(k).getBusFavorite() == 0) {
-				busListCopy.remove(k);
-				k--;
+		// for (int k = 0; k < busListCopy.size(); k++) {
+		// if (busListCopy.get(k).getBusFavorite() == 0) {
+		// busListCopy.remove(k);
+		// k--;
+		// }
+		// }
+
+		if (passFavorite != null && passFavorite.length() == busListCopy.size()) {
+			int index = 0;
+			for (int k = 0; k < busListCopy.size(); k++) {
+				if (passFavorite.charAt(index++) == '0') {
+					busListCopy.remove(k);
+					k--;
+				}
 			}
+		} else {
+			StringBuilder sb = new StringBuilder();
+			for (int k = 0; k < busListCopy.size(); k++) {
+				   sb.append("1");
+			}
+			passFavorite = sb.toString();
+		}
+
+		if (netList == null) {
+			netSize = 0;
+			busSize = busListCopy.size();
+			return;
 		}
 
 		HashMap<Integer, Integer> removeIndexHash = new HashMap<Integer, Integer>();
@@ -189,15 +201,14 @@ public class FavoriteFragmentBusList extends ListFragment{
 		startActivity(intent);
 	}
 
-	
 	public void onDialogOpen() {
-		final ContentResolver cr = getActivity().getContentResolver();
+		final SQLiteDatabase db = SQLiteDatabase.openDatabase(getActivity().getDatabasePath("StationDB.png").getAbsolutePath(), null, SQLiteDatabase.OPEN_READWRITE);
 		AlertDialog ad = new AlertDialog.Builder(context).setTitle("보여질 버스를 체크하세요").setAdapter(new BusListCheckDialogAdapter(), null)
 				.setNeutralButton("확인", new OnClickListener() {
-					
+
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
-						((FavoriteFragment)getParentFragment()).settingInfo();
+						((FavoriteFragment) getParentFragment()).settingInfo();
 					}
 				}).create();
 		ListView checkListView = ad.getListView();
@@ -205,22 +216,24 @@ public class FavoriteFragmentBusList extends ListFragment{
 
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-				int busFavorite = busList.get(position).isBusFavorite() ? 0 : 1; 
-				busList.get(position).setBusFavorite(busFavorite);
-				
-				StringBuilder sb = new StringBuilder(MyContentProvider.BUS_ID);
-				sb.append("='").append(busList.get(position).getBusId()).append("'");
+
+				char check = (passFavorite.charAt(position) == '0' ? '1' : '0');
+				StringBuilder setFavorite = new StringBuilder(passFavorite);
+				setFavorite.setCharAt(position, check);
+
+				StringBuilder sb = new StringBuilder(MyContentProvider.STATION_ID);
+				sb.append("='").append(stationID).append("'");
 				ContentValues cv = new ContentValues();
-				cv.put(MyContentProvider.BUS_FAVORITE, busFavorite);
-				Uri uri = MyContentProvider.CONTENT_URI_BUS;
-				cr.update(uri, cv, sb.toString() , null);
+				cv.put(MyContentProvider.PASS_FAVORITE, setFavorite.toString());
+				Log.d(TAG,"업데이트 " + setFavorite.toString());
+				db.update("stationInfo", cv, sb.toString(), null);
 			}
-			
+
 		});
 		checkListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
 		ad.show();
-		for(int i=0; i<checkListView.getCount(); i++){
-			checkListView.setItemChecked(i, busList.get(i).isBusFavorite());
+		for (int i = 0; i < checkListView.getCount(); i++) {
+			checkListView.setItemChecked(i, passFavorite.charAt(i) == '0' ? false : true);
 		}
 	}
 
@@ -263,8 +276,7 @@ public class FavoriteFragmentBusList extends ListFragment{
 				holder.tv.setText(ssb);
 			} else {
 				SpannableString sb = new SpannableString(busListCopy.get(position - netSize).getBusName());
-				sb.setSpan(new ForegroundColorSpan(Color.argb(100, 0, 0, 0)), 0, sb.length(),
-						SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE);
+				sb.setSpan(new ForegroundColorSpan(Color.argb(100, 0, 0, 0)), 0, sb.length(), SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE);
 				holder.tv.setText(sb);
 			}
 
@@ -273,7 +285,7 @@ public class FavoriteFragmentBusList extends ListFragment{
 
 	}
 
-	private class BusListCheckDialogAdapter extends BaseAdapter{
+	private class BusListCheckDialogAdapter extends BaseAdapter {
 
 		@Override
 		public int getCount() {
@@ -292,15 +304,15 @@ public class FavoriteFragmentBusList extends ListFragment{
 
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
-			
+
 			RelativeLayout view;
 			TextView tv;
-			
+
 			if (convertView == null) {
 				float density = context.getResources().getDisplayMetrics().density;
 				view = new RelativeLayout(context);
 				tv = new TextView(context);
-				
+
 				AbsListView.LayoutParams params = new AbsListView.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
 				XmlResourceParser xrp = context.getResources().getXml(R.drawable.search_selector);
 				Drawable background = null;
@@ -313,28 +325,28 @@ public class FavoriteFragmentBusList extends ListFragment{
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-				
+
 				view.setBackgroundDrawable(background);
 				view.setLayoutParams(params);
 				tv.setLayoutParams(params);
-				tv.setTextSize(15*density);
-				int padding = (int)(12*density);
+				tv.setTextSize(15 * density);
+				int padding = (int) (12 * density);
 				tv.setPadding(padding, padding, padding, padding);
-				
+
 				view.setTag(tv);
 				view.addView(tv);
 			} else {
 				view = (RelativeLayout) convertView;
 			}
-			
+
 			tv = (TextView) view.getTag();
 			tv.setText(busList.get(position).getBusName());
-			
+
 			return view;
 		}
 	}
-	
-	private class BusUpdateLoader extends SQLiteCursorLoader{
+
+	private class BusUpdateLoader extends SQLiteCursorLoader {
 
 		public BusUpdateLoader(Context context) {
 			super(context);
@@ -344,8 +356,7 @@ public class FavoriteFragmentBusList extends ListFragment{
 		protected Cursor loadCursor() {
 			return null;
 		}
-		
+
 	}
 
-	
 }
