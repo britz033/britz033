@@ -523,15 +523,10 @@ public class SearchStationFragment extends ListFragment implements LoaderCallbac
 	/** 마커 정보창 클릭시 버스리스트 나옴
 	 * 쿼리루프를 돌면서 모든 버스리스트를 얻고
 	 * finishSlidingMenuQuery에서 슬라이딩 작동
-	 * 그리고 만약 푸시상태라면 
 	 */
 	
 	@Override
 	public void onInfoWindowClick(Marker marker, Integer id) {
-//		if (!MainActivity.backAction.isAlreadyPushed()) {
-//			
-//		}
-		
 		isMarkerClick = true;
 		Bundle stationId = new Bundle();
 		stationId.putInt(KEY_STATION_ID, id);

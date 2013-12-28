@@ -82,6 +82,7 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 	private int[] stationIdBackward;
 	private HashMap<Integer, String> passBusHash;
 	private LoopQuery<String> loopQueryStation;
+	private LoopQuery<String> loopQueryBusnum;
 	private Cursor mcursor;
 	private int busDirection;
 	private int currentDirection;
@@ -570,6 +571,10 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 	@Override
 	public void onInfoWindowClick(Marker marker, Integer markerAdditionalinfo) {
 		Toast.makeText(this, passBusHash.get(markerAdditionalinfo), 0).show();
+		
+		String[] arrayBusId = passBusHash.get(markerAdditionalinfo).split(",");
+		loopQueryBusnum = new LoopQuery<String>(getSupportLoaderManager(), arrayBusId, this);
+		loopQueryBusnum.start();
 	}
 
 	// 경유버스 목록 닫기, 검색된 버스 목록 닫고 경로 목록 열기, 각각은 겹치지 않게 경유버스가 안닫혔으면 검색 버스가 안열리는
