@@ -102,6 +102,7 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 	private int busId;
 	private BackPressStack backPressStack;
 	private FrameLayout stationListViewContainer;
+	private FrameLayout barContainer;
 	private ListView stationListView;
 	private boolean searchAgain;
 	private boolean isFirst;
@@ -137,6 +138,9 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 		TextView textOption = (TextView) findViewById(R.id.text_activity_businfo_option);
 		Button searchBtn = (Button) findViewById(R.id.btn_activity_businfo_pathsearch);
 		stationListViewContainer = (FrameLayout) findViewById(R.id.layout_activity_businfo_path_container);
+		barContainer = (FrameLayout) findViewById(R.id.bar_container);
+		barContainer.setClickable(true);
+		
 		stationListView = new ListView(this);
 		searchBtn.setOnClickListener(this);
 
@@ -419,6 +423,7 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 		}
 
 		userControlAllowed = true;
+		barContainer.setVisibility(View.INVISIBLE);
 
 	}
 

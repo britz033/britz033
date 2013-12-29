@@ -90,6 +90,9 @@ public class FavoriteFragment extends Fragment implements ResponseTask, LoaderCa
 	private ProgressBar loadingBar;
 	private TextView loadingText;
 	private File savedFile;
+	private Button btnReflash;
+	private Button btnFavorite;
+	private Button btnChangePicture;
 
 	@Override
 	public void onAttach(Activity activity) {
@@ -112,18 +115,18 @@ public class FavoriteFragment extends Fragment implements ResponseTask, LoaderCa
 		// getLoaderManager().initLoader(0, null, this);
 		loadingBar = (ProgressBar) view.findViewById(R.id.progressbar_favorite_buslist_loading);
 		loadingText = (TextView) view.findViewById(R.id.text_favorite_busList_loading);
-		Button btn = (Button) view.findViewById(R.id.btn_testreflash);
-		Button btn2 = (Button) view.findViewById(R.id.btn_favorite_bus_check_open);
-		Button btn3 = (Button) view.findViewById(R.id.btn_favorite_bus_peekup);
+		btnReflash = (Button) view.findViewById(R.id.btn_testreflash);
+		btnFavorite = (Button) view.findViewById(R.id.btn_favorite_bus_check_open);
+		btnChangePicture = (Button) view.findViewById(R.id.btn_favorite_bus_peekup);
 
-		ButtonSetting(btn, btn2, btn3);
+		ButtonSetting();
 		viewPagerSetting(view);
 
 		return view;
 	}
 
-	private void ButtonSetting(Button btn, Button btn2, Button btn3) {
-		btn.setOnClickListener(new OnClickListener() {
+	private void ButtonSetting() {
+		btnReflash.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
@@ -132,14 +135,14 @@ public class FavoriteFragment extends Fragment implements ResponseTask, LoaderCa
 			}
 		});
 
-		btn2.setOnClickListener(new OnClickListener() {
+		btnFavorite.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				busListFragment.onDialogOpen();
 			}
 		});
 
-		btn3.setOnClickListener(new OnClickListener() {
+		btnChangePicture.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
@@ -308,11 +311,20 @@ public class FavoriteFragment extends Fragment implements ResponseTask, LoaderCa
 		// 각종오류 감지 및 정보뿌림
 		if (error == null && list != null) {
 			// 정상일 경우
+			btnReflash.setVisibility(View.VISIBLE);
+			btnFavorite.setVisibility(View.VISIBLE);
+			btnChangePicture.setVisibility(View.VISIBLE);
 			initData.putParcelableArrayList(KEY_BUS_NET_INFO_LIST, list);
 		} else if (error != null) {
 			// error 메세지가 있을 경우
+			btnReflash.setVisibility(View.INVISIBLE);
+			btnFavorite.setVisibility(View.INVISIBLE);
+			btnChangePicture.setVisibility(View.INVISIBLE);
 			initData.putString(KEY_ERROR, error);
 		} else if (busInfoList == null) {
+			btnReflash.setVisibility(View.INVISIBLE);
+			btnFavorite.setVisibility(View.INVISIBLE);
+			btnChangePicture.setVisibility(View.INVISIBLE);
 			initData.putString(KEY_ERROR, "정보를 찾을 수 없습니다.");
 		}
 

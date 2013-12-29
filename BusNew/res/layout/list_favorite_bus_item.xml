@@ -3,13 +3,27 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical" 
-    android:padding="10dp"
     >
     <TextView 
         android:id="@+id/text_favorite_list_busitem_busnumber"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="22sp"
+        android:paddingTop="10dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:paddingBottom="10dp"
         />
+<!--     <ProgressBar -->
+<!--         android:id="@+id/bar_favorite_list_busitem_time"  -->
+<!--         android:layout_width="match_parent" -->
+<!--         android:layout_height="wrap_content" -->
+<!--         android:paddingLeft="10dp" -->
+<!--         android:paddingRight="10dp" -->
+<!--         android:layout_marginBottom="10dp" -->
+<!--         android:indeterminate="false" -->
+<!--         style="?android:attr/progressBarStyleHorizontal" -->
+<!--         android:progressDrawable="@drawable/progressbar_bus" -->
+<!--         /> -->
 
 </LinearLayout>

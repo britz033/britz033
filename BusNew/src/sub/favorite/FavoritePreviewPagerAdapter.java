@@ -54,7 +54,6 @@ public class FavoritePreviewPagerAdapter extends PagerAdapter {
 
 	@Override
 	public Object instantiateItem(ViewGroup container, int position) {
-		Log.d(TAG, "불려짐");
 		if (cursor == null)
 			return null;
 
@@ -68,7 +67,6 @@ public class FavoritePreviewPagerAdapter extends PagerAdapter {
 			StringBuilder sb = new StringBuilder(Environment.getExternalStorageDirectory() + "/android/data/" + context.getPackageName()
 					+ "/preview/" + cursor.getString(0) + ".png");
 			File preImageFile = new File(sb.toString());
-			Log.d(TAG,"프리뷰참고경로" + preImageFile.getAbsolutePath());
 			if (preImageFile.exists()) {
 				BitmapDrawable bd = new BitmapDrawable(preImageFile.getAbsolutePath());
 				iv.setImageDrawable(bd);

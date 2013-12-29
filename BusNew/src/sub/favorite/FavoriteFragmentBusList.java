@@ -40,6 +40,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import businfo.activity.BusInfoActivity;
@@ -65,6 +66,7 @@ public class FavoriteFragmentBusList extends ListFragment {
 	private String stationName;
 	private String stationID;
 	private String passFavorite;
+	StringBuilder setFavorite;
 	private float density;
 	private int netSize;
 	private int busSize;
@@ -88,6 +90,7 @@ public class FavoriteFragmentBusList extends ListFragment {
 			
 			if (busListCopy.size() != 0) {
 				bindInfo();
+				setFavorite = new StringBuilder(passFavorite);
 				setListAdapter(new BusListAdapter());
 			} else {
 				setListAdapter(null);
@@ -208,7 +211,7 @@ public class FavoriteFragmentBusList extends ListFragment {
 
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
-						((FavoriteFragment) getParentFragment()).settingInfo();
+						((FavoriteFragment) getParentFragment()).refreshPreview();
 					}
 				}).create();
 		ListView checkListView = ad.getListView();
@@ -218,7 +221,6 @@ public class FavoriteFragmentBusList extends ListFragment {
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
 				char check = (passFavorite.charAt(position) == '0' ? '1' : '0');
-				StringBuilder setFavorite = new StringBuilder(passFavorite);
 				setFavorite.setCharAt(position, check);
 
 				StringBuilder sb = new StringBuilder(MyContentProvider.STATION_ID);
@@ -241,6 +243,7 @@ public class FavoriteFragmentBusList extends ListFragment {
 
 		class ViewHolder {
 			TextView tv;
+//			ProgressBar bar;
 		}
 
 		@Override
@@ -266,6 +269,7 @@ public class FavoriteFragmentBusList extends ListFragment {
 				LayoutInflater inflater = LayoutInflater.from(context);
 				convertView = inflater.inflate(R.layout.list_favorite_bus_item, null);
 				holder.tv = (TextView) convertView.findViewById(R.id.text_favorite_list_busitem_busnumber);
+//				holder.bar = (ProgressBar) convertView.findViewById(R.id.bar_favorite_list_busitem_time);
 				convertView.setTag(holder);
 			} else {
 				holder = (ViewHolder) convertView.getTag();
@@ -274,10 +278,12 @@ public class FavoriteFragmentBusList extends ListFragment {
 			if (position < netSize) {
 				SpannableStringBuilder ssb = netList.get(position).getSpannableStringBusInfo(density);
 				holder.tv.setText(ssb);
+//				holder.bar.setProgress(20*position);
 			} else {
 				SpannableString sb = new SpannableString(busListCopy.get(position - netSize).getBusName());
 				sb.setSpan(new ForegroundColorSpan(Color.argb(100, 0, 0, 0)), 0, sb.length(), SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE);
 				holder.tv.setText(sb);
+//				holder.bar.setProgress(20*position);
 			}
 
 			return convertView;

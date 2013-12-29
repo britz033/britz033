@@ -60,7 +60,6 @@ public class BusInfoNet implements Parcelable {
 		spb.append(num).append(" ").append("[");
 		spb.append(time).append("] ");
 		spb.append(current).append(" ");
-		spb.append("\n");
 
 		return spb;
 	}
