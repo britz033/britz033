@@ -495,6 +495,8 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 
 	}
 
+	private EditText et;
+	private AlertDialog searchDialog;
 	// 검색창을 보여주거나 즐겨찾기를 추가
 	@Override
 	public void onClick(View v) {
@@ -502,51 +504,16 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 		case R.id.btn_activity_businfo_pathsearch:
 			LayoutInflater inflater = LayoutInflater.from(this);
 			LinearLayout ll = (LinearLayout) inflater.inflate(R.layout.edittext_businfo_search, null);
-			final AlertDialog searchDialog = new AlertDialog.Builder(this).setView(ll).create();
+			searchDialog = new AlertDialog.Builder(this).setView(ll).create();
 			searchDialog.show();
 
-			EditText et = (EditText) ll.findViewById(R.id.edittext_activity_businfo_search);
+			et = (EditText) ll.findViewById(R.id.edittext_activity_businfo_search);
 
 			et.setOnKeyListener(new OnKeyListener() {
 				@Override
 				public boolean onKey(View v, int keyCode, KeyEvent event) {
 					if (event.getAction() == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER) {
-
-						String s = ((EditText) v).getText().toString();
-						ArrayList<Integer> saveSearchPoint = new ArrayList<Integer>();
-						ArrayList<String> searchedStationList = new ArrayList<String>();
-
-						for (int i = 0; i < pathDirection.size(); i++) {
-							if (pathDirection.get(i).contains(s)) {
-								saveSearchPoint.add(i);
-								searchedStationList.add(pathDirection.get(i));
-							}
-						}
-
-						if (searchedStationList.size() != 0) {
-							actionMapDirection.clearMap();
-							actionMapDirection.drawLine();
-
-							for (int i = 0; i < saveSearchPoint.size(); i++) {
-								int point = saveSearchPoint.get(i);
-								actionMapDirection.addMarkerAndShow(point, pathDirection.get(point), saveSearchPoint.get(i));
-							}
-
-							BusInfoStationSearchListAdapter searchAdapter = new BusInfoStationSearchListAdapter(searchedStationList, getBaseContext());
-
-							if (!searchAgain) {
-								searchAgain = true;
-								backPressStack.push();
-								pathListOpen();
-							}
-
-							stationListView.setAdapter(searchAdapter);
-
-							actionMapDirection.setLineBound();
-						} else {
-							Toast.makeText(getBaseContext(), "버스 경로상에 <" + s + "> 단어가 포함된 \n정류소가 없습니다", 0).show();
-						}
-						searchDialog.dismiss();
+						searchResult();
 					}
 					return false;
 				}
@@ -554,6 +521,48 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 			});
 			break;
 		}
+	}
+	
+	public void searchResultClick(View view){
+		searchResult();
+	}
+	
+	private void searchResult(){
+		String s = et.getText().toString();
+		ArrayList<Integer> saveSearchPoint = new ArrayList<Integer>();
+		ArrayList<String> searchedStationList = new ArrayList<String>();
+
+		for (int i = 0; i < pathDirection.size(); i++) {
+			if (pathDirection.get(i).contains(s)) {
+				saveSearchPoint.add(i);
+				searchedStationList.add(pathDirection.get(i));
+			}
+		}
+
+		if (searchedStationList.size() != 0) {
+			actionMapDirection.clearMap();
+			actionMapDirection.drawLine();
+
+			for (int i = 0; i < saveSearchPoint.size(); i++) {
+				int point = saveSearchPoint.get(i);
+				actionMapDirection.addMarkerAndShow(point, pathDirection.get(point), stationIdDirection[saveSearchPoint.get(i)]);
+			}
+
+			BusInfoStationSearchListAdapter searchAdapter = new BusInfoStationSearchListAdapter(searchedStationList, getBaseContext());
+
+			if (!searchAgain) {
+				searchAgain = true;
+				backPressStack.push();
+				pathListOpen();
+			}
+
+			stationListView.setAdapter(searchAdapter);
+
+			actionMapDirection.setLineBound();
+		} else {
+			Toast.makeText(getBaseContext(), "버스 경로상에 <" + s + "> 단어가 포함된 \n정류소가 없습니다", 0).show();
+		}
+		searchDialog.dismiss();
 	}
 
 	private void pathListOpen() {
