@@ -9,6 +9,7 @@ import adapter.OnCommunicationReceive;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.database.Cursor;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -26,6 +27,7 @@ import android.support.v7.app.ActionBar.TabListener;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
+import android.view.Window;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -87,6 +89,7 @@ public class MainActivity extends ActionBarActivity implements TabListener, OnCo
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 
+		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 		viewPagerSetting();
 		actionBarSetting();
 

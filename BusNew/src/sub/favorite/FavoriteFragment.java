@@ -11,14 +11,10 @@ import util.ImageUtil;
 import util.LoopQuery;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -41,6 +37,7 @@ import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -93,6 +90,7 @@ public class FavoriteFragment extends Fragment implements ResponseTask, LoaderCa
 	private Button btnReflash;
 	private Button btnFavorite;
 	private Button btnChangePicture;
+	private ImageUtil imageUtil;
 
 	@Override
 	public void onAttach(Activity activity) {
@@ -111,6 +109,7 @@ public class FavoriteFragment extends Fragment implements ResponseTask, LoaderCa
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		isFirst = true;
+		imageUtil = new ImageUtil(context);
 		view = inflater.inflate(R.layout.fragment_favorite_layout, container, false);
 		// getLoaderManager().initLoader(0, null, this);
 		loadingBar = (ProgressBar) view.findViewById(R.id.progressbar_favorite_buslist_loading);
@@ -158,8 +157,16 @@ public class FavoriteFragment extends Fragment implements ResponseTask, LoaderCa
 
 							@Override
 							public void onClick(DialogInterface dialog, int which) {
-
+								
+								//프리뷰 이미지뷰의 크기를 가져와서 저장
+								ImageView iv = adapter.getImageView();
+								int height = iv.getMeasuredHeight();
+								int width =iv.getMeasuredWidth();
+								imageUtil.setImageSizeBoundary(Math.max(height, width), 2);
+								
+								// 프리뷰파일의 경로와 파일명을 던져줌(아직 생성은 안된상태, 그래서 현재 존재하더라도 클릭만으론 안바뀜)
 								savedFile = createPreviewFile();
+								imageUtil.setTargetFile(savedFile);  // 처리를 위해 등록
 
 								switch (which) {
 								case 0:
@@ -170,7 +177,6 @@ public class FavoriteFragment extends Fragment implements ResponseTask, LoaderCa
 									break;
 								case 1:
 									Intent intent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-
 									intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(savedFile));
 									intent.putExtra("return-data", true);
 									startActivityForResult(intent, 2002);
@@ -196,7 +202,7 @@ public class FavoriteFragment extends Fragment implements ResponseTask, LoaderCa
 	}
 
 	// 사진변경 메뉴선택 반환
-	// 사진으로 저장된 파일을 용량 줄여서 다시 저장
+	// 등록된 파일명과 경로에 이미지뷰의 크기에 맞게 사이즈 변경 + 저장
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
@@ -204,15 +210,13 @@ public class FavoriteFragment extends Fragment implements ResponseTask, LoaderCa
 		if (resultCode == Activity.RESULT_OK) {
 			switch (requestCode) {
 			case 2001:
-
-				ImageUtil galleryImage = new ImageUtil(savedFile, context);
-				galleryImage.startGallery(data.getData());
+				
+				imageUtil.startGallery(data.getData());
 
 				break;
 			case 2002:
 
-				ImageUtil cameraImage = new ImageUtil(savedFile, context);
-				cameraImage.startCamera();
+				imageUtil.startCamera();
 
 				adapter.notifyDataSetChanged();
 				break;
@@ -269,8 +273,8 @@ public class FavoriteFragment extends Fragment implements ResponseTask, LoaderCa
 		};
 
 		pager.setOnPageChangeListener(onPageChangeListener);
-		pager.setOffscreenPageLimit(5);
-		pager.setClipChildren(false);
+//		pager.setOffscreenPageLimit(5);
+//		pager.setClipChildren(false);
 
 		adapter.setDummy(dummyAdapter);
 

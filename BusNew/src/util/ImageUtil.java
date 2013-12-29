@@ -13,15 +13,21 @@ import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.media.ExifInterface;
 import android.net.Uri;
+import android.util.Log;
 
 public class ImageUtil {
+	
+	private static final String TAG = "imageUtil";
 	
 	private File mTargetFile;
 	private Context mContext;
 	
-	public ImageUtil(File target, Context context){
-		mTargetFile = target;
+	public ImageUtil(Context context){
 		mContext = context;
+	}
+	
+	public void setTargetFile(File target){
+		mTargetFile = target;
 	}
 	
 	public void startCamera(){
@@ -31,6 +37,7 @@ public class ImageUtil {
 	public void startGallery(Uri galleryUri){
 		copyUriToFile(galleryUri, mTargetFile);
 		Bitmap bitmap = loadImageWithSampleSize(mTargetFile);
+		bitmap = resizeImageWithinBoundary(bitmap);
 		saveBitmapToFile(bitmap);
 	}
 	
@@ -45,6 +52,7 @@ public class ImageUtil {
 			int exifOrientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
 			int exifRotateDegree = exifOrientationToDegrees(exifOrientation);
 			bitmap = rotateImage(bitmap, exifRotateDegree);
+			bitmap = resizeImageWithinBoundary(bitmap);
 			saveBitmapToFile(bitmap);	// 세이브
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -56,21 +64,77 @@ public class ImageUtil {
 		BitmapFactory.Options options = new BitmapFactory.Options();
 		options.inJustDecodeBounds = true;
 		BitmapFactory.decodeFile(file.getAbsolutePath(), options);
-		int width = options.outWidth;
-		int height = options.outHeight;
+		final int width = options.outWidth;
+		final int height = options.outHeight;
 		int longSide = Math.max(width, height);
 		int sampleSize = 1;
 		if (longSide > mImageSizeBoundary) {
 			sampleSize = longSide / mImageSizeBoundary;
 		}
 		options.inJustDecodeBounds = false;
-//		options.inSampleSize = sampleSize;
-		options.inSampleSize = 9;
+		options.inSampleSize = sampleSize;
+//		options.inSampleSize = 28;
 		options.inPurgeable = true;
 		options.inDither = false;
 
 		Bitmap bitmap = BitmapFactory.decodeFile(file.getAbsolutePath(), options);
 		return bitmap;
+	}
+	
+	/**
+	 * mImageSizeBoundary 크기로 이미지 크기 조정. mImageSizeBoundary 보다 작은 경우 resize하지
+	 * 않음.
+	 */
+	private Bitmap resizeImageWithinBoundary(Bitmap bitmap) {
+		int width = bitmap.getWidth();
+		int height = bitmap.getHeight();
+
+		if (width > height) {
+			if (width > mImageSizeBoundary) {
+				bitmap = resizeBitmapWithWidth(bitmap, mImageSizeBoundary);
+			}
+		} else {
+			if (height > mImageSizeBoundary) {
+				bitmap = resizeBitmapWithHeight(bitmap, mImageSizeBoundary);
+			}
+		}
+		return bitmap;
+	}
+
+	private Bitmap resizeBitmapWithHeight(Bitmap source, int wantedHeight) {
+		if (source == null)
+			return null;
+
+		int width = source.getWidth();
+		int height = source.getHeight();
+
+		float resizeFactor = wantedHeight * 1f / height;
+
+		int targetWidth, targetHeight;
+		targetWidth = (int) (width * resizeFactor);
+		targetHeight = (int) (height * resizeFactor);
+
+		Bitmap resizedBitmap = Bitmap.createScaledBitmap(source, targetWidth, targetHeight, true);
+
+		return resizedBitmap;
+	}
+
+	private Bitmap resizeBitmapWithWidth(Bitmap source, int wantedWidth) {
+		if (source == null)
+			return null;
+
+		int width = source.getWidth();
+		int height = source.getHeight();
+
+		float resizeFactor = wantedWidth * 1f / width;
+
+		int targetWidth, targetHeight;
+		targetWidth = (int) (width * resizeFactor);
+		targetHeight = (int) (height * resizeFactor);
+
+		Bitmap resizedBitmap = Bitmap.createScaledBitmap(source, targetWidth, targetHeight, true);
+
+		return resizedBitmap;
 	}
 	
 	/**
@@ -120,17 +184,20 @@ public class ImageUtil {
 		}
 	}
 	
+	
+	private int mImageSizeBoundary = 500;
+
 	/**
 	 * 사용할 이미지의 최대 크기 설정. 가로, 세로 지정한 크기보다 작은 사이즈로 이미지 크기를 조절함. default size :
 	 * 500
 	 * 
 	 * @param sizePixel
 	 *            기본 500
+	 * @param quality 그림의 퀄리티를 나타낸다 숫자가 커질수록 낮아짐
 	 */
-	private int mImageSizeBoundary = 500;
-
-	public void setImageSizeBoundary(int sizePixel) {
-		mImageSizeBoundary = sizePixel;
+	public void setImageSizeBoundary(int sizePixel, float quality) {
+		mImageSizeBoundary = (int)(sizePixel/quality);
+		Log.d(TAG,"이미지뷰 크기 : " + mImageSizeBoundary);
 	}
 	
 	private void copyUriToFile(Uri srcUri, File target) {

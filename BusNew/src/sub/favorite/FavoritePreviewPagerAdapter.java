@@ -6,9 +6,9 @@ import adapter.OnCommunicationActivity;
 import android.content.Context;
 import android.database.Cursor;
 import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.Environment;
 import android.support.v4.view.PagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,7 +17,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
-import android.widget.Toast;
 
 import com.zoeas.qdeagubus.MainActivity;
 import com.zoeas.qdeagubus.R;
@@ -35,6 +34,7 @@ public class FavoritePreviewPagerAdapter extends PagerAdapter {
 	private LayoutInflater inflater;
 	private FavoriteDummyPagerAdapter dummy;
 	private boolean startSetting;
+	private ImageView ivInfo;
 
 	public FavoritePreviewPagerAdapter(Context context, Cursor c) {
 		this.context = context;
@@ -61,11 +61,12 @@ public class FavoritePreviewPagerAdapter extends PagerAdapter {
 
 		if (!startSetting) {
 			ImageView iv = (ImageView) rl.findViewById(R.id.img_favorite_preview);
+			ivInfo = iv;
 
 			cursor.moveToPosition(position);
 
-			StringBuilder sb = new StringBuilder(Environment.getExternalStorageDirectory() + "/android/data/" + context.getPackageName()
-					+ "/preview/" + cursor.getString(0) + ".png");
+			StringBuilder sb = new StringBuilder(Environment.getExternalStorageDirectory().toString()).append("/android/data/").append(context.getPackageName())
+					.append("/preview/").append(cursor.getString(0)).append(".png");
 			File preImageFile = new File(sb.toString());
 			if (preImageFile.exists()) {
 				BitmapDrawable bd = new BitmapDrawable(preImageFile.getAbsolutePath());
@@ -93,7 +94,11 @@ public class FavoritePreviewPagerAdapter extends PagerAdapter {
 		container.addView(rl, 0);
 		return rl;
 	}
-
+	
+	public ImageView getImageView(){
+		return ivInfo;
+	}
+	
 	@Override
 	public int getCount() {
 		if (cursor == null)
@@ -124,7 +129,9 @@ public class FavoritePreviewPagerAdapter extends PagerAdapter {
 
 	@Override
 	public void destroyItem(ViewGroup container, int position, Object object) {
-		container.removeView((RelativeLayout) object);
+		View view = (View)object;
+		((ViewPager)container).removeView(view);
+		view = null;
 	}
 
 	public void swapCursor(Cursor cursor) {

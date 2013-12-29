@@ -22,12 +22,15 @@
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/Theme.Deagubus" >
+        android:theme="@style/Theme.Deagubus" 
+        >
         <provider android:name="MyContentProvider"
             android:authorities="com.zoeas.qdeagubus" />
         <activity
             android:name=".MainActivity"
-            android:label="@string/app_name" >
+            android:label="@string/app_name" 
+            android:screenOrientation="portrait"
+            >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -36,7 +39,9 @@
         </activity>
         <activity
             android:name="businfo.activity.BusInfoActivity"
-            android:label="번호정보"/>
+            android:label="번호정보"
+            android:screenOrientation="portrait"
+            />
         <receiver 
             android:name=".BusWidget"
             android:label="버스위젯"
