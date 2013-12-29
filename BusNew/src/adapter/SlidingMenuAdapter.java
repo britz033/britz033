@@ -77,6 +77,7 @@ public class SlidingMenuAdapter extends BaseAdapter implements OnItemClickListen
 		Intent intent = new Intent(context, BusInfoActivity.class);
 		intent.putExtra(BusInfoActivity.KEY_BUS_ID, data.get(position)[1]);
 		intent.putExtra(BusInfoActivity.KEY_BUS_NAME, data.get(position)[0]);
+		intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
 		context.startActivity(intent);
 	}
 
