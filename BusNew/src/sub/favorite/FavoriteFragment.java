@@ -311,18 +311,15 @@ public class FavoriteFragment extends Fragment implements ResponseTask, LoaderCa
 		// 각종오류 감지 및 정보뿌림
 		if (error == null && list != null) {
 			// 정상일 경우
-			btnReflash.setVisibility(View.VISIBLE);
 			btnFavorite.setVisibility(View.VISIBLE);
 			btnChangePicture.setVisibility(View.VISIBLE);
 			initData.putParcelableArrayList(KEY_BUS_NET_INFO_LIST, list);
 		} else if (error != null) {
 			// error 메세지가 있을 경우
-			btnReflash.setVisibility(View.INVISIBLE);
 			btnFavorite.setVisibility(View.INVISIBLE);
 			btnChangePicture.setVisibility(View.INVISIBLE);
 			initData.putString(KEY_ERROR, error);
 		} else if (busInfoList == null) {
-			btnReflash.setVisibility(View.INVISIBLE);
 			btnFavorite.setVisibility(View.INVISIBLE);
 			btnChangePicture.setVisibility(View.INVISIBLE);
 			initData.putString(KEY_ERROR, "정보를 찾을 수 없습니다.");

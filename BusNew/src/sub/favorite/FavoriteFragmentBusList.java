@@ -11,7 +11,6 @@ import org.xmlpull.v1.XmlPullParserException;
 import sub.search.bus.SearchBusNumberFragment;
 import adapter.OnCommunicationActivity;
 import android.app.AlertDialog;
-import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -22,10 +21,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
-import android.net.Uri;
 import android.os.Bundle;
-import android.provider.OpenableColumns;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.app.ListFragment;
 import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
@@ -39,8 +35,8 @@ import android.widget.AbsListView.LayoutParams;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.ListView;
-import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import businfo.activity.BusInfoActivity;
@@ -66,10 +62,11 @@ public class FavoriteFragmentBusList extends ListFragment {
 	private String stationName;
 	private String stationID;
 	private String passFavorite;
-	StringBuilder setFavorite;
+	private StringBuilder setFavorite;
 	private float density;
 	private int netSize;
 	private int busSize;
+	private SQLiteDatabase db;
 
 	@Override
 	public void onViewCreated(View view, Bundle savedInstanceState) {
@@ -205,16 +202,21 @@ public class FavoriteFragmentBusList extends ListFragment {
 	}
 
 	public void onDialogOpen() {
-		final SQLiteDatabase db = SQLiteDatabase.openDatabase(getActivity().getDatabasePath("StationDB.png").getAbsolutePath(), null, SQLiteDatabase.OPEN_READWRITE);
-		AlertDialog ad = new AlertDialog.Builder(context).setTitle("보여질 버스를 체크하세요").setAdapter(new BusListCheckDialogAdapter(), null)
+		db = SQLiteDatabase.openDatabase(getActivity().getDatabasePath("StationDB.png").getAbsolutePath(), null, SQLiteDatabase.OPEN_READWRITE);
+		
+		View customTitleView = LayoutInflater.from(context).inflate(R.layout.layout_favorite_dialog_title, null);
+		AlertDialog ad = new AlertDialog.Builder(context).setCustomTitle(customTitleView).setAdapter(new BusListCheckDialogAdapter(), null)
 				.setNeutralButton("확인", new OnClickListener() {
 
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
 						((FavoriteFragment) getParentFragment()).refreshPreview();
+						if(db !=null && db.isOpen()){
+							db.close();
+						}
 					}
 				}).create();
-		ListView checkListView = ad.getListView();
+		final ListView checkListView = ad.getListView();
 		checkListView.setOnItemClickListener(new OnItemClickListener() {
 
 			@Override
@@ -223,14 +225,23 @@ public class FavoriteFragmentBusList extends ListFragment {
 				char check = (passFavorite.charAt(position) == '0' ? '1' : '0');
 				setFavorite.setCharAt(position, check);
 
-				StringBuilder sb = new StringBuilder(MyContentProvider.STATION_ID);
-				sb.append("='").append(stationID).append("'");
-				ContentValues cv = new ContentValues();
-				cv.put(MyContentProvider.PASS_FAVORITE, setFavorite.toString());
-				Log.d(TAG,"업데이트 " + setFavorite.toString());
-				db.update("stationInfo", cv, sb.toString(), null);
+				dbUpdate();
 			}
 
+		});
+		
+		((Button)customTitleView.findViewById(R.id.imgbtn_dialog_title_busfavorite)).setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				StringBuilder sb = new StringBuilder();
+				for (int k = 0; k < passFavorite.length(); k++) {
+					   sb.append("0");
+					   checkListView.setItemChecked(k, false);
+				}
+				setFavorite = sb;
+				dbUpdate();
+				((FavoriteFragment) getParentFragment()).refreshPreview();
+			}
 		});
 		checkListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
 		ad.show();
@@ -239,6 +250,14 @@ public class FavoriteFragmentBusList extends ListFragment {
 		}
 	}
 
+	private void dbUpdate(){
+		StringBuilder sb = new StringBuilder(MyContentProvider.STATION_ID);
+		sb.append("='").append(stationID).append("'");
+		ContentValues cv = new ContentValues();
+		cv.put(MyContentProvider.PASS_FAVORITE, setFavorite.toString());
+		db.update("stationInfo", cv, sb.toString(), null);
+	}
+	
 	class BusListAdapter extends BaseAdapter {
 
 		class ViewHolder {

@@ -1364,7 +1364,7 @@ containing a value of this type.
         public static final int action_mode_bar=0x7f080032;
         public static final int action_mode_bar_stub=0x7f080031;
         public static final int action_mode_close_button=0x7f080025;
-        public static final int action_settings=0x7f080089;
+        public static final int action_settings=0x7f08008a;
         public static final int activity_chooser_view_content=0x7f080026;
         public static final int always=0x7f08000f;
         public static final int bar_container=0x7f080050;
@@ -1372,11 +1372,11 @@ containing a value of this type.
         public static final int btn_activity_businfo_pathsearch=0x7f08004d;
         public static final int btn_favorite_bus_check_open=0x7f080058;
         public static final int btn_favorite_bus_peekup=0x7f080059;
-        public static final int btn_google_service_pendingintent=0x7f080083;
-        public static final int btn_listitem_test2=0x7f08007b;
+        public static final int btn_google_service_pendingintent=0x7f080084;
+        public static final int btn_listitem_test2=0x7f08007c;
         public static final int btn_search_station_widesearch=0x7f08006a;
-        public static final int btn_station_item_favorite=0x7f080073;
-        public static final int btn_test=0x7f080079;
+        public static final int btn_station_item_favorite=0x7f080074;
+        public static final int btn_test=0x7f08007a;
         public static final int btn_testreflash=0x7f080057;
         public static final int busmap=0x7f08004c;
         public static final int checkbox=0x7f08002e;
@@ -1385,7 +1385,7 @@ containing a value of this type.
         public static final int dialog=0x7f080012;
         public static final int disableHome=0x7f08000c;
         public static final int dropdown=0x7f080013;
-        public static final int dummy_station_item_favorite=0x7f080074;
+        public static final int dummy_station_item_favorite=0x7f080075;
         public static final int edit_fragment_search_bus=0x7f080065;
         public static final int edit_query=0x7f080039;
         public static final int edit_search_sub2fragment=0x7f080067;
@@ -1400,13 +1400,14 @@ containing a value of this type.
         public static final int icon=0x7f08002b;
         public static final int ifRoom=0x7f08000e;
         public static final int image=0x7f080028;
-        public static final int img_favorite_preview=0x7f08007c;
-        public static final int img_fragment_favorite_preview_item=0x7f08007e;
+        public static final int img_favorite_preview=0x7f08007d;
+        public static final int img_fragment_favorite_preview_item=0x7f08007f;
         public static final int img_path=0x7f080054;
-        public static final int imgbtn_fragment_favorite_preview_item=0x7f08007f;
-        public static final int imgbtn_fragment_favorite_preview_item2=0x7f080080;
-        public static final int imgbtn_fragment_favorite_preview_item3=0x7f080081;
-        public static final int imgbutton_favorite_preview_empty=0x7f08007d;
+        public static final int imgbtn_dialog_title_busfavorite=0x7f08006d;
+        public static final int imgbtn_fragment_favorite_preview_item=0x7f080080;
+        public static final int imgbtn_fragment_favorite_preview_item2=0x7f080081;
+        public static final int imgbtn_fragment_favorite_preview_item3=0x7f080082;
+        public static final int imgbutton_favorite_preview_empty=0x7f08007e;
         public static final int layout_activity_businfo_map_container=0x7f08004b;
         public static final int layout_activity_businfo_path_container=0x7f08004e;
         public static final int layout_activity_businfo_root=0x7f080045;
@@ -1418,12 +1419,12 @@ containing a value of this type.
         public static final int layout_map_loading=0x7f080060;
         public static final int layout_search_station_map=0x7f080069;
         public static final int layout_search_station_map_container=0x7f080068;
-        public static final int layout_sliding_menu=0x7f08006d;
+        public static final int layout_sliding_menu=0x7f08006e;
         public static final int left_icon=0x7f080034;
         public static final int listMode=0x7f080005;
         public static final int list_item=0x7f08002a;
-        public static final int listtest=0x7f080076;
-        public static final int listview_sliding_menu=0x7f08006e;
+        public static final int listtest=0x7f080077;
+        public static final int listview_sliding_menu=0x7f08006f;
         public static final int middle=0x7f080015;
         public static final int never=0x7f08000d;
         public static final int none=0x7f080000;
@@ -1451,27 +1452,27 @@ containing a value of this type.
         public static final int showCustom=0x7f08000b;
         public static final int showHome=0x7f080008;
         public static final int showTitle=0x7f08000a;
-        public static final int source=0x7f080077;
+        public static final int source=0x7f080078;
         public static final int split_action_bar=0x7f08001f;
         public static final int submit_area=0x7f080042;
         public static final int switch_path=0x7f08004a;
         public static final int tabMode=0x7f080006;
         public static final int terrain=0x7f080003;
-        public static final int test1=0x7f080078;
+        public static final int test1=0x7f080079;
         public static final int text_activity_businfo_current=0x7f080049;
         public static final int text_activity_businfo_number=0x7f080046;
         public static final int text_activity_businfo_option=0x7f080047;
         public static final int text_activity_businfo_stationname=0x7f080048;
-        public static final int text_bus_search_list_item=0x7f08006f;
+        public static final int text_bus_search_list_item=0x7f080070;
         public static final int text_favorite_busList_loading=0x7f08005e;
-        public static final int text_favorite_list_busitem_busnumber=0x7f080070;
-        public static final int text_google_service_error_msg=0x7f080082;
-        public static final int text_listitem_test2=0x7f08007a;
+        public static final int text_favorite_list_busitem_busnumber=0x7f080071;
+        public static final int text_google_service_error_msg=0x7f080083;
+        public static final int text_listitem_test2=0x7f08007b;
         public static final int text_map_loading=0x7f080061;
         public static final int text_path=0x7f080055;
-        public static final int text_sliding_menu=0x7f080075;
-        public static final int text_station_item_name=0x7f080071;
-        public static final int text_station_item_number=0x7f080072;
+        public static final int text_sliding_menu=0x7f080076;
+        public static final int text_station_item_name=0x7f080072;
+        public static final int text_station_item_number=0x7f080073;
         public static final int title=0x7f08002c;
         public static final int title_container=0x7f080033;
         public static final int top_action_bar=0x7f080021;
@@ -1483,11 +1484,11 @@ containing a value of this type.
         public static final int viewpager_main=0x7f080051;
         public static final int viewstub_gmap_google_fail=0x7f080063;
         public static final int viewstub_search_station_map_fail=0x7f08006b;
-        public static final int widget_busNum=0x7f080085;
-        public static final int widget_reflesh=0x7f080088;
-        public static final int widget_station=0x7f080084;
-        public static final int widget_time=0x7f080086;
-        public static final int widget_where=0x7f080087;
+        public static final int widget_busNum=0x7f080086;
+        public static final int widget_reflesh=0x7f080089;
+        public static final int widget_station=0x7f080085;
+        public static final int widget_time=0x7f080087;
+        public static final int widget_where=0x7f080088;
         public static final int withText=0x7f080010;
     }
     public static final class integer {
@@ -1550,22 +1551,23 @@ containing a value of this type.
         public static final int fragment_gmap_layout=0x7f03001d;
         public static final int fragment_search_bus_layout=0x7f03001e;
         public static final int fragment_search_station_layout=0x7f03001f;
-        public static final int layout_sliding_background=0x7f030020;
-        public static final int layout_sliding_menu=0x7f030021;
-        public static final int list_bus_search_item=0x7f030022;
-        public static final int list_favorite_bus_item=0x7f030023;
-        public static final int list_favorite_station_item=0x7f030024;
-        public static final int sliding_item=0x7f030025;
-        public static final int support_simple_spinner_dropdown_item=0x7f030026;
-        public static final int temp=0x7f030027;
-        public static final int test=0x7f030028;
-        public static final int test2=0x7f030029;
-        public static final int test2_list_item=0x7f03002a;
-        public static final int test3=0x7f03002b;
-        public static final int viewpager_favorite_preview=0x7f03002c;
-        public static final int viewpager_favorite_preview_item=0x7f03002d;
-        public static final int viewstub_google_fail=0x7f03002e;
-        public static final int widget_layout=0x7f03002f;
+        public static final int layout_favorite_dialog_title=0x7f030020;
+        public static final int layout_sliding_background=0x7f030021;
+        public static final int layout_sliding_menu=0x7f030022;
+        public static final int list_bus_search_item=0x7f030023;
+        public static final int list_favorite_bus_item=0x7f030024;
+        public static final int list_favorite_station_item=0x7f030025;
+        public static final int sliding_item=0x7f030026;
+        public static final int support_simple_spinner_dropdown_item=0x7f030027;
+        public static final int temp=0x7f030028;
+        public static final int test=0x7f030029;
+        public static final int test2=0x7f03002a;
+        public static final int test2_list_item=0x7f03002b;
+        public static final int test3=0x7f03002c;
+        public static final int viewpager_favorite_preview=0x7f03002d;
+        public static final int viewpager_favorite_preview_item=0x7f03002e;
+        public static final int viewstub_google_fail=0x7f03002f;
+        public static final int widget_layout=0x7f030030;
     }
     public static final class menu {
         public static final int main=0x7f0e0000;
@@ -1636,6 +1638,7 @@ containing a value of this type.
         [CHAR LIMIT=70] 
          */
         public static final int auth_client_using_bad_version_title=0x7f090013;
+        public static final int btn_title_busfavorite=0x7f090029;
         /**  Button in confirmation dialog to enable Google Play services.  Clicking it
         will direct user to application settings of Google Play services where they
         can enable it [CHAR LIMIT=40] 
@@ -1703,6 +1706,7 @@ containing a value of this type.
         /**  Long form sign-in button text [CHAR LIMIT=30] 
          */
         public static final int common_signin_button_text_long=0x7f090012;
+        public static final int dialog_title_busfavorite=0x7f090028;
     }
     public static final class style {
         public static final int ActionBar_Solid_Deagubus=0x7f0d0085;

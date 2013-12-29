@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
+    <TextView 
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/dialog_title_busfavorite"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="#3063d0"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        />
+    <Button 
+        android:id="@+id/imgbtn_dialog_title_busfavorite"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:text="@string/btn_title_busfavorite"
+        android:background="@android:color/transparent"
+        />
+
+</RelativeLayout>
