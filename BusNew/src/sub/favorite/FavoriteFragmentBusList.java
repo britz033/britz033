@@ -41,6 +41,10 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import businfo.activity.BusInfoActivity;
 
+import com.nineoldandroids.animation.Animator;
+import com.nineoldandroids.animation.ArgbEvaluator;
+import com.nineoldandroids.animation.ObjectAnimator;
+import com.nineoldandroids.animation.ValueAnimator;
 import com.zoeas.qdeagubus.MainActivity;
 import com.zoeas.qdeagubus.MyContentProvider;
 import com.zoeas.qdeagubus.R;
@@ -285,17 +289,22 @@ public class FavoriteFragmentBusList extends ListFragment {
 			ViewHolder holder = null;
 			if (convertView == null) {
 				holder = new ViewHolder();
-				LayoutInflater inflater = LayoutInflater.from(context);
-				convertView = inflater.inflate(R.layout.list_favorite_bus_item, null);
+				convertView = new AniLayout(context);
 				holder.tv = (TextView) convertView.findViewById(R.id.text_favorite_list_busitem_busnumber);
 //				holder.bar = (ProgressBar) convertView.findViewById(R.id.bar_favorite_list_busitem_time);
 				convertView.setTag(holder);
 			} else {
+				convertView.setBackgroundColor(Color.WHITE);
+				((AniLayout)convertView).stopAni();
 				holder = (ViewHolder) convertView.getTag();
 			}
 
+			// 넷에서 가져온게 일치하는 경우는 넷정보를 뿌리고 그렇지 않은 것들은 그냥 이름만 뿌림
 			if (position < netSize) {
 				SpannableStringBuilder ssb = netList.get(position).getSpannableStringBusInfo(density);
+				if(netList.get(position).isSoon()){
+					((AniLayout)convertView).startAni();
+				}
 				holder.tv.setText(ssb);
 //				holder.bar.setProgress(20*position);
 			} else {
