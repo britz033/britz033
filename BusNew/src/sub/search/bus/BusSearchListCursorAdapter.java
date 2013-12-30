@@ -1,7 +1,5 @@
 package sub.search.bus;
 
-import com.zoeas.qdeagubus.R;
-
 import android.content.Context;
 import android.database.Cursor;
 import android.support.v4.widget.CursorAdapter;
@@ -13,6 +11,8 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 
+import com.zoeas.qdeagubus.R;
+
 public class BusSearchListCursorAdapter extends CursorAdapter implements OnTouchListener{
 	
 	Context context;
@@ -22,6 +22,32 @@ public class BusSearchListCursorAdapter extends CursorAdapter implements OnTouch
 		this.context = context;
 	}
 
+	@Override
+	public View getView(int position, View convertView, ViewGroup parent) {
+        if (!mDataValid) {
+            throw new IllegalStateException("this should only be called when the cursor is valid");
+        }
+        if (!mCursor.moveToPosition(position)) {
+            throw new IllegalStateException("couldn't move cursor to position " + position);
+        }
+        View v;
+        
+        if (convertView == null) {
+            v = newView(mContext, mCursor, parent);
+        } else {
+            v = convertView;
+        }
+        bindView(v, mContext, mCursor);
+        
+        if(position%2==0){
+			v.setBackgroundColor(context.getResources().getColor(R.color.color_test));
+		} else {
+			v.setBackgroundColor(context.getResources().getColor(R.color.color_test2));
+		}
+        
+        return v;
+    }
+	
 	@Override
 	public void bindView(View view, Context context, Cursor cursor) {
 		TextView tv = (TextView) view.findViewById(R.id.text_bus_search_list_item);

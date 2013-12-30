@@ -45,25 +45,35 @@ public class BusInfoNet implements Parcelable {
 		StringBuilder sb = new StringBuilder(busNum).append(" ").append(route);
 		SpannableStringBuilder spb = new SpannableStringBuilder();
 
-		if (soon) {
+		if (soon && !time.equals("전")) {
 			SpannableString sp = new SpannableString("**다와감**");
 			sp.setSpan(new ForegroundColorSpan(Color.RED), 0, sp.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 			spb.append(sp).append(" ");
 		}
-		
-		int textSize = (int)(30*density);
-		
-		SpannableString num = new SpannableString(sb.toString()); 
+
+		int textSize = (int) (30 * density);
+
+		SpannableString num = new SpannableString(sb.toString());
 		num.setSpan(new AbsoluteSizeSpan(textSize), 0, num.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 		num.setSpan(new StyleSpan(android.graphics.Typeface.BOLD), 0, num.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+
 		
-		spb.append(num).append(" ").append("[");
-		spb.append(time).append("] ");
-		spb.append(current).append(" ");
+		if (!time.equals("전")) {
+			spb.append(num).append(" ");
+			spb.append("[");
+			spb.append(time).append("] ");
+			spb.append(current).append(" ");
+		} else {
+			num.setSpan(new ForegroundColorSpan(Color.WHITE), 0, num.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+			spb.append(num).append(" ");
+			SpannableString s = new SpannableString("\n놓쳤을 가능성 있음");
+			s.setSpan(new AbsoluteSizeSpan((int)(textSize/2)), 0, s.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+			spb.append(s);
+		}
 
 		return spb;
 	}
-	
+
 	public String getStation() {
 		return station;
 	}
@@ -103,11 +113,11 @@ public class BusInfoNet implements Parcelable {
 	public void setCurrent(String current) {
 		this.current = current;
 	}
-	
-	public String getRoute(){
+
+	public String getRoute() {
 		return route;
 	}
-	
+
 	public String getBusId() {
 		return busId;
 	}
@@ -121,9 +131,7 @@ public class BusInfoNet implements Parcelable {
 	 * 
 	 * @see android.os.Parcelable#describeContents()
 	 * 
-	 * Parcel 하려는 오브젝트의 종류를 정의한다. 어떤 특별한 객체를 포함하고 있는지에 대한 설명을 리턴값으로 표현 하는 것이라고
-	 * 보면된다. bit mask 형식의 integer를 리턴 하며,값을 체크 할 때 bit mask 체크를 해서 어떤 것들이 들어 있는지
-	 * 알 수 있다.
+	 * Parcel 하려는 오브젝트의 종류를 정의한다. 어떤 특별한 객체를 포함하고 있는지에 대한 설명을 리턴값으로 표현 하는 것이라고 보면된다. bit mask 형식의 integer를 리턴 하며,값을 체크 할 때 bit mask 체크를 해서 어떤 것들이 들어 있는지 알 수 있다.
 	 */
 	@Override
 	public int describeContents() {
@@ -133,8 +141,7 @@ public class BusInfoNet implements Parcelable {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see android.os.Parcelable#writeToParcel(android.os.Parcel, int) parcel
-	 * 소포로 보내기 위해 쓰는 필수적 함수
+	 * @see android.os.Parcelable#writeToParcel(android.os.Parcel, int) parcel 소포로 보내기 위해 쓰는 필수적 함수
 	 */
 	@Override
 	public void writeToParcel(Parcel dest, int flags) {
@@ -162,13 +169,11 @@ public class BusInfoNet implements Parcelable {
 		current = in.readString();
 		route = in.readString();
 		busId = in.readString();
-		
+
 	}
 
 	/*
-	 * Parcel 에서 Parcelable 클래스의 인스턴스를 만들 때 CREATOR라는 static field를 찾아서 실행 합니다.
-	 * CREATOR는 Parcelable.Creator<T> type 으로 만들어져야 하는데 이건 선언과 동시에 반드시
-	 * initialize 되어야 합니다.
+	 * Parcel 에서 Parcelable 클래스의 인스턴스를 만들 때 CREATOR라는 static field를 찾아서 실행 합니다. CREATOR는 Parcelable.Creator<T> type 으로 만들어져야 하는데 이건 선언과 동시에 반드시 initialize 되어야 합니다.
 	 * 
 	 * 클래스 따로 만들어서 initialize 하기도 쉽지 않습니다. 그냥 익명 클래스로 만들어 버립시다.
 	 */

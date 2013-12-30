@@ -45,6 +45,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
                 android:paddingRight="10dp"
+                android:textColor="#ffffff"
                 android:textSize="15sp" />
 
             <TextView
@@ -54,6 +55,7 @@
                 android:layout_alignParentRight="true"
                 android:layout_below="@+id/text_activity_businfo_stationname"
                 android:paddingRight="10dp"
+                android:textColor="#ffffff"
                 android:textSize="15sp" />
 
             <com.zoeas.util.Switch

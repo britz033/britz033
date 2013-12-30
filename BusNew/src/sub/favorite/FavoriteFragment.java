@@ -37,8 +37,12 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.nineoldandroids.animation.Animator;
+import com.nineoldandroids.animation.ObjectAnimator;
+import com.zoeas.qdeagubus.MainActivity;
 import com.zoeas.qdeagubus.MainActivity.OnBackAction;
 import com.zoeas.qdeagubus.MyContentProvider;
 import com.zoeas.qdeagubus.R;
@@ -91,6 +95,8 @@ public class FavoriteFragment extends Fragment implements ResponseTask, LoaderCa
 	private Button btnFavorite;
 	private Button btnChangePicture;
 	private ImageUtil imageUtil;
+	private TextView menuText;
+	private RelativeLayout menuContainer;
 
 	@Override
 	public void onAttach(Activity activity) {
@@ -117,6 +123,22 @@ public class FavoriteFragment extends Fragment implements ResponseTask, LoaderCa
 		btnReflash = (Button) view.findViewById(R.id.btn_testreflash);
 		btnFavorite = (Button) view.findViewById(R.id.btn_favorite_bus_check_open);
 		btnChangePicture = (Button) view.findViewById(R.id.btn_favorite_bus_peekup);
+		menuText = (TextView) view.findViewById(R.id.text_favorite_menu_sliding);
+		menuContainer = (RelativeLayout) view.findViewById(R.id.layout_favorite_container_setbtn);
+		
+		menuText.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				MainActivity.backAction.push();
+				menuText.setVisibility(View.INVISIBLE);
+				menuContainer.setVisibility(View.VISIBLE);
+				int width = context.getResources().getDisplayMetrics().widthPixels;
+				Animator ani = ObjectAnimator.ofFloat(menuContainer, "translationX",width , 25*density);
+				ani.setDuration(1000);
+				ani.start();
+			}
+		});
 
 		ButtonSetting();
 		viewPagerSetting(view);
@@ -473,7 +495,11 @@ public class FavoriteFragment extends Fragment implements ResponseTask, LoaderCa
 
 	@Override
 	public void onBackPressed() {
-		// TODO Auto-generated method stub
+		menuText.setVisibility(View.VISIBLE);
+		int width = context.getResources().getDisplayMetrics().widthPixels;
+		Animator ani = ObjectAnimator.ofFloat(menuContainer, "translationX", 25*density, width);
+		ani.setDuration(500);
+		ani.start();
 
 	}
 

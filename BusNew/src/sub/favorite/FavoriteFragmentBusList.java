@@ -88,7 +88,7 @@ public class FavoriteFragmentBusList extends ListFragment {
 
 		if (error == null) {
 			busListCopy = (ArrayList<BusInfo>) busList.clone();
-			
+
 			if (busListCopy.size() != 0) {
 				bindInfo();
 				setFavorite = new StringBuilder(passFavorite);
@@ -128,7 +128,7 @@ public class FavoriteFragmentBusList extends ListFragment {
 		} else {
 			StringBuilder sb = new StringBuilder();
 			for (int k = 0; k < busListCopy.size(); k++) {
-				   sb.append("1");
+				sb.append("1");
 			}
 			passFavorite = sb.toString();
 		}
@@ -207,7 +207,7 @@ public class FavoriteFragmentBusList extends ListFragment {
 
 	public void onDialogOpen() {
 		db = SQLiteDatabase.openDatabase(getActivity().getDatabasePath("StationDB.png").getAbsolutePath(), null, SQLiteDatabase.OPEN_READWRITE);
-		
+
 		View customTitleView = LayoutInflater.from(context).inflate(R.layout.layout_favorite_dialog_title, null);
 		AlertDialog ad = new AlertDialog.Builder(context).setCustomTitle(customTitleView).setAdapter(new BusListCheckDialogAdapter(), null)
 				.setNeutralButton("확인", new OnClickListener() {
@@ -215,7 +215,7 @@ public class FavoriteFragmentBusList extends ListFragment {
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
 						((FavoriteFragment) getParentFragment()).refreshPreview();
-						if(db !=null && db.isOpen()){
+						if (db != null && db.isOpen()) {
 							db.close();
 						}
 					}
@@ -233,14 +233,14 @@ public class FavoriteFragmentBusList extends ListFragment {
 			}
 
 		});
-		
-		((Button)customTitleView.findViewById(R.id.imgbtn_dialog_title_busfavorite)).setOnClickListener(new View.OnClickListener() {
+
+		((Button) customTitleView.findViewById(R.id.imgbtn_dialog_title_busfavorite)).setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				StringBuilder sb = new StringBuilder();
 				for (int k = 0; k < passFavorite.length(); k++) {
-					   sb.append("0");
-					   checkListView.setItemChecked(k, false);
+					sb.append("0");
+					checkListView.setItemChecked(k, false);
 				}
 				setFavorite = sb;
 				dbUpdate();
@@ -254,19 +254,18 @@ public class FavoriteFragmentBusList extends ListFragment {
 		}
 	}
 
-	private void dbUpdate(){
+	private void dbUpdate() {
 		StringBuilder sb = new StringBuilder(MyContentProvider.STATION_ID);
 		sb.append("='").append(stationID).append("'");
 		ContentValues cv = new ContentValues();
 		cv.put(MyContentProvider.PASS_FAVORITE, setFavorite.toString());
 		db.update("stationInfo", cv, sb.toString(), null);
 	}
-	
+
 	class BusListAdapter extends BaseAdapter {
 
 		class ViewHolder {
 			TextView tv;
-//			ProgressBar bar;
 		}
 
 		@Override
@@ -291,27 +290,29 @@ public class FavoriteFragmentBusList extends ListFragment {
 				holder = new ViewHolder();
 				convertView = new AniLayout(context);
 				holder.tv = (TextView) convertView.findViewById(R.id.text_favorite_list_busitem_busnumber);
-//				holder.bar = (ProgressBar) convertView.findViewById(R.id.bar_favorite_list_busitem_time);
 				convertView.setTag(holder);
 			} else {
-				convertView.setBackgroundColor(Color.WHITE);
-				((AniLayout)convertView).stopAni();
+				((AniLayout) convertView).stopAni();
 				holder = (ViewHolder) convertView.getTag();
 			}
+
+			convertView.setBackgroundColor(Color.argb(position%2 * 30, 48, 99, 208));
 
 			// 넷에서 가져온게 일치하는 경우는 넷정보를 뿌리고 그렇지 않은 것들은 그냥 이름만 뿌림
 			if (position < netSize) {
 				SpannableStringBuilder ssb = netList.get(position).getSpannableStringBusInfo(density);
-				if(netList.get(position).isSoon()){
-					((AniLayout)convertView).startAni();
+				if (netList.get(position).isSoon()) {
+					if (netList.get(position).getTime().equals("전")) {
+						((AniLayout) convertView).startAniSoon();
+					} else {
+						convertView.setBackgroundColor(Color.argb(200, 48, 99, 208));
+					}
 				}
 				holder.tv.setText(ssb);
-//				holder.bar.setProgress(20*position);
 			} else {
 				SpannableString sb = new SpannableString(busListCopy.get(position - netSize).getBusName());
 				sb.setSpan(new ForegroundColorSpan(Color.argb(100, 0, 0, 0)), 0, sb.length(), SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE);
 				holder.tv.setText(sb);
-//				holder.bar.setProgress(20*position);
 			}
 
 			return convertView;

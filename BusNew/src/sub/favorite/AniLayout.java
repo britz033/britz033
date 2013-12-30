@@ -45,6 +45,17 @@ public class AniLayout extends RelativeLayout{
 		colorAnim.start();
 	}
 	
+	public void startAniSoon(){
+		colorAnim = ObjectAnimator.ofInt(this, "backgroundColor", /* Red */
+				0xFFFF8080, /* Blue */
+				0xFF8080FF);
+		colorAnim.setDuration(1500);
+		colorAnim.setEvaluator(new ArgbEvaluator());
+		colorAnim.setRepeatCount(ValueAnimator.INFINITE);
+		colorAnim.setRepeatMode(ValueAnimator.REVERSE);
+		colorAnim.start();
+	}
+	
 	public void stopAni(){
 		if(colorAnim != null){
 			colorAnim.cancel();

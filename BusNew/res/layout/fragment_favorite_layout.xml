@@ -5,7 +5,7 @@
     android:layout_height="110dp"
     android:orientation="vertical" >
 
-    <RelativeLayout
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="40" >
@@ -17,41 +17,59 @@
             android:background="#3063d0" >
         </android.support.v4.view.ViewPager>
 
-        <Button
-            android:id="@+id/btn_testreflash"
-            android:layout_width="100dp"
+        <TextView
+            android:id="@+id/text_favorite_menu_sliding"
+            android:layout_width="20dp"
+            android:layout_height="match_parent"
+            android:background="#ffffff"
+            android:layout_gravity="right"
+            android:textDirection="firstStrong"
+            android:text="s\ne\nt\nt\ni\nn\ng"
+            android:clickable="true"
+            />
+        <RelativeLayout 
+            android:id="@+id/layout_favorite_container_setbtn"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_marginTop="11dp"
-            android:layout_marginRight="15dp"
-            android:background="@drawable/tab_selected_pressed_deagubus"
-            android:text="새로고침"
-            android:textColor="#ffffff" />
+            android:visibility="gone"
+            >
 
-        <Button
-            android:id="@+id/btn_favorite_bus_check_open"
-            android:layout_width="100dp"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_below="@+id/btn_testreflash"
-            android:layout_marginTop="5dp"
-            android:layout_marginRight="15dp"
-            android:background="@drawable/tab_selected_pressed_deagubus"
-            android:text="버스Check"
-            android:textColor="#ffffff" />
-        
-        <Button
-            android:id="@+id/btn_favorite_bus_peekup"
-            android:layout_width="100dp"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_below="@+id/btn_favorite_bus_check_open"
-            android:layout_marginTop="5dp"
-            android:layout_marginRight="15dp"
-            android:background="@drawable/tab_selected_pressed_deagubus"
-            android:text="사진변경"
-            android:textColor="#ffffff" />
-    </RelativeLayout>
+            <Button
+                android:id="@+id/btn_testreflash"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="15dp"
+                android:layout_marginTop="11dp"
+                android:background="@drawable/tab_selected_pressed_deagubus"
+                android:text="새로고침"
+                android:textColor="#ffffff" />
+
+            <Button
+                android:id="@+id/btn_favorite_bus_check_open"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_below="@+id/btn_testreflash"
+                android:layout_marginRight="15dp"
+                android:layout_marginTop="5dp"
+                android:background="@drawable/tab_selected_pressed_deagubus"
+                android:text="버스Check"
+                android:textColor="#ffffff" />
+
+            <Button
+                android:id="@+id/btn_favorite_bus_peekup"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_below="@+id/btn_favorite_bus_check_open"
+                android:layout_marginRight="15dp"
+                android:layout_marginTop="5dp"
+                android:background="@drawable/tab_selected_pressed_deagubus"
+                android:text="사진변경"
+                android:textColor="#ffffff" />
+        </RelativeLayout>
+    </FrameLayout>
 
     <android.support.v4.view.ViewPager
         android:id="@+id/viewpager_favorite_preview_dummy"
