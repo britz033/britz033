@@ -182,7 +182,7 @@ public class ActionMap<MarkerInfo> implements OnInfoWindowClickListener {
 	 * 지도에 그릴 라인포인트를 설정한다
 	 * @param point	LatLng형식의 점을 연결할 포인트
 	 */
-	public void addLinePoint(LatLng point) {
+	public void addLatLngPoint(LatLng point) {
 		latLngList.add(point);
 		lineBoundBuilder.include(point);
 	}

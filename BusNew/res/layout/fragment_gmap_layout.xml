@@ -48,12 +48,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             />
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="100dp"
-            android:layout_alignParentBottom="true"
-            android:background="#22000000" />
+        
     </RelativeLayout>
 
     <View

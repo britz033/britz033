@@ -1,5 +1,7 @@
 package sub.gmap;
 
+import java.util.ArrayList;
+
 import subfragment.CustomMapFragment;
 import subfragment.CustomMapFragment.OnMapReadyListener;
 import util.ActionMap;
@@ -28,7 +30,9 @@ import android.widget.LinearLayout;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.GoogleMap.OnCameraChangeListener;
 import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
@@ -40,7 +44,7 @@ import com.zoeas.qdeagubus.MyContentProvider;
 import com.zoeas.qdeagubus.R;
 
 public class GMapFragment extends Fragment implements CallFragmentMethod, LoaderCallbacks<Cursor>,
-		OnMarkerClickListener, OnMapReadyListener, OnBackAction {
+		OnMarkerClickListener, OnMapReadyListener, OnBackAction, OnCameraChangeListener {
 
 	private static final String TAG = "GMapFragment";
 	
@@ -49,6 +53,7 @@ public class GMapFragment extends Fragment implements CallFragmentMethod, Loader
 	private Context context;
 	private GoogleMap map;
 	private ActionMap actionMap;
+	private ArrayList<Marker> markerList;
 	private float density;
 	private LatLng myLatLng;
 	private LinearLayout loadingLayout;
@@ -109,6 +114,7 @@ public class GMapFragment extends Fragment implements CallFragmentMethod, Loader
 		this.map = map;
 		this.map.moveCamera(CameraUpdateFactory.newLatLngZoom(ActionMap.DEAGU_LATLNG, ActionMap.ZOOM_OUT));
 		this.map.setMyLocationEnabled(true);
+		this.map.setOnCameraChangeListener(this);
 	}
 
 	// 생성될때가 아니라 자신이 선택될때 불려진다.
@@ -170,6 +176,8 @@ public class GMapFragment extends Fragment implements CallFragmentMethod, Loader
 		Handler handler = new Handler();
 		// 기존의 cursor를 그대로 불러오기 때문에 시작시 반드시 커서위치를 처음으로 되돌려줘야함
 		c.moveToFirst();
+		markerList = new ArrayList<Marker>();
+		
 
 		for (int i = 0; i < c.getCount(); i++) {
 			String station_number = c.getString(1);
@@ -186,7 +194,7 @@ public class GMapFragment extends Fragment implements CallFragmentMethod, Loader
 				handler.postDelayed(new Runnable() {
 					@Override
 					public void run() {
-						map.addMarker(op);
+						markerList.add(map.addMarker(op));
 						map.setOnMarkerClickListener(GMapFragment.this);
 					}
 				}, 1200);
@@ -220,6 +228,32 @@ public class GMapFragment extends Fragment implements CallFragmentMethod, Loader
 		super.onPause();
 		if(myLocation != null)
 			myLocation.cancle();
+		
+	}
+
+	@Override
+	public void onCameraChange(CameraPosition cPosition) {
+		Log.d(TAG,"카메라 체인지"+cPosition.target.latitude);
+		
+		LatLng centerLatLng = cPosition.target;
+		LatLng markerLatLng = null;
+		double minDistance = 1000;
+		Marker nearMarker = null;
+		for(int i=0; i<markerList.size(); i++){
+			markerLatLng = markerList.get(i).getPosition();
+			
+			double latgap = Math.abs(centerLatLng.latitude - markerLatLng.latitude);
+			double longap = Math.abs(centerLatLng.longitude - markerLatLng.longitude);
+			
+			double distance = latgap + longap;
+			
+			if(minDistance > distance){
+				minDistance = distance;
+				nearMarker = markerList.get(i);
+			}
+		}
+		
+		nearMarker.showInfoWindow();
 		
 	}
 }

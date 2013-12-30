@@ -342,7 +342,7 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 				cursor.moveToNext();
 				Log.d(TAG, cursor.getString(1));
 				LatLng latLng = new LatLng(cursor.getDouble(2), cursor.getDouble(3));
-				actionMapDirection.addLinePoint(latLng);
+				actionMapDirection.addLatLngPoint(latLng);
 				passBusHash.put(cursor.getInt(0), cursor.getString(4)); // 나중에
 																		// 꺼낼
 																		// pass
