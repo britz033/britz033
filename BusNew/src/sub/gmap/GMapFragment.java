@@ -45,6 +45,7 @@ import com.zoeas.qdeagubus.MainActivity.OnBackAction;
 import com.zoeas.qdeagubus.MyContentProvider;
 import com.zoeas.qdeagubus.R;
 import com.zoeas.util.ActionMap;
+import com.zoeas.util.CalculateC;
 import com.zoeas.util.MyLocation;
 import com.zoeas.util.MyLocation.LocationResult;
 
@@ -68,12 +69,13 @@ public class GMapFragment extends Fragment implements CallFragmentMethod, Loader
 	private MyLocation myLocation;
 	private boolean isGoogleServiceInstalled;
 	private Button movebtn;
+	private CalculateC cc;
 
 	@Override
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
 		context = activity;
-
+		cc = new CalculateC();
 	}
 
 	@Override
@@ -176,10 +178,11 @@ public class GMapFragment extends Fragment implements CallFragmentMethod, Loader
 
 		Uri uri = MyContentProvider.CONTENT_URI_STATION;
 
-		double maxlat = myLatLng.latitude + DEFAULT_BOUND;
-		double minlat = myLatLng.latitude - DEFAULT_BOUND;
-		double maxlnt = myLatLng.longitude + DEFAULT_BOUND;
-		double minlnt = myLatLng.longitude - DEFAULT_BOUND;
+		double bound = cc.setData(DEFAULT_BOUND);
+		double maxlat = cc.setData(myLatLng.latitude) + bound;
+		double minlat = cc.setData(myLatLng.latitude) - bound;
+		double maxlnt = cc.setData(myLatLng.longitude) + bound;
+		double minlnt = cc.setData(myLatLng.longitude) - bound;
 
 		String[] projection = { "_id", "station_number", "station_name", "station_longitude", "station_latitude" };
 		String selection = "(station_latitude BETWEEN " + minlat + " AND " + maxlat + ") AND (station_longitude BETWEEN " + minlnt + " AND " + maxlnt
@@ -199,8 +202,8 @@ public class GMapFragment extends Fragment implements CallFragmentMethod, Loader
 		for (int i = 0; i < c.getCount(); i++) {
 			String station_number = c.getString(1);
 			String station_name = c.getString(2);
-			double station_longitude = c.getDouble(3);
-			double station_latitude = c.getDouble(4);
+			double station_longitude = cc.getData(c.getDouble(3));
+			double station_latitude = cc.getData(c.getDouble(4));
 			LatLng boundLatLng = new LatLng(station_latitude, station_longitude);
 			c.moveToNext();
 

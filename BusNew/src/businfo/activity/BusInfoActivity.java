@@ -52,6 +52,7 @@ import com.zoeas.qdeagubus.MyContentProvider;
 import com.zoeas.qdeagubus.R;
 import com.zoeas.util.ActionMap;
 import com.zoeas.util.BackPressStack;
+import com.zoeas.util.CalculateC;
 import com.zoeas.util.LoopQuery;
 import com.zoeas.util.Switch;
 import com.zoeas.util.ActionMap.OnActionInfoWindowClickListener;
@@ -106,11 +107,13 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 	private ListView stationListView;
 	private boolean searchAgain;
 	private boolean isFirst;
+	private CalculateC cc;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_businfo);
+		cc = new CalculateC();
 		actionMapForward = new ActionMap<Integer>(this);
 		actionMapBackward = new ActionMap<Integer>(this);
 		passBusHash = new HashMap<Integer, String>();
@@ -345,7 +348,7 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 			try {
 				cursor.moveToNext();
 				Log.d(TAG, cursor.getString(1));
-				LatLng latLng = new LatLng(cursor.getDouble(2), cursor.getDouble(3));
+				LatLng latLng = new LatLng(cc.getData(cursor.getDouble(2)), cc.getData(cursor.getDouble(3)));
 				actionMapDirection.addLatLngPoint(latLng);
 				pathFavorite.put(cursor.getInt(0), cursor.getInt(5));
 				passBusHash.put(cursor.getInt(0), cursor.getString(4)); // 나중에
