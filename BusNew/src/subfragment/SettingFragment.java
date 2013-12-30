@@ -25,6 +25,7 @@ import android.widget.TextView;
 
 import com.zoeas.qdeagubus.MainActivity.OnBackAction;
 import com.zoeas.qdeagubus.R;
+import com.zoeas.util.CalculateC;
 
 
 public class SettingFragment extends Fragment implements OnBackAction{
@@ -157,7 +158,8 @@ class BaseExpandableAdapter extends BaseExpandableListAdapter{
 	@Override
 	public View getGroupView(int groupPosition, boolean isExpanded, View convertView, ViewGroup parent) {
 		TextView tv = new TextView(context);
-		tv.setText("그룹입니다만");
+		CalculateC c = new CalculateC();
+		tv.setText("그룹입니다만" + c.getData1(124.023893, 30) + c.getData1(125, 10));
 		return tv;
 	}
 

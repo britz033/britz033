@@ -18,7 +18,7 @@
             android:hint="역 이름을 적으세요"
             android:textSize="20sp" />
 
-        <util.AnimationRelativeLayout
+        <com.zoeas.util.AnimationRelativeLayout
             android:id="@+id/layout_search_station_map_container"
             android:layout_width="match_parent"
             android:layout_height="0dp"
@@ -37,7 +37,7 @@
                 android:layout_height="wrap_content"
                 android:text="주변검색"
                 android:textSize="12sp" />
-        </util.AnimationRelativeLayout>
+        </com.zoeas.util.AnimationRelativeLayout>
 
         <!-- inflate 되면 다른레이아웃으로 교체 그 레이아웃의 id를 override 해주는게 inflateid -->
 

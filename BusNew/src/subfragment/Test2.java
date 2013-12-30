@@ -1,7 +1,6 @@
 package subfragment;
 
 import sub.search.station.SearchStationFragment;
-import util.LoopQuery;
 import adapter.OnCommunicationActivity;
 import android.content.Context;
 import android.database.Cursor;
@@ -24,6 +23,7 @@ import com.zoeas.qdeagubus.MainActivity.OnBackAction;
 import com.zoeas.qdeagubus.MainActivity;
 import com.zoeas.qdeagubus.MyContentProvider;
 import com.zoeas.qdeagubus.R;
+import com.zoeas.util.LoopQuery;
 
 public class Test2 extends ListFragment implements OnBackAction, LoaderCallbacks<Cursor> {
 	

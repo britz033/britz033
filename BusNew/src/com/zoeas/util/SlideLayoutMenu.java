@@ -1,4 +1,4 @@
-package util;
+package com.zoeas.util;
 
 import android.content.Context;
 import android.graphics.Color;

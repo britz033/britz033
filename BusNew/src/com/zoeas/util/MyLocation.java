@@ -1,4 +1,4 @@
-package util;
+package com.zoeas.util;
 
 import java.util.Timer;
 import java.util.TimerTask;

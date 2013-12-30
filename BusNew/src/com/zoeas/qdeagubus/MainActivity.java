@@ -3,7 +3,6 @@ package com.zoeas.qdeagubus;
 import java.util.ArrayList;
 
 import sub.favorite.FavoriteFragment;
-import util.BackPressStack;
 import adapter.OnCommunicationActivity;
 import adapter.OnCommunicationReceive;
 import android.app.AlertDialog;
@@ -33,6 +32,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
+import com.zoeas.util.BackPressStack;
 
 public class MainActivity extends ActionBarActivity implements TabListener, OnCommunicationActivity {
 	

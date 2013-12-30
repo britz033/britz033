@@ -1,4 +1,4 @@
-package util;
+package com.zoeas.util;
 
 import java.io.Serializable;
 import java.util.ArrayList;

@@ -1,4 +1,4 @@
-package util;
+package com.zoeas.util;
 
 import com.google.android.gms.maps.model.LatLng;
 

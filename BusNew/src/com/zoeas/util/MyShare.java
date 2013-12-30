@@ -1,4 +1,4 @@
-package util;
+package com.zoeas.util;
 
 import android.app.Activity;
 import android.content.SharedPreferences;

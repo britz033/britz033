@@ -1,9 +1,5 @@
 package subfragment;
 
-import util.Blur;
-import util.SlideLayoutBackGround;
-import util.SlideLayoutMenu;
-import util.StackBlurManager;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -36,6 +32,10 @@ import com.nineoldandroids.animation.ValueAnimator;
 import com.zoeas.qdeagubus.MainActivity;
 import com.zoeas.qdeagubus.MainActivity.OnBackAction;
 import com.zoeas.qdeagubus.R;
+import com.zoeas.util.Blur;
+import com.zoeas.util.SlideLayoutBackGround;
+import com.zoeas.util.SlideLayoutMenu;
+import com.zoeas.util.StackBlurManager;
 
 /*
  * 후에 지울때 애니메이션 관련은 공부를 위해서 보전

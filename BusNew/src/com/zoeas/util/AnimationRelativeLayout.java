@@ -1,4 +1,4 @@
-package util;
+package com.zoeas.util;
 
 import android.R;
 import android.content.Context;

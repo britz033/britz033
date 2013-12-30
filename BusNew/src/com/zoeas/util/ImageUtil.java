@@ -1,4 +1,4 @@
-package util;
+package com.zoeas.util;
 
 import java.io.File;
 import java.io.FileInputStream;

@@ -5,9 +5,6 @@ import java.util.ArrayList;
 import sub.search.station.SearchStationFragment;
 import subfragment.CustomMapFragment;
 import subfragment.CustomMapFragment.OnMapReadyListener;
-import util.ActionMap;
-import util.MyLocation;
-import util.MyLocation.LocationResult;
 import adapter.OnCommunicationActivity;
 import android.app.Activity;
 import android.content.Context;
@@ -47,6 +44,9 @@ import com.zoeas.qdeagubus.MainActivity.CallFragmentMethod;
 import com.zoeas.qdeagubus.MainActivity.OnBackAction;
 import com.zoeas.qdeagubus.MyContentProvider;
 import com.zoeas.qdeagubus.R;
+import com.zoeas.util.ActionMap;
+import com.zoeas.util.MyLocation;
+import com.zoeas.util.MyLocation.LocationResult;
 
 public class GMapFragment extends Fragment implements CallFragmentMethod, LoaderCallbacks<Cursor>, OnInfoWindowClickListener, OnMapReadyListener,
 		OnBackAction, OnCameraChangeListener {

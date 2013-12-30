@@ -1,4 +1,4 @@
-package util;
+package com.zoeas.util;
 
 import android.annotation.SuppressLint;
 import android.content.Context;

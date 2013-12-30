@@ -1,4 +1,4 @@
-package util;
+package com.zoeas.util;
 
 /**
 * StackBlur v1.0 for Android

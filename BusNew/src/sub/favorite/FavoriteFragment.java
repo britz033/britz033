@@ -7,8 +7,6 @@ import internet.ResponseTask;
 import java.io.File;
 import java.util.ArrayList;
 
-import util.ImageUtil;
-import util.LoopQuery;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -44,6 +42,8 @@ import android.widget.TextView;
 import com.zoeas.qdeagubus.MainActivity.OnBackAction;
 import com.zoeas.qdeagubus.MyContentProvider;
 import com.zoeas.qdeagubus.R;
+import com.zoeas.util.ImageUtil;
+import com.zoeas.util.LoopQuery;
 
 /* 뷰페이저에 있는 미리 저장된 즐겨찾기중 하나를 선택하면
  * 그것을 전광판에 뿌림. 시작시는 가장 처음것(이후 다시 수정)을 뿌림
