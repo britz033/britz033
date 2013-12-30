@@ -31,6 +31,8 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnKeyListener;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
@@ -61,7 +63,7 @@ import com.zoeas.qdeagubus.R;
  */
 
 public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks<Cursor>, OnPageChangeListener,
-		OnClickListener, OnActionInfoWindowClickListener<Integer> {
+		OnClickListener, OnActionInfoWindowClickListener<Integer>{
 
 	private static final String TAG = "BusInfoActivity";
 
@@ -78,10 +80,11 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 	private ArrayList<String> pathDirection;
 	private ArrayList<String> pathForward;
 	private ArrayList<String> pathBackward;
+	private HashMap<Integer,Integer> pathFavorite;
+	private HashMap<Integer, String> passBusHash;
 	private int[] stationIdDirection;
 	private int[] stationIdForward;
 	private int[] stationIdBackward;
-	private HashMap<Integer, String> passBusHash;
 	private LoopQuery<String> loopQueryStation;
 	private LoopQuery<String> loopQueryBusnum;
 	private Cursor mcursor;
@@ -111,6 +114,7 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 		actionMapForward = new ActionMap<Integer>(this);
 		actionMapBackward = new ActionMap<Integer>(this);
 		passBusHash = new HashMap<Integer, String>();
+		pathFavorite = new HashMap<Integer, Integer>();
 		pathForward = new ArrayList<String>();
 		pathBackward = new ArrayList<String>();
 		backPressStack = new BackPressStack();
@@ -301,7 +305,7 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 			break;
 		case LoopQuery.DEFAULT_LOOP_QUERY_ID:
 			uri = MyContentProvider.CONTENT_URI_STATION;
-			projection = new String[] { "_id", "station_name", "station_latitude", "station_longitude", "station_pass" };
+			projection = new String[] { "_id", "station_name", "station_latitude", "station_longitude", "station_pass", "station_favorite" };
 			selection = "station_name='" + data.getString(LoopQuery.KEY) + "'";
 			break;
 		case LoopQuery.LOOP_QUERY_ID_2:
@@ -343,6 +347,7 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 				Log.d(TAG, cursor.getString(1));
 				LatLng latLng = new LatLng(cursor.getDouble(2), cursor.getDouble(3));
 				actionMapDirection.addLatLngPoint(latLng);
+				pathFavorite.put(cursor.getInt(0), cursor.getInt(5));
 				passBusHash.put(cursor.getInt(0), cursor.getString(4)); // 나중에
 																		// 꺼낼
 																		// pass
@@ -575,15 +580,19 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 		searchResult();
 	}
 
+	// 검색결과를 리스트뷰로 보여줌.
 	private void searchResult() {
 		String s = et.getText().toString();
-		ArrayList<Integer> saveSearchPoint = new ArrayList<Integer>();
+		final ArrayList<Integer> saveSearchPoint = new ArrayList<Integer>();
+		final ArrayList<Marker> searchedMarkerList = new ArrayList<Marker>();
 		ArrayList<String> searchedStationList = new ArrayList<String>();
+		ArrayList<Integer> searchedStationId = new ArrayList<Integer>();
 
 		for (int i = 0; i < pathDirection.size(); i++) {
 			if (pathDirection.get(i).contains(s)) {
 				saveSearchPoint.add(i);
 				searchedStationList.add(pathDirection.get(i));
+				searchedStationId.add(stationIdDirection[i]);
 			}
 		}
 
@@ -593,12 +602,11 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 
 			for (int i = 0; i < saveSearchPoint.size(); i++) {
 				int point = saveSearchPoint.get(i);
-				actionMapDirection.addMarkerAndShow(point, pathDirection.get(point),
-						stationIdDirection[saveSearchPoint.get(i)]);
+				searchedMarkerList.add(actionMapDirection.addMarkerAndShow(point, pathDirection.get(point),
+						stationIdDirection[saveSearchPoint.get(i)]));
 			}
 
-			BusInfoStationSearchListAdapter searchAdapter = new BusInfoStationSearchListAdapter(searchedStationList,
-					getBaseContext());
+			BusInfoStationSearchListAdapter searchAdapter = new BusInfoStationSearchListAdapter(searchedStationList,searchedStationId,pathFavorite,getBaseContext());
 
 			if (!searchAgain) {
 				searchAgain = true;
@@ -607,6 +615,15 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 			}
 
 			stationListView.setAdapter(searchAdapter);
+			stationListView.setOnItemClickListener(new OnItemClickListener() {
+				@Override
+				public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+					// 선택된 좌표로 이동
+					actionMapDirection.aniMap(saveSearchPoint.get(position));
+					searchedMarkerList.get(position).showInfoWindow();
+					
+				}
+			});
 
 			actionMapDirection.setLineBound();
 		} else {
@@ -614,7 +631,7 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 		}
 		searchDialog.dismiss();
 	}
-
+	
 	private void pathListOpen() {
 		Animator downAni = ObjectAnimator.ofFloat(pathPager, "translationY", 0, 200);
 		Animator alphaAni = ObjectAnimator.ofFloat(pathPager, "alpha", 1, 0);
@@ -673,5 +690,7 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 			break;
 		}
 	}
+
+
 
 }

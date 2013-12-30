@@ -13,7 +13,9 @@
         android:id="@+id/text_path"
         android:layout_width="wrap_content"
         android:layout_height="25dp"
-        android:textSize="10sp"
+        android:textSize="12sp"
+        android:textColor="#ffffff"
+        android:textStyle="bold"
         android:rotation="-40"
         android:layout_centerHorizontal="true"
         />
