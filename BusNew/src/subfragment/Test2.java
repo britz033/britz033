@@ -1,6 +1,8 @@
 package subfragment;
 
+import sub.search.station.SearchStationFragment;
 import util.LoopQuery;
+import adapter.OnCommunicationActivity;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
@@ -15,9 +17,11 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.BaseAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.zoeas.qdeagubus.MainActivity.OnBackAction;
+import com.zoeas.qdeagubus.MainActivity;
 import com.zoeas.qdeagubus.MyContentProvider;
 import com.zoeas.qdeagubus.R;
 
@@ -113,6 +117,14 @@ public class Test2 extends ListFragment implements OnBackAction, LoaderCallbacks
 
 	}
 
+	@Override
+	public void onListItemClick(ListView l, View v, int position, long id) {
+		super.onListItemClick(l, v, position, id);
+		OnCommunicationActivity communication = (OnCommunicationActivity) getActivity();
+		Bundle data = new Bundle();
+		data.putString(SearchStationFragment.KEY_TAB_SELECTION, "지산");
+		communication.OnTabMove(MainActivity.MyTabs.STATION_LISTVIEW, data);
+	}
 
 	@Override
 	public void onLoadFinished(android.support.v4.content.Loader<Cursor> loader, Cursor data) {

@@ -9,6 +9,7 @@ import util.ActionMap;
 import util.ActionMap.OnActionInfoWindowClickListener;
 import util.AnimationRelativeLayout;
 import util.LoopQuery;
+import adapter.OnCommunicationReceive;
 import adapter.SlidingMenuAdapter;
 import android.app.Activity;
 import android.content.Context;
@@ -60,7 +61,7 @@ import com.zoeas.qdeagubus.MyContentProvider;
 import com.zoeas.qdeagubus.R;
 
 public class SearchStationFragment extends ListFragment implements LoaderCallbacks<Cursor>, OnKeyListener,
-		OnMapReadyListener, OnClickListener, OnBackAction, OnActionInfoWindowClickListener<Integer>, OnScrollListener {
+		OnMapReadyListener, OnClickListener, OnBackAction, OnActionInfoWindowClickListener<Integer>, OnScrollListener, OnCommunicationReceive {
 
 	private static final String TAG = "SearchStationFragment";
 	
@@ -70,6 +71,7 @@ public class SearchStationFragment extends ListFragment implements LoaderCallbac
 	public static final String KEY_WIDE_LATITUDE = "wideLatitude";
 	public static final String KEY_WIDE_LONGITUDE = "wideLongitude";
 	public static final String KEY_BUS_ID = "BUSID";
+	public static final String KEY_TAB_SELECTION = "STATION_SELETE";
 
 	public static final int SEARCH_STATION = 0;
 	public static final int SEARCH_WIDE = 1;
@@ -97,6 +99,7 @@ public class SearchStationFragment extends ListFragment implements LoaderCallbac
 	private ActionMap<Integer> actionMap;
 	private boolean isGoogleServiceInstalled;
 	private boolean isFirst;
+	private boolean isReceived;
 	private int rowHeight;
 	private ArrayList<Marker> wideMarkerList;
 
@@ -112,6 +115,7 @@ public class SearchStationFragment extends ListFragment implements LoaderCallbac
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		view = (FrameLayout) inflater.inflate(R.layout.fragment_search_station_layout, null);
 		isFirst = true;
+		isReceived = false;
 		wideMarkerList = new ArrayList<Marker>();
 		
 		et = (EditText) view.findViewById(R.id.edit_search_sub2fragment);
@@ -395,6 +399,10 @@ public class SearchStationFragment extends ListFragment implements LoaderCallbac
 				isFirst = false;
 			}
 			
+			if(isReceived){
+			getListView().performItemClick(getListView().getChildAt(0), 0, madapter.getItemId(0));
+			}
+			
 			break;
 		case SEARCH_WIDE:
 			if (currentUpdatableId == SEARCH_WIDE) {
@@ -550,6 +558,13 @@ public class SearchStationFragment extends ListFragment implements LoaderCallbac
 	public void onScrollStateChanged(AbsListView view, int scrollState) {
 		// TODO Auto-generated method stub
 
+	}
+
+
+	@Override
+	public void OnReceive(Bundle data) {
+		et.setText(data.getString(KEY_TAB_SELECTION));
+		isReceived = true;
 	}
 
 }

@@ -2,11 +2,13 @@ package sub.gmap;
 
 import java.util.ArrayList;
 
+import sub.search.station.SearchStationFragment;
 import subfragment.CustomMapFragment;
 import subfragment.CustomMapFragment.OnMapReadyListener;
 import util.ActionMap;
 import util.MyLocation;
 import util.MyLocation.LocationResult;
+import adapter.OnCommunicationActivity;
 import android.app.Activity;
 import android.content.Context;
 import android.database.Cursor;
@@ -24,35 +26,39 @@ import android.support.v4.content.Loader;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.ViewStub;
+import android.widget.Button;
 import android.widget.LinearLayout;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.OnCameraChangeListener;
-import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener;
+import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.zoeas.qdeagubus.MainActivity;
 import com.zoeas.qdeagubus.MainActivity.CallFragmentMethod;
 import com.zoeas.qdeagubus.MainActivity.OnBackAction;
 import com.zoeas.qdeagubus.MyContentProvider;
 import com.zoeas.qdeagubus.R;
 
-public class GMapFragment extends Fragment implements CallFragmentMethod, LoaderCallbacks<Cursor>,
-		OnMarkerClickListener, OnMapReadyListener, OnBackAction, OnCameraChangeListener {
+public class GMapFragment extends Fragment implements CallFragmentMethod, LoaderCallbacks<Cursor>, OnInfoWindowClickListener, OnMapReadyListener,
+		OnBackAction, OnCameraChangeListener {
 
 	private static final String TAG = "GMapFragment";
-	
+
 	public static final String TAG_MYLOCATION_MAP = "myLocation";
 	public static final double DEFAULT_BOUND = 0.005; // 검색범위
 	private Context context;
 	private GoogleMap map;
 	private ActionMap actionMap;
+	private Bundle searchBundle;
 	private ArrayList<Marker> markerList;
 	private float density;
 	private LatLng myLatLng;
@@ -61,6 +67,7 @@ public class GMapFragment extends Fragment implements CallFragmentMethod, Loader
 	private Circle circle;
 	private MyLocation myLocation;
 	private boolean isGoogleServiceInstalled;
+	private Button movebtn;
 
 	@Override
 	public void onAttach(Activity activity) {
@@ -73,16 +80,27 @@ public class GMapFragment extends Fragment implements CallFragmentMethod, Loader
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		actionMap = new ActionMap(context);
 		density = context.getResources().getDisplayMetrics().density;
+		searchBundle = new Bundle();
 
 		View view = inflater.inflate(R.layout.fragment_gmap_layout, null);
 		
+		movebtn = (Button)view.findViewById(R.id.btn_gmap_movetab);
+		movebtn.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				OnCommunicationActivity communication = (OnCommunicationActivity) getActivity();
+				communication.OnTabMove(MainActivity.MyTabs.STATION_LISTVIEW, searchBundle);
+			}
+		});
+
 		loadingLayout = (LinearLayout) view.findViewById(R.id.layout_map_loading);
-		
-		if(!(isGoogleServiceInstalled = actionMap.checkGoogleService())){
+
+		if (!(isGoogleServiceInstalled = actionMap.checkGoogleService())) {
 			View googleFail = ((ViewStub) view.findViewById(R.id.viewstub_gmap_google_fail)).inflate();
 			actionMap.setGoogleFailLayout(googleFail);
 		}
-		
+
 		return view;
 	}
 
@@ -91,7 +109,7 @@ public class GMapFragment extends Fragment implements CallFragmentMethod, Loader
 		super.onResume();
 		if (isGoogleServiceInstalled) {
 			setupMapIfNeeded();
-		} 
+		}
 	}
 
 	// 맵 세팅
@@ -115,6 +133,7 @@ public class GMapFragment extends Fragment implements CallFragmentMethod, Loader
 		this.map.moveCamera(CameraUpdateFactory.newLatLngZoom(ActionMap.DEAGU_LATLNG, ActionMap.ZOOM_OUT));
 		this.map.setMyLocationEnabled(true);
 		this.map.setOnCameraChangeListener(this);
+		this.map.setOnInfoWindowClickListener(this);
 	}
 
 	// 생성될때가 아니라 자신이 선택될때 불려진다.
@@ -140,9 +159,8 @@ public class GMapFragment extends Fragment implements CallFragmentMethod, Loader
 						map.animateCamera(CameraUpdateFactory.newLatLngZoom(myLatLng, 15));
 
 						radius = ActionMap.getRadius(DEFAULT_BOUND);
-						circle = map.addCircle(new CircleOptions().center(myLatLng).radius(radius)
-								.strokeWidth(density * 2).strokeColor(Color.argb(100, 0x4b, 0x4b, 0x4b))
-								.fillColor(Color.HSVToColor(30, new float[] { 150, 1, 1 })));
+						circle = map.addCircle(new CircleOptions().center(myLatLng).radius(radius).strokeWidth(density * 2)
+								.strokeColor(Color.argb(100, 0x4b, 0x4b, 0x4b)).fillColor(Color.HSVToColor(30, new float[] { 150, 1, 1 })));
 
 						getLoaderManager().initLoader(0, null, GMapFragment.this);
 					}
@@ -164,8 +182,8 @@ public class GMapFragment extends Fragment implements CallFragmentMethod, Loader
 		double minlnt = myLatLng.longitude - DEFAULT_BOUND;
 
 		String[] projection = { "_id", "station_number", "station_name", "station_longitude", "station_latitude" };
-		String selection = "(station_latitude BETWEEN " + minlat + " AND " + maxlat
-				+ ") AND (station_longitude BETWEEN " + minlnt + " AND " + maxlnt + ")";
+		String selection = "(station_latitude BETWEEN " + minlat + " AND " + maxlat + ") AND (station_longitude BETWEEN " + minlnt + " AND " + maxlnt
+				+ ")";
 
 		return new CursorLoader(context, uri, projection, selection, null, null);
 	}
@@ -177,7 +195,6 @@ public class GMapFragment extends Fragment implements CallFragmentMethod, Loader
 		// 기존의 cursor를 그대로 불러오기 때문에 시작시 반드시 커서위치를 처음으로 되돌려줘야함
 		c.moveToFirst();
 		markerList = new ArrayList<Marker>();
-		
 
 		for (int i = 0; i < c.getCount(); i++) {
 			String station_number = c.getString(1);
@@ -186,7 +203,6 @@ public class GMapFragment extends Fragment implements CallFragmentMethod, Loader
 			double station_latitude = c.getDouble(4);
 			LatLng boundLatLng = new LatLng(station_latitude, station_longitude);
 			c.moveToNext();
-			
 
 			if (ActionMap.isInsideCircle(circle, boundLatLng)) {
 				final MarkerOptions op = new MarkerOptions();
@@ -195,7 +211,6 @@ public class GMapFragment extends Fragment implements CallFragmentMethod, Loader
 					@Override
 					public void run() {
 						markerList.add(map.addMarker(op));
-						map.setOnMarkerClickListener(GMapFragment.this);
 					}
 				}, 1200);
 			}
@@ -208,11 +223,6 @@ public class GMapFragment extends Fragment implements CallFragmentMethod, Loader
 	}
 
 	@Override
-	public boolean onMarkerClick(Marker marker) {
-		return false;
-	}
-
-	@Override
 	public void onBackPressed() {
 		// TODO Auto-generated method stub
 
@@ -222,38 +232,50 @@ public class GMapFragment extends Fragment implements CallFragmentMethod, Loader
 	public void onClear() {
 		// TODO Auto-generated method stub
 	}
-	
+
 	@Override
 	public void onPause() {
 		super.onPause();
-		if(myLocation != null)
+		if (myLocation != null)
 			myLocation.cancle();
-		
+
 	}
 
 	@Override
 	public void onCameraChange(CameraPosition cPosition) {
-		Log.d(TAG,"카메라 체인지"+cPosition.target.latitude);
-		
-		LatLng centerLatLng = cPosition.target;
-		LatLng markerLatLng = null;
-		double minDistance = 1000;
-		Marker nearMarker = null;
-		for(int i=0; i<markerList.size(); i++){
-			markerLatLng = markerList.get(i).getPosition();
-			
-			double latgap = Math.abs(centerLatLng.latitude - markerLatLng.latitude);
-			double longap = Math.abs(centerLatLng.longitude - markerLatLng.longitude);
-			
-			double distance = latgap + longap;
-			
-			if(minDistance > distance){
-				minDistance = distance;
-				nearMarker = markerList.get(i);
+		Log.d(TAG, "카메라 체인지" + cPosition.target.latitude);
+
+		// 로더완료전에 진입할 가능성이 큼. 그때를 위해 무시용
+		if (markerList != null && markerList.size() != 0) {
+			LatLng centerLatLng = cPosition.target;
+			LatLng markerLatLng = null;
+			double minDistance = 1000;
+			Marker nearMarker = null;
+			for (int i = 0; i < markerList.size(); i++) {
+				markerLatLng = markerList.get(i).getPosition();
+
+				double latgap = Math.abs(centerLatLng.latitude - markerLatLng.latitude);
+				double longap = Math.abs(centerLatLng.longitude - markerLatLng.longitude);
+
+				double distance = latgap + longap;
+
+				if (minDistance > distance) {
+					minDistance = distance;
+					nearMarker = markerList.get(i);
+				}
 			}
+
+			movebtn.setVisibility(View.VISIBLE);
+			searchBundle.putString(SearchStationFragment.KEY_TAB_SELECTION, nearMarker.getTitle());
+			movebtn.setText(nearMarker.getTitle() + " (을)를 상세검색합니다");
+			nearMarker.showInfoWindow();
 		}
-		
-		nearMarker.showInfoWindow();
-		
+
+	}
+	
+	
+
+	@Override
+	public void onInfoWindowClick(Marker marker) {
 	}
 }

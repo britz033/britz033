@@ -245,7 +245,9 @@ public class MainActivity extends ActionBarActivity implements TabListener, OnCo
 	@Override
 	public void OnTabMove(MyTabs myTab, Bundle data) {
 		int index = myTab.getValue();
+		Log.d(TAG,"탭무브 호출");
 		vp.setCurrentItem(index, false);
+		Log.d(TAG,"탭무브 호출2");
 		if (data != null) {
 			OnCommunicationReceive send = (OnCommunicationReceive) flist.get(index);
 			send.OnReceive(data);
