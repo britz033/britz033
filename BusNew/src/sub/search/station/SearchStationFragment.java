@@ -57,6 +57,7 @@ import com.zoeas.qdeagubus.MyContentProvider;
 import com.zoeas.qdeagubus.R;
 import com.zoeas.util.ActionMap;
 import com.zoeas.util.AnimationRelativeLayout;
+import com.zoeas.util.CalculateC;
 import com.zoeas.util.LoopQuery;
 import com.zoeas.util.ActionMap.OnActionInfoWindowClickListener;
 
@@ -86,6 +87,7 @@ public class SearchStationFragment extends ListFragment implements LoaderCallbac
 	public static final int STATION_LATITUDE_INDEX = 4;
 	public static final int STATION_FAVORITE_INDEX = 5;
 
+	private CalculateC cc;
 	private StationSearchListCursorAdapter madapter;
 	private RelativeLayout slidingBusListView;
 	private LoopQuery<String> busNumloopQuery;
@@ -117,6 +119,7 @@ public class SearchStationFragment extends ListFragment implements LoaderCallbac
 		isFirst = true;
 		isReceived = false;
 		wideMarkerList = new ArrayList<Marker>();
+		cc = new CalculateC();
 		
 		et = (EditText) view.findViewById(R.id.edit_search_sub2fragment);
 		et.addTextChangedListener(new MyWatcher());
@@ -201,8 +204,8 @@ public class SearchStationFragment extends ListFragment implements LoaderCallbac
 		int stationId = c.getInt(STATION_ID_INDEX);
 		String stationNumber = c.getString(STATION_NUMBER_INDEX);
 		String stationName = c.getString(STATION_NAME_INDEX);
-		double stationLongitude = c.getDouble(STATION_LONGITUDE_INDEX);
-		double stationLatitude = c.getDouble(STATION_LATITUDE_INDEX);
+		double stationLongitude = cc.getData(c.getDouble(STATION_LONGITUDE_INDEX));
+		double stationLatitude = cc.getData(c.getDouble(STATION_LATITUDE_INDEX));
 
 		LatLng stationPosition = new LatLng(stationLatitude, stationLongitude);
 
@@ -337,10 +340,10 @@ public class SearchStationFragment extends ListFragment implements LoaderCallbac
 			currentUpdatableId = id;
 			madapter.resetAnimatedPosition();
 			Log.d(TAG, "주변검색작동");
-			double latitude = args.getDouble(KEY_WIDE_LATITUDE);
-			double longitude = args.getDouble(KEY_WIDE_LONGITUDE);
+			double latitude = cc.setData(args.getDouble(KEY_WIDE_LATITUDE));
+			double longitude = cc.setData(args.getDouble(KEY_WIDE_LONGITUDE));
 
-			double bound = 0.005;
+			double bound = cc.setData(0.005);
 			double minLatitude = latitude - bound;
 			double maxLatitude = latitude + bound;
 			double minLongitude = longitude - bound;
@@ -411,7 +414,7 @@ public class SearchStationFragment extends ListFragment implements LoaderCallbac
 				cursor.moveToFirst();
 				wideMarkerList.clear();
 				for (int i = 0; i < cursor.getCount(); i++) {
-					LatLng position = new LatLng(cursor.getDouble(4), cursor.getDouble(3));
+					LatLng position = new LatLng(cc.getData(cursor.getDouble(4)), cc.getData(cursor.getDouble(3)));
 					MarkerOptions options = new MarkerOptions().position(position).title(cursor.getString(2));
 					wideMarkerList.add(actionMap.addMarker(options, cursor.getInt(0)));
 					cursor.moveToNext();
