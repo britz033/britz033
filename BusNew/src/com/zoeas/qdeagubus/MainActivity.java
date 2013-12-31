@@ -25,18 +25,20 @@ import android.support.v7.app.ActionBar.Tab;
 import android.support.v7.app.ActionBar.TabListener;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
-import android.view.Menu;
-import android.view.Window;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
-import com.google.android.gms.maps.model.LatLng;
+import com.google.ads.AdRequest;
+import com.google.ads.AdSize;
+import com.google.ads.AdView;
 import com.zoeas.util.BackPressStack;
 
 public class MainActivity extends ActionBarActivity implements TabListener, OnCommunicationActivity {
 	
 	private static final String TAG = "MainActivity";
+	private static final String MY_AD_UNIT_ID = "a152c25e00349af";
 
 	private ArrayList<Fragment> flist; // 액티비티가 관리하는 애들
 
@@ -92,7 +94,6 @@ public class MainActivity extends ActionBarActivity implements TabListener, OnCo
 		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 		viewPagerSetting();
 		actionBarSetting();
-
 	}
 
 	/*
@@ -167,10 +168,12 @@ public class MainActivity extends ActionBarActivity implements TabListener, OnCo
 		});
 		subFragment = (OnBackAction) flist.get(0);
 	}
-
+	
 	private void actionBarSetting() {
 		ActionBar actionbar = getSupportActionBar();
 		actionbar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+		actionbar.setDisplayShowTitleEnabled(false);
+		actionbar.setDisplayShowHomeEnabled(false);
 
 		MyTabs[] mytabs = MyTabs.values();
 		for (MyTabs mytab : mytabs) {
@@ -179,12 +182,12 @@ public class MainActivity extends ActionBarActivity implements TabListener, OnCo
 		}
 	}
 
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.main, menu);
-		return true;
-	}
+//	@Override
+//	public boolean onCreateOptionsMenu(Menu menu) {
+//		// Inflate the menu; this adds items to the action bar if it is present.
+//		getMenuInflater().inflate(R.menu.main, menu);
+//		return true;
+//	}
 
 	// 일단 보류. 현재 위젯에서 이 정보를 사용해서 스테이션 결정중
 	// @Override
@@ -276,5 +279,9 @@ public class MainActivity extends ActionBarActivity implements TabListener, OnCo
 		}
 	}
 	
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+	}
 
 }
