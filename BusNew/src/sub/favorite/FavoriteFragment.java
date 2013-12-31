@@ -212,11 +212,11 @@ public class FavoriteFragment extends Fragment implements ResponseTask, LoaderCa
 	}
 
 	private File createPreviewFile() {
-		File path = new File(Environment.getExternalStorageDirectory() + "/android/data/" + context.getPackageName()
+		File path = new File(Environment.getExternalStorageDirectory() + "/Android/data/" + context.getPackageName()
 				+ "/preview/");
 
 		if (!path.exists()) {
-			path.mkdir();
+			path.mkdirs();
 		}
 
 		File saveImage = new File(path, stationNum + ".png");
@@ -227,7 +227,7 @@ public class FavoriteFragment extends Fragment implements ResponseTask, LoaderCa
 	// 등록된 파일명과 경로에 이미지뷰의 크기에 맞게 사이즈 변경 + 저장
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-		super.onActivityResult(requestCode, resultCode, data);
+		
 
 		if (resultCode == Activity.RESULT_OK) {
 			switch (requestCode) {
@@ -242,6 +242,8 @@ public class FavoriteFragment extends Fragment implements ResponseTask, LoaderCa
 
 				adapter.notifyDataSetChanged();
 				break;
+				default : 
+					super.onActivityResult(requestCode, resultCode, data);
 			}
 		}
 

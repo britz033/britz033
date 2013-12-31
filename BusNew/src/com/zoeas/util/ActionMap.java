@@ -116,6 +116,8 @@ public class ActionMap<MarkerInfo> implements OnInfoWindowClickListener {
 			if (GooglePlayServicesUtil.isUserRecoverableError(resultCode)) {
 				Toast.makeText(context, "현재 구글맵 서비스가 설치되어 있지 않습니다", Toast.LENGTH_LONG).show();
 				errorMsg = GooglePlayServicesUtil.getErrorString(resultCode);
+				if(resultCode == 9)
+					resultCode = 2;
 				pendingIntent = GooglePlayServicesUtil.getErrorPendingIntent(resultCode, context,
 						GOOGLE_SERVICE_REQUEST_CODE);
 			} else {
