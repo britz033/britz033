@@ -20,7 +20,7 @@
         ads:adSize="BANNER"
         ads:adUnitId="a152c25e00349af"
         ads:loadAdOnCreate="true"
-        ads:testDevices="TEST_EMULATOR, 714ED3CAFF3F8CABEABD026D4D6563C4" />
+        ads:testDevices="TEST_EMULATOR, 2D62D62F1BBF31AA650A570EC8251DF1" />
     
 <!--에뮬     2D62D62F1BBF31AA650A570EC8251DF1 -->
 <!--내폰     714ED3CAFF3F8CABEABD026D4D6563C4 -->

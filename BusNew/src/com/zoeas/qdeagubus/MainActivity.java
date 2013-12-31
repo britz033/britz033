@@ -25,20 +25,20 @@ import android.support.v7.app.ActionBar.Tab;
 import android.support.v7.app.ActionBar.TabListener;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.ads.AdRequest;
-import com.google.ads.AdSize;
-import com.google.ads.AdView;
 import com.zoeas.util.BackPressStack;
 
 public class MainActivity extends ActionBarActivity implements TabListener, OnCommunicationActivity {
 	
 	private static final String TAG = "MainActivity";
-	private static final String MY_AD_UNIT_ID = "a152c25e00349af";
+//	private static final String MY_AD_UNIT_ID = "a152c25e00349af";
+	private static final String MY_AD_UNIT_ID = "7d3f9cfacae641fd";
 
 	private ArrayList<Fragment> flist; // 액티비티가 관리하는 애들
 
@@ -53,7 +53,6 @@ public class MainActivity extends ActionBarActivity implements TabListener, OnCo
 
 	public interface OnBackAction {
 		public void onBackPressed();
-
 		public void onClear();
 	}
 
@@ -174,10 +173,18 @@ public class MainActivity extends ActionBarActivity implements TabListener, OnCo
 		actionbar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 		actionbar.setDisplayShowTitleEnabled(false);
 		actionbar.setDisplayShowHomeEnabled(false);
-
+		
 		MyTabs[] mytabs = MyTabs.values();
 		for (MyTabs mytab : mytabs) {
+//			View tabView = LayoutInflater.from(this).inflate(R.layout.actionbar_tabview, null);
+//			ImageView tabIcon = (ImageView) tabView.findViewById(R.id.img_maintab);
+//			TextView tabTitle = (TextView) tabView.findViewById(R.id.text_maintab);
+			
+//			tabTitle.setText(mytab.getName());
+//			tabIcon.setImageDrawable(getResources().getDrawable(R.drawable.abc_ic_clear));
+					
 			Tab tab = actionbar.newTab().setText(mytab.getName()).setTabListener(this);
+//			tab.setCustomView(tabView);
 			actionbar.addTab(tab);
 		}
 	}

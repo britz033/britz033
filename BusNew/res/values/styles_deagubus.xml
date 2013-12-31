@@ -27,6 +27,7 @@
         <item name="actionDropDownStyle">@style/DropDownNav.Deagubus</item>
         <item name="actionBarStyle">@style/ActionBar.Solid.Deagubus</item>
         <item name="actionBarTabTextStyle">@style/MyActionBarTabText</item>
+<!--         <item name="actionBarSize">100dp</item> -->
         <item name="actionMenuTextColor">#FFFFFF</item>
         <item name="actionModeBackground">@drawable/cab_background_top_deagubus</item>
         <item name="actionModeSplitBackground">@drawable/cab_background_bottom_deagubus</item>
@@ -80,6 +81,7 @@
 
     <style name="ActionBarTabStyle.Deagubus" parent="@style/Widget.AppCompat.Light.ActionBar.TabView">
         <item name="android:background">@drawable/tab_indicator_ab_deagubus</item>
+        <item name="android:minHeight">10dp</item>
     </style>
 	
     <style name="DropDownNav.Deagubus" parent="@style/Widget.AppCompat.Light.Spinner.DropDown.ActionBar">
