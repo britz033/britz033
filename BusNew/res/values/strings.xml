@@ -6,4 +6,7 @@
     <string name="dialog_title_busfavorite">버스 즐겨찾기</string>
     <string name="btn_title_busfavorite">clear</string>
     <string name="btn_bus_info_search">검색</string>
+    <string name="favorite_first">정류장 즐겨찾기를 추가해주세요\n
+        정류장 목록에서 원하는 정류장을 검색하여\n
+        오른쪽의 별표를 클릭하여 추가하시면 됩니다</string>
 </resources>

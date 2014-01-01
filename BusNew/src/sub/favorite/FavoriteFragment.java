@@ -89,7 +89,6 @@ public class FavoriteFragment extends Fragment implements ResponseTask, LoaderCa
 	private boolean isFirst;
 	private FavoriteFragmentBusList busListFragment;
 	private ProgressBar loadingBar;
-	private TextView loadingText;
 	private File savedFile;
 	private Button btnReflash;
 	private Button btnFavorite;
@@ -119,7 +118,6 @@ public class FavoriteFragment extends Fragment implements ResponseTask, LoaderCa
 		view = inflater.inflate(R.layout.fragment_favorite_layout, container, false);
 		// getLoaderManager().initLoader(0, null, this);
 		loadingBar = (ProgressBar) view.findViewById(R.id.progressbar_favorite_buslist_loading);
-		loadingText = (TextView) view.findViewById(R.id.text_favorite_busList_loading);
 		btnReflash = (Button) view.findViewById(R.id.btn_testreflash);
 		btnFavorite = (Button) view.findViewById(R.id.btn_favorite_bus_check_open);
 		btnChangePicture = (Button) view.findViewById(R.id.btn_favorite_bus_peekup);
@@ -320,7 +318,6 @@ public class FavoriteFragment extends Fragment implements ResponseTask, LoaderCa
 
 	private void loadingVisible(int visibility) {
 		loadingBar.setVisibility(visibility);
-		loadingText.setVisibility(visibility);
 	}
 
 	/*
@@ -446,9 +443,12 @@ public class FavoriteFragment extends Fragment implements ResponseTask, LoaderCa
 			Log.d(TAG, "스왑작동");
 			adapter.swapCursor(cursor);
 			this.cursor = cursor;
-			if (cursor.getCount() == 0)
-				onTaskFinish(null, "정류장 즐겨찾기를 추가해주세요");
+			if (cursor.getCount() == 0){
+				menuText.setVisibility(View.INVISIBLE);
+				onTaskFinish(null, getResources().getString(R.string.favorite_first));
+			}
 			else {
+				menuText.setVisibility(View.VISIBLE);
 				cursor.moveToPosition(pager.getCurrentItem());
 				settingInfo();
 			}
