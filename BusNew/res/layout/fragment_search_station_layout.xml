@@ -8,14 +8,15 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical" >
+        android:orientation="vertical" 
+        >
 
         <EditText
             android:id="@+id/edit_search_sub2fragment"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="32dp"
             android:background="@drawable/edittext_back"
-            android:hint="역 이름을 적으세요"
+            android:hint="정류소이름이나 번호를 적으세요"
             android:textSize="20sp" />
 
         <com.zoeas.util.AnimationRelativeLayout

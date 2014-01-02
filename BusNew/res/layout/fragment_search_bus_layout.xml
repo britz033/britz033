@@ -6,8 +6,9 @@
     <EditText 
         android:id="@+id/edit_fragment_search_bus"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="32dp"
         android:hint="버스번호를 입력하세요"
+        android:textSize="20sp" 
         android:background="@drawable/edittext_back"
         />
     <ListView 
