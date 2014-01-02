@@ -10,13 +10,6 @@
         android:layout_height="match_parent" >
     </RelativeLayout>
 
-    <Button
-        android:id="@+id/btn_gmap_movetab"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" 
-        android:visibility="gone"
-        />
-
     <LinearLayout
         android:id="@+id/layout_map_loading"
         android:layout_width="wrap_content"

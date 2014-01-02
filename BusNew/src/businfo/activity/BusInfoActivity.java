@@ -28,11 +28,11 @@ import android.view.View.OnKeyListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -51,11 +51,11 @@ import com.nineoldandroids.animation.ObjectAnimator;
 import com.zoeas.qdeagubus.MyContentProvider;
 import com.zoeas.qdeagubus.R;
 import com.zoeas.util.ActionMap;
+import com.zoeas.util.ActionMap.OnActionInfoWindowClickListener;
 import com.zoeas.util.BackPressStack;
 import com.zoeas.util.CalculateC;
 import com.zoeas.util.LoopQuery;
 import com.zoeas.util.Switch;
-import com.zoeas.util.ActionMap.OnActionInfoWindowClickListener;
 
 /*
  * 일반 버스 리스트에서 검색말고
@@ -142,7 +142,7 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 		TextView textBusNumber = (TextView) findViewById(R.id.text_activity_businfo_number);
 		TextView textStationName = (TextView) findViewById(R.id.text_activity_businfo_stationname);
 		TextView textOption = (TextView) findViewById(R.id.text_activity_businfo_option);
-		Button searchBtn = (Button) findViewById(R.id.btn_activity_businfo_pathsearch);
+		ImageButton searchBtn = (ImageButton) findViewById(R.id.btn_activity_businfo_pathsearch);
 		stationListViewContainer = (FrameLayout) findViewById(R.id.layout_activity_businfo_path_container);
 		barContainer = (FrameLayout) findViewById(R.id.bar_container);
 		barContainer.setClickable(true);

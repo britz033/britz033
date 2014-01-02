@@ -86,12 +86,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
 
-            <Button
+            <ImageButton
                 android:id="@+id/btn_activity_businfo_pathsearch"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
-                android:text="검색" />
+                android:src="@drawable/button_businfo_search" 
+                android:background="@android:color/transparent"
+                />
         </RelativeLayout>
 
         <FrameLayout

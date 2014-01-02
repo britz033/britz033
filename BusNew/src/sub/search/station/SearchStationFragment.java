@@ -1,7 +1,6 @@
 package sub.search.station;
 
 import java.util.ArrayList;
-import java.util.zip.Inflater;
 
 import subfragment.CustomMapFragment;
 import subfragment.CustomMapFragment.OnMapReadyListener;
@@ -10,7 +9,6 @@ import adapter.SlidingMenuAdapter;
 import android.app.Activity;
 import android.content.Context;
 import android.database.Cursor;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
@@ -39,7 +37,7 @@ import android.widget.AbsListView.OnScrollListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
-import android.widget.FrameLayout.LayoutParams;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 
@@ -56,10 +54,10 @@ import com.zoeas.qdeagubus.MainActivity.OnBackAction;
 import com.zoeas.qdeagubus.MyContentProvider;
 import com.zoeas.qdeagubus.R;
 import com.zoeas.util.ActionMap;
+import com.zoeas.util.ActionMap.OnActionInfoWindowClickListener;
 import com.zoeas.util.AnimationRelativeLayout;
 import com.zoeas.util.CalculateC;
 import com.zoeas.util.LoopQuery;
-import com.zoeas.util.ActionMap.OnActionInfoWindowClickListener;
 
 public class SearchStationFragment extends ListFragment implements LoaderCallbacks<Cursor>, OnKeyListener,
 		OnMapReadyListener, OnClickListener, OnBackAction, OnActionInfoWindowClickListener<Integer>, OnScrollListener, OnCommunicationReceive {
@@ -141,7 +139,7 @@ public class SearchStationFragment extends ListFragment implements LoaderCallbac
 		actionMap = new ActionMap<Integer>(context);
 		mapContainer = (AnimationRelativeLayout) view.findViewById(R.id.layout_search_station_map_container);
 		mapContainer.setInAnimation((Animation) AnimationUtils.loadAnimation(context, R.animator.in_ani));
-		Button btn = (Button) view.findViewById(R.id.btn_search_station_widesearch);
+		ImageButton btn = (ImageButton) view.findViewById(R.id.btn_search_station_widesearch);
 		btn.setOnClickListener(this);
 
 		if (!(isGoogleServiceInstalled = actionMap.checkGoogleService())) {

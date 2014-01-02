@@ -12,6 +12,7 @@ import android.database.Cursor;
 import android.graphics.Color;
 import android.location.Location;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
@@ -68,7 +69,6 @@ public class GMapFragment extends Fragment implements CallFragmentMethod, Loader
 	private Circle circle;
 	private MyLocation myLocation;
 	private boolean isGoogleServiceInstalled;
-	private Button movebtn;
 	private CalculateC cc;
 
 	@Override
@@ -85,16 +85,6 @@ public class GMapFragment extends Fragment implements CallFragmentMethod, Loader
 		searchBundle = new Bundle();
 
 		View view = inflater.inflate(R.layout.fragment_gmap_layout, null);
-		
-		movebtn = (Button)view.findViewById(R.id.btn_gmap_movetab);
-		movebtn.setOnClickListener(new OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				OnCommunicationActivity communication = (OnCommunicationActivity) getActivity();
-				communication.OnTabMove(MainActivity.MyTabs.STATION_LISTVIEW, searchBundle);
-			}
-		});
 
 		loadingLayout = (LinearLayout) view.findViewById(R.id.layout_map_loading);
 
@@ -268,9 +258,7 @@ public class GMapFragment extends Fragment implements CallFragmentMethod, Loader
 				}
 			}
 
-			movebtn.setVisibility(View.VISIBLE);
 			searchBundle.putString(SearchStationFragment.KEY_TAB_SELECTION, nearMarker.getTitle());
-			movebtn.setText(nearMarker.getTitle() + " (을)를 상세검색합니다");
 			nearMarker.showInfoWindow();
 		}
 
@@ -280,5 +268,21 @@ public class GMapFragment extends Fragment implements CallFragmentMethod, Loader
 
 	@Override
 	public void onInfoWindowClick(Marker marker) {
+		new AsyncTask<Void, Void, Void>(){
+
+			@Override
+			protected Void doInBackground(Void... params) {
+				// TODO Auto-generated method stub
+				return null;
+			}
+			
+			@Override
+			protected void onPostExecute(Void result) {
+				super.onPostExecute(result);
+				OnCommunicationActivity communication = (OnCommunicationActivity) getActivity();
+				communication.OnTabMove(MainActivity.MyTabs.STATION_LISTVIEW, searchBundle);
+			}
+			
+		}.execute();
 	}
 }
