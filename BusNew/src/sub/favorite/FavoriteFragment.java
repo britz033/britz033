@@ -35,14 +35,10 @@ import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
 
-import com.nineoldandroids.animation.Animator;
-import com.nineoldandroids.animation.ObjectAnimator;
-import com.zoeas.qdeagubus.MainActivity;
 import com.zoeas.qdeagubus.MainActivity.OnBackAction;
 import com.zoeas.qdeagubus.MyContentProvider;
 import com.zoeas.qdeagubus.R;
@@ -90,12 +86,10 @@ public class FavoriteFragment extends Fragment implements ResponseTask, LoaderCa
 	private FavoriteFragmentBusList busListFragment;
 	private ProgressBar loadingBar;
 	private File savedFile;
-	private Button btnReflash;
-	private Button btnFavorite;
-	private Button btnChangePicture;
+	private ImageButton btnReflash;
+	private ImageButton btnFavorite;
+	private ImageButton btnChangePicture;
 	private ImageUtil imageUtil;
-	private TextView menuText;
-	private RelativeLayout menuContainer;
 
 	@Override
 	public void onAttach(Activity activity) {
@@ -118,26 +112,10 @@ public class FavoriteFragment extends Fragment implements ResponseTask, LoaderCa
 		view = inflater.inflate(R.layout.fragment_favorite_layout, container, false);
 		// getLoaderManager().initLoader(0, null, this);
 		loadingBar = (ProgressBar) view.findViewById(R.id.progressbar_favorite_buslist_loading);
-		btnReflash = (Button) view.findViewById(R.id.btn_testreflash);
-		btnFavorite = (Button) view.findViewById(R.id.btn_favorite_bus_check_open);
-		btnChangePicture = (Button) view.findViewById(R.id.btn_favorite_bus_peekup);
-		menuText = (TextView) view.findViewById(R.id.text_favorite_menu_sliding);
-		menuContainer = (RelativeLayout) view.findViewById(R.id.layout_favorite_container_setbtn);
+		btnReflash = (ImageButton) view.findViewById(R.id.btn_testreflash);
+		btnFavorite = (ImageButton) view.findViewById(R.id.btn_favorite_bus_check_open);
+		btnChangePicture = (ImageButton) view.findViewById(R.id.btn_favorite_bus_peekup);
 		
-		menuText.setOnClickListener(new OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				MainActivity.backAction.push();
-				menuText.setVisibility(View.INVISIBLE);
-				menuContainer.setVisibility(View.VISIBLE);
-				int width = context.getResources().getDisplayMetrics().widthPixels;
-				Animator ani = ObjectAnimator.ofFloat(menuContainer, "translationX",width , 25*density);
-				ani.setDuration(1000);
-				ani.start();
-			}
-		});
-
 		ButtonSetting();
 		viewPagerSetting(view);
 
@@ -444,11 +422,9 @@ public class FavoriteFragment extends Fragment implements ResponseTask, LoaderCa
 			adapter.swapCursor(cursor);
 			this.cursor = cursor;
 			if (cursor.getCount() == 0){
-				menuText.setVisibility(View.INVISIBLE);
 				onTaskFinish(null, getResources().getString(R.string.favorite_first));
 			}
 			else {
-				menuText.setVisibility(View.VISIBLE);
 				cursor.moveToPosition(pager.getCurrentItem());
 				settingInfo();
 			}
@@ -497,11 +473,6 @@ public class FavoriteFragment extends Fragment implements ResponseTask, LoaderCa
 
 	@Override
 	public void onBackPressed() {
-		menuText.setVisibility(View.VISIBLE);
-		int width = context.getResources().getDisplayMetrics().widthPixels;
-		Animator ani = ObjectAnimator.ofFloat(menuContainer, "translationX", 25*density, width);
-		ani.setDuration(500);
-		ani.start();
 
 	}
 

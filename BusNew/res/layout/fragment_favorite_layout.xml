@@ -16,56 +16,45 @@
             android:layout_height="match_parent"
             android:background="@drawable/preview_back" >
         </android.support.v4.view.ViewPager>
-        <TextView
-            android:id="@+id/text_favorite_menu_sliding"
-            android:layout_width="20dp"
-            android:layout_height="match_parent"
-            android:layout_gravity="right"
-            android:textDirection="firstStrong"
-            android:text="s\ne\nt\nt\ni\nn\ng"
-            android:clickable="true"
-            />
         <RelativeLayout 
             android:id="@+id/layout_favorite_container_setbtn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:visibility="gone"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:layout_gravity="bottom"
             >
 
-            <Button
+            <ImageButton
                 android:id="@+id/btn_testreflash"
-                android:layout_width="100dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:layout_marginRight="15dp"
-                android:layout_marginTop="11dp"
-                android:background="@drawable/tab_selected_pressed_deagubus"
-                android:text="새로고침"
-                android:textColor="#ffffff" />
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentBottom="true"
+                android:layout_marginLeft="5dp"
+                android:src="@drawable/button_refresh"
+                android:background="@android:color/transparent"
+                />
 
-            <Button
+            <ImageButton
                 android:id="@+id/btn_favorite_bus_check_open"
-                android:layout_width="100dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
-                android:layout_below="@+id/btn_testreflash"
-                android:layout_marginRight="15dp"
-                android:layout_marginTop="5dp"
-                android:background="@drawable/tab_selected_pressed_deagubus"
-                android:text="버스Check"
-                android:textColor="#ffffff" />
+                android:layout_alignParentBottom="true"
+                android:layout_marginRight="5dp"
+                android:src="@drawable/button_list"
+                android:background="@android:color/transparent"
+                 />
 
-            <Button
+            <ImageButton
                 android:id="@+id/btn_favorite_bus_peekup"
-                android:layout_width="100dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:layout_below="@+id/btn_favorite_bus_check_open"
-                android:layout_marginRight="15dp"
-                android:layout_marginTop="5dp"
-                android:background="@drawable/tab_selected_pressed_deagubus"
-                android:text="사진변경"
-                android:textColor="#ffffff" />
+                android:layout_alignParentBottom="true"
+                android:layout_toLeftOf="@+id/btn_favorite_bus_check_open"
+                android:layout_marginRight="5dp"
+                android:src="@drawable/button_pic"
+                android:background="@android:color/transparent"
+                 />
         </RelativeLayout>
     </FrameLayout>
 
