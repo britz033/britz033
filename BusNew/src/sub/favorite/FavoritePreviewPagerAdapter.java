@@ -57,7 +57,7 @@ public class FavoritePreviewPagerAdapter extends PagerAdapter {
 		if (cursor == null)
 			return null;
 
-		RelativeLayout rl = (RelativeLayout) inflater.inflate(R.layout.viewpager_favorite_preview, null);
+		RelativeLayout rl = (RelativeLayout) inflater.inflate(R.layout.viewpager_favorite_preview, container, false);
 
 		if (!startSetting) {
 			ImageView iv = (ImageView) rl.findViewById(R.id.img_favorite_preview);
@@ -72,7 +72,7 @@ public class FavoritePreviewPagerAdapter extends PagerAdapter {
 				BitmapDrawable bd = new BitmapDrawable(preImageFile.getAbsolutePath());
 				iv.setImageDrawable(bd);
 			} else {
-				iv.setImageDrawable(context.getResources().getDrawable(R.drawable.station00005));
+				iv.setImageDrawable(context.getResources().getDrawable(R.drawable.default_stop2));
 			}
 
 		} else {

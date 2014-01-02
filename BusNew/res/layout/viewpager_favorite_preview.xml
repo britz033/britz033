@@ -7,7 +7,6 @@
         android:id="@+id/img_favorite_preview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:adjustViewBounds="true"
         android:background="#88ffffff"
         android:padding="1dp" />
 
@@ -20,6 +19,7 @@
         android:background="@android:color/transparent"
         android:text="정류장 즐겨찾기가 없네요. 여기를 누르세요"
         android:textColor="#ffffff"
-        android:visibility="gone" />
+        android:visibility="gone"
+         />
 
 </RelativeLayout>

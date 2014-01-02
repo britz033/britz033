@@ -20,7 +20,7 @@
         ads:adSize="BANNER"
         ads:adUnitId="a152c25e00349af"
         ads:loadAdOnCreate="true"
-        ads:testDevices="TEST_EMULATOR, 3FEFB0C3226CFA214A5C0DCB5EC38023" />
+        ads:testDevices="TEST_EMULATOR, 2D62D62F1BBF31AA650A570EC8251DF1" />
     
 <!--에뮬     2D62D62F1BBF31AA650A570EC8251DF1 -->
 <!--에뮬2     3FEFB0C3226CFA214A5C0DCB5EC38023 -->
