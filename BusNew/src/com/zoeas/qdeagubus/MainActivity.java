@@ -3,6 +3,7 @@ package com.zoeas.qdeagubus;
 import java.util.ArrayList;
 
 import sub.favorite.FavoriteFragment;
+import sub.search.station.SearchStationFragment;
 import adapter.OnCommunicationActivity;
 import adapter.OnCommunicationReceive;
 import android.app.AlertDialog;
@@ -249,7 +250,8 @@ public class MainActivity extends ActionBarActivity implements TabListener, OnCo
 	// 정류장 검색에서 리스트뷰 즐겨찾기 추가시 불러짐
 	@Override
 	public void OnFavoriteRefresh() {
-		((FavoriteFragment) flist.get(MyTabs.FAVORITE.getValue())).refreshPreview();
+		((FavoriteFragment) flist.get(MyTabs.FAVORITE.getValue())).refrashPreview();
+		((SearchStationFragment) flist.get(MyTabs.STATION_LISTVIEW.getValue())).refrashFavorite();
 	}
 
 	@Override

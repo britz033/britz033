@@ -138,7 +138,7 @@ public class FavoritePreviewPagerAdapter extends PagerAdapter {
 		if (this.cursor == cursor)
 			return;
 		if (cursor != null)
-			Log.d(TAG, String.valueOf(cursor.getCount()));
+			Log.d(TAG, String.valueOf("프리뷰 갯수:" +cursor.getCount()));
 		this.cursor = cursor;
 		dummy.swapAdapter(this);
 		notifyDataSetChanged();

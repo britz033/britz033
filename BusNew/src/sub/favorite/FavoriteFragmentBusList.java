@@ -214,7 +214,7 @@ public class FavoriteFragmentBusList extends ListFragment {
 
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
-						((FavoriteFragment) getParentFragment()).refreshPreview();
+						((FavoriteFragment) getParentFragment()).refrashPreview();
 						if (db != null && db.isOpen()) {
 							db.close();
 						}
@@ -244,7 +244,7 @@ public class FavoriteFragmentBusList extends ListFragment {
 				}
 				setFavorite = sb;
 				dbUpdate();
-				((FavoriteFragment) getParentFragment()).refreshPreview();
+				((FavoriteFragment) getParentFragment()).refrashPreview();
 			}
 		});
 		checkListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);

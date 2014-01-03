@@ -7,12 +7,15 @@ import internet.ResponseTask;
 import java.io.File;
 import java.util.ArrayList;
 
+import adapter.OnCommunicationActivity;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -89,6 +92,7 @@ public class FavoriteFragment extends Fragment implements ResponseTask, LoaderCa
 	private ImageButton btnReflash;
 	private ImageButton btnFavorite;
 	private ImageButton btnChangePicture;
+	private ImageButton btnDelete;
 	private ImageUtil imageUtil;
 
 	@Override
@@ -115,6 +119,7 @@ public class FavoriteFragment extends Fragment implements ResponseTask, LoaderCa
 		btnReflash = (ImageButton) view.findViewById(R.id.btn_testreflash);
 		btnFavorite = (ImageButton) view.findViewById(R.id.btn_favorite_bus_check_open);
 		btnChangePicture = (ImageButton) view.findViewById(R.id.btn_favorite_bus_peekup);
+		btnDelete = (ImageButton) view.findViewById(R.id.btn_delete);
 		
 		ButtonSetting();
 		viewPagerSetting(view);
@@ -183,6 +188,31 @@ public class FavoriteFragment extends Fragment implements ResponseTask, LoaderCa
 							}
 
 						}).create().show();
+			}
+		});
+		
+		btnDelete.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				new AlertDialog.Builder(context).setTitle("현재 정류장을 즐겨찾기에서 삭제하시겠습니까?")
+				.setPositiveButton("확인", new DialogInterface.OnClickListener() {
+					
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						SQLiteDatabase db = SQLiteDatabase.openDatabase(context.getDatabasePath("StationDB.png").getAbsolutePath(), null, SQLiteDatabase.OPEN_READWRITE);
+						ContentValues cv = new ContentValues();
+						cv.put("station_favorite", 0);
+						db.update(MyContentProvider.TABLE_NAME_STATION, cv, "station_id=" + stationID, null);
+						db.close();
+						adapter.notifyDataSetChanged();
+						refrashPreview();
+						OnCommunicationActivity refrashSearchList = (OnCommunicationActivity)getActivity();
+						refrashSearchList.OnFavoriteRefresh();
+					}
+				})
+				.setNegativeButton("취소", null).create().show();
 			}
 		});
 	}
@@ -343,7 +373,7 @@ public class FavoriteFragment extends Fragment implements ResponseTask, LoaderCa
 		ft.commitAllowingStateLoss();
 	}
 
-	public void refreshPreview() {
+	public void refrashPreview() {
 		getLoaderManager().restartLoader(0, null, this);
 	}
 
@@ -422,9 +452,13 @@ public class FavoriteFragment extends Fragment implements ResponseTask, LoaderCa
 			adapter.swapCursor(cursor);
 			this.cursor = cursor;
 			if (cursor.getCount() == 0){
+				btnDelete.setVisibility(View.INVISIBLE);
+				btnReflash.setVisibility(View.INVISIBLE);
 				onTaskFinish(null, getResources().getString(R.string.favorite_first));
 			}
 			else {
+				btnReflash.setVisibility(View.VISIBLE);
+				btnDelete.setVisibility(View.VISIBLE);
 				cursor.moveToPosition(pager.getCurrentItem());
 				settingInfo();
 			}

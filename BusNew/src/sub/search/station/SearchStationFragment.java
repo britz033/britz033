@@ -401,7 +401,7 @@ public class SearchStationFragment extends ListFragment implements LoaderCallbac
 			}
 			
 			if(isReceived){
-			getListView().performItemClick(getListView().getChildAt(0), 0, madapter.getItemId(0));
+				getListView().performItemClick(getListView().getChildAt(0), 0, madapter.getItemId(0));
 			}
 			
 			break;
@@ -554,18 +554,21 @@ public class SearchStationFragment extends ListFragment implements LoaderCallbac
 			}
 		}
 	}
-
+	
 	@Override
 	public void onScrollStateChanged(AbsListView view, int scrollState) {
 		// TODO Auto-generated method stub
 
 	}
 
-
 	@Override
 	public void OnReceive(Bundle data) {
 		et.setText(data.getString(KEY_TAB_SELECTION));
 		isReceived = true;
+	}
+	
+	public void refrashFavorite(){
+		context.getContentResolver().notifyChange(MyContentProvider.CONTENT_URI_STATION, null);
 	}
 
 }

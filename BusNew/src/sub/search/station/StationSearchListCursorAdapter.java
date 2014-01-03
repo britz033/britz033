@@ -5,6 +5,7 @@ import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.support.v4.widget.CursorAdapter;
 import android.util.Log;
@@ -89,19 +90,23 @@ public class StationSearchListCursorAdapter extends CursorAdapter {
 
 	// 즐겨찾기 변경
 	private void updateFavorite(int favorite, int id) {
-		ContentValues value = new ContentValues();
+		ContentValues cv = new ContentValues();
 
 		if (favorite == 0) {
-			value.put("station_favorite", 1);
+			cv.put("station_favorite", 1);
 		} else {
-			value.put("station_favorite", 0);
+			cv.put("station_favorite", 0);
 		}
+		
+		SQLiteDatabase db = SQLiteDatabase.openDatabase(mcontext.getDatabasePath("StationDB.png").getAbsolutePath(), null, SQLiteDatabase.OPEN_READWRITE);
+		db.update(MyContentProvider.TABLE_NAME_STATION, cv, "_id=" + id, null);
+		db.close();
 
-		// 아이디 값을 기준으로 업데이트
-		Uri singleUri = ContentUris.withAppendedId(MyContentProvider.CONTENT_URI_STATION, id);
-
-		Log.d(TAG,"즐겨찾기 업데이트 호출됨");
-		mcontext.getContentResolver().update(singleUri, value, null, null);
+//		// 아이디 값을 기준으로 업데이트
+//		Uri singleUri = ContentUris.withAppendedId(MyContentProvider.CONTENT_URI_STATION, id);
+//
+//		Log.d(TAG,"즐겨찾기 업데이트 호출됨");
+//		mcontext.getContentResolver().update(singleUri, cv, null, null);
 
 	}
 	
