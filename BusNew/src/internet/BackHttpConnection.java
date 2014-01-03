@@ -13,17 +13,13 @@ import org.apache.http.params.HttpParams;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.util.Log;
 
 public class BackHttpConnection {
 	
-	private static final String TAG = "BackHttpConnection";
-
 	private InputStream is = null;
 
 	public BackHttpConnection(Context context, String url) throws Exception {
 
-		// 기기의 인터넷사용여부 확인후 연결
 		if (isNetworkOn(context)) {
 			urlConnect(url);
 		} else
@@ -31,7 +27,6 @@ public class BackHttpConnection {
 
 	}
 
-	// 인터넷 연결을 확인하는 메소드
 	private boolean isNetworkOn(Context context) {
 		ConnectivityManager cm = (ConnectivityManager) context
 				.getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -47,7 +42,6 @@ public class BackHttpConnection {
 		HttpGet get = new HttpGet(url);
 		try {
 			HttpParams params = client.getParams();
-			// 5초 응답시간 타임아웃
 			HttpConnectionParams.setConnectionTimeout(params, 10000);
 			HttpConnectionParams.setSoTimeout(params, 10000);
 			HttpResponse response = client.execute(get);
@@ -55,7 +49,6 @@ public class BackHttpConnection {
 		} catch (ConnectTimeoutException e){
 			throw new Exception("홈페이지에 부하가 걸려 접속이 원할 하지 않습니다. 다시 접속해주세요");
 		} catch (Exception e) {
-			Log.d(TAG, "http 연결 실패했습니다");
 			e.printStackTrace();
 			throw new Exception("인터넷 연결이 되어 있지 않습니다");
 		}

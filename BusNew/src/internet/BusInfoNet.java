@@ -10,10 +10,6 @@ import android.text.style.AbsoluteSizeSpan;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.StyleSpan;
 
-/*
- * 각 버스들 정보
- * 도착까지 가까운지 여부, 번호, 시간 , 현재장소
- */
 public class BusInfoNet implements Parcelable {
 	private String station;
 	private boolean soon;
@@ -126,13 +122,6 @@ public class BusInfoNet implements Parcelable {
 		this.busId = busId;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see android.os.Parcelable#describeContents()
-	 * 
-	 * Parcel 하려는 오브젝트의 종류를 정의한다. 어떤 특별한 객체를 포함하고 있는지에 대한 설명을 리턴값으로 표현 하는 것이라고 보면된다. bit mask 형식의 integer를 리턴 하며,값을 체크 할 때 bit mask 체크를 해서 어떤 것들이 들어 있는지 알 수 있다.
-	 */
 	@Override
 	public int describeContents() {
 		return 0;
@@ -145,11 +134,6 @@ public class BusInfoNet implements Parcelable {
 	 */
 	@Override
 	public void writeToParcel(Parcel dest, int flags) {
-		// private String station;
-		// private boolean soon;
-		// private String busNum;
-		// private String time;
-		// private String current;
 
 		dest.writeString(station);
 		dest.writeByte((byte) (soon ? 1 : 0));
@@ -160,7 +144,6 @@ public class BusInfoNet implements Parcelable {
 		dest.writeString(busId);
 	}
 
-	// 이건 필수가 아닌데 저 다음것에서 read 할려면 getter 써야하는게 귀찮아서..
 	public void readFromParcel(Parcel in) {
 		station = in.readString();
 		soon = in.readByte() != 0;
@@ -172,20 +155,13 @@ public class BusInfoNet implements Parcelable {
 
 	}
 
-	/*
-	 * Parcel 에서 Parcelable 클래스의 인스턴스를 만들 때 CREATOR라는 static field를 찾아서 실행 합니다. CREATOR는 Parcelable.Creator<T> type 으로 만들어져야 하는데 이건 선언과 동시에 반드시 initialize 되어야 합니다.
-	 * 
-	 * 클래스 따로 만들어서 initialize 하기도 쉽지 않습니다. 그냥 익명 클래스로 만들어 버립시다.
-	 */
 	public static final Parcelable.Creator<BusInfoNet> CREATOR = new Creator<BusInfoNet>() {
 
-		// 읽기함수 원래 여기에 source.readString 이런식으로 써야한다. 근데 귀찮아서..
 		@Override
 		public BusInfoNet createFromParcel(Parcel source) {
 			return new BusInfoNet(source);
 		}
 
-		// array로 만들때 반환되는 듯
 		@Override
 		public BusInfoNet[] newArray(int size) {
 			return new BusInfoNet[size];

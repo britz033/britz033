@@ -25,7 +25,6 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBar.Tab;
 import android.support.v7.app.ActionBar.TabListener;
 import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -37,11 +36,7 @@ import com.zoeas.util.BackPressStack;
 
 public class MainActivity extends ActionBarActivity implements TabListener, OnCommunicationActivity {
 	
-	private static final String TAG = "MainActivity";
-//	private static final String MY_AD_UNIT_ID = "a152c25e00349af";
-	private static final String MY_AD_UNIT_ID = "7d3f9cfacae641fd";
-
-	private ArrayList<Fragment> flist; // 액티비티가 관리하는 애들
+	private ArrayList<Fragment> flist; 
 
 	public interface CallFragmentMethod {
 		public void OnCalled();
@@ -96,12 +91,6 @@ public class MainActivity extends ActionBarActivity implements TabListener, OnCo
 		actionBarSetting();
 	}
 
-	/*
-	 * asset에서 db 가져와서 기기에 디렉토리 만들고, 거기에 db를 카피 contentprovider가 먼저 호출되면서 덩달아 dbhelper도 호출 덕분에 이 코드는 망함. 그래서 dbhelper 쪽으로 이사감
-	 */
-
-	// commitAllowingStateLoss 를 사용해야 에러가 안난다. 이부분 주의
-	// http://stackoverflow.com/questions/7469082/getting-exception-illegalstateexception-can-not-perform-this-action-after-onsa
 	@Override
 	protected void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
@@ -120,7 +109,6 @@ public class MainActivity extends ActionBarActivity implements TabListener, OnCo
 				flist.add(addFragment);
 			}
 		} catch (Exception e) {
-			Log.d(TAG, "페이지뷰 동적 클래스 생성 실패했습니다");
 			e.printStackTrace();
 		}
 
@@ -177,45 +165,10 @@ public class MainActivity extends ActionBarActivity implements TabListener, OnCo
 		
 		MyTabs[] mytabs = MyTabs.values();
 		for (MyTabs mytab : mytabs) {
-//			View tabView = LayoutInflater.from(this).inflate(R.layout.actionbar_tabview, null);
-//			ImageView tabIcon = (ImageView) tabView.findViewById(R.id.img_maintab);
-//			TextView tabTitle = (TextView) tabView.findViewById(R.id.text_maintab);
-			
-//			tabTitle.setText(mytab.getName());
-//			tabIcon.setImageDrawable(getResources().getDrawable(R.drawable.abc_ic_clear));
-					
 			Tab tab = actionbar.newTab().setText(mytab.getName()).setTabListener(this);
-//			tab.setCustomView(tabView);
 			actionbar.addTab(tab);
 		}
 	}
-
-//	@Override
-//	public boolean onCreateOptionsMenu(Menu menu) {
-//		// Inflate the menu; this adds items to the action bar if it is present.
-//		getMenuInflater().inflate(R.menu.main, menu);
-//		return true;
-//	}
-
-	// 일단 보류. 현재 위젯에서 이 정보를 사용해서 스테이션 결정중
-	// @Override
-	// public void OnSaveBusStationInfo(String station_number, String station_name, LatLng latLng) {
-	//
-	// SharedPreferences setting = getSharedPreferences(PREF_NAME, 0);
-	// SharedPreferences.Editor editor = setting.edit();
-	//
-	// editor.putString("station_number", station_number);
-	// editor.putString("station_name", station_name);
-	// editor.putString("station_longitude", String.valueOf(latLng.longitude));
-	// editor.putString("station_latitude", String.valueOf(latLng.latitude));
-	// editor.commit();
-	//
-	// this.stationNumber = station_number;
-	// this.stationName = station_name;
-	// this.latlng = latLng;
-	//
-	// Toast.makeText(this, latLng.toString() + " 저장되었습니다", 0).show();
-	// }
 
 	@Override
 	public void onTabReselected(Tab arg0, FragmentTransaction arg1) {
@@ -247,7 +200,6 @@ public class MainActivity extends ActionBarActivity implements TabListener, OnCo
 		}
 	}
 
-	// 정류장 검색에서 리스트뷰 즐겨찾기 추가시 불러짐
 	@Override
 	public void OnFavoriteRefresh() {
 		((FavoriteFragment) flist.get(MyTabs.FAVORITE.getValue())).refrashPreview();
@@ -257,9 +209,7 @@ public class MainActivity extends ActionBarActivity implements TabListener, OnCo
 	@Override
 	public void OnTabMove(MyTabs myTab, Bundle data) {
 		int index = myTab.getValue();
-		Log.d(TAG,"탭무브 호출");
 		vp.setCurrentItem(index, false);
-		Log.d(TAG,"탭무브 호출2");
 		if (data != null) {
 			OnCommunicationReceive send = (OnCommunicationReceive) flist.get(index);
 			send.OnReceive(data);

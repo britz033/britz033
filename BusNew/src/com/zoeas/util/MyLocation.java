@@ -9,7 +9,6 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 
 public class MyLocation {
     Timer timer1;
@@ -34,7 +33,6 @@ public class MyLocation {
 
         //don't start listeners if no provider is enabled
         if(!gps_enabled && !network_enabled){
-        	Log.d("위치추적 클래스", "gps net 둘다 지원안함 크리");
             return false;
         }
 
@@ -50,7 +48,6 @@ public class MyLocation {
 
     LocationListener locationListenerGps = new LocationListener() {
         public void onLocationChanged(Location location) {
-        	Log.d("MyLocation","gps 불려짐");
             timer1.cancel();
             locationResult.gotLocation(location);
             lm.removeUpdates(this);
@@ -63,7 +60,6 @@ public class MyLocation {
 
     LocationListener locationListenerNetwork = new LocationListener() {
         public void onLocationChanged(Location location) {
-        	Log.d("MyLocation","net 불려짐");
             timer1.cancel();
             locationResult.gotLocation(location);
             lm.removeUpdates(this);
@@ -74,11 +70,9 @@ public class MyLocation {
         public void onStatusChanged(String provider, int status, Bundle extras) {}
     };
 
-    // 타임오버
     class GetLastLocation extends TimerTask {
         @Override
         public void run() {
-        	Log.d("MyLocation","타임오버 불려짐");
              lm.removeUpdates(locationListenerGps);
              lm.removeUpdates(locationListenerNetwork);
 

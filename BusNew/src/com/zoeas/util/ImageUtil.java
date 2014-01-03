@@ -13,11 +13,8 @@ import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.media.ExifInterface;
 import android.net.Uri;
-import android.util.Log;
 
 public class ImageUtil {
-	
-	private static final String TAG = "imageUtil";
 	
 	private File mTargetFile;
 	private Context mContext;
@@ -42,7 +39,6 @@ public class ImageUtil {
 	}
 	
 
-	/** 이미지 사이즈 수정 후, 카메라 rotation 정보가 있으면 회전 보정함. */
 	private void correctCameraOrientation(File imgFile) {
 		Bitmap bitmap = loadImageWithSampleSize(imgFile); // 크기보정
 		
@@ -197,7 +193,6 @@ public class ImageUtil {
 	 */
 	public void setImageSizeBoundary(int sizePixel, float quality) {
 		mImageSizeBoundary = (int)(sizePixel/quality);
-		Log.d(TAG,"이미지뷰 크기 : " + mImageSizeBoundary);
 	}
 	
 	private void copyUriToFile(Uri srcUri, File target) {

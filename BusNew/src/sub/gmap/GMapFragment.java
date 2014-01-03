@@ -21,13 +21,10 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.ViewStub;
-import android.widget.Button;
 import android.widget.LinearLayout;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -53,8 +50,6 @@ import com.zoeas.util.MyLocation.LocationResult;
 
 public class GMapFragment extends Fragment implements CallFragmentMethod, LoaderCallbacks<Cursor>, OnInfoWindowClickListener, OnMapReadyListener,
 		OnBackAction, OnCameraChangeListener {
-
-	private static final String TAG = "GMapFragment";
 
 	public static final String TAG_MYLOCATION_MAP = "myLocation";
 	public static final double DEFAULT_BOUND = 0.005; // 검색범위
@@ -105,7 +100,6 @@ public class GMapFragment extends Fragment implements CallFragmentMethod, Loader
 		}
 	}
 
-	// 맵 세팅
 	private void setupMapIfNeeded() {
 		if (map == null) {
 			FragmentManager fm = getChildFragmentManager();
@@ -119,7 +113,6 @@ public class GMapFragment extends Fragment implements CallFragmentMethod, Loader
 		}
 	}
 
-	// 맵이 준비되면 자동호출
 	@Override
 	public void OnMapReady(GoogleMap map) {
 		this.map = map;
@@ -129,17 +122,11 @@ public class GMapFragment extends Fragment implements CallFragmentMethod, Loader
 		this.map.setOnInfoWindowClickListener(this);
 	}
 
-	// 생성될때가 아니라 자신이 선택될때 불려진다.
-	// 인터페이스로 메인 ViewPager의 OnPageChangeListener 에서 호출한다.
 	@Override
 	public void OnCalled() {
 		if (isGoogleServiceInstalled) {
-			Log.d(TAG, "oncalled 인터페이스메소드 호출");
 			loadingLayout.setVisibility(View.VISIBLE);
 
-			// MyLocation 클래스 콜백 리스너. gps나 네트웤 위치 신호가 오기까지 기다리다가 onchange 리스너가
-			// 호출되면
-			// 그 결과값을 gotLocation 메소드로 리턴해준다.
 			LocationResult locationResult = new LocationResult() {
 				@Override
 				public void gotLocation(Location location) {
@@ -186,7 +173,6 @@ public class GMapFragment extends Fragment implements CallFragmentMethod, Loader
 	public void onLoadFinished(Loader<Cursor> loader, Cursor c) {
 
 		Handler handler = new Handler();
-		// 기존의 cursor를 그대로 불러오기 때문에 시작시 반드시 커서위치를 처음으로 되돌려줘야함
 		c.moveToFirst();
 		markerList = new ArrayList<Marker>();
 
@@ -237,9 +223,6 @@ public class GMapFragment extends Fragment implements CallFragmentMethod, Loader
 
 	@Override
 	public void onCameraChange(CameraPosition cPosition) {
-		Log.d(TAG, "카메라 체인지" + cPosition.target.latitude);
-
-		// 로더완료전에 진입할 가능성이 큼. 그때를 위해 무시용
 		if (markerList != null && markerList.size() != 0) {
 			LatLng centerLatLng = cPosition.target;
 			LatLng markerLatLng = null;

@@ -9,7 +9,6 @@ import android.graphics.drawable.BitmapDrawable;
 import android.os.Environment;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -20,14 +19,7 @@ import android.widget.RelativeLayout;
 
 import com.zoeas.qdeagubus.MainActivity;
 import com.zoeas.qdeagubus.R;
-
-/*
- * 프리뷰 미리보기 페이져 어뎁터
- * 현재는 일단 글자만 표현
- */
 public class FavoritePreviewPagerAdapter extends PagerAdapter {
-
-	private static final String TAG = "FavoritePreviewPagerAdapter";
 
 	private Context context;
 	private Cursor cursor;
@@ -39,8 +31,6 @@ public class FavoritePreviewPagerAdapter extends PagerAdapter {
 	public FavoritePreviewPagerAdapter(Context context, Cursor c) {
 		this.context = context;
 		this.cursor = c;
-		// if (cursor != null)
-		// cursor.moveToFirst(); // 바깥에서 이미 커서를 움직일지도 모르므로 그냥 무조건 첫번째로
 
 		inflater = LayoutInflater.from(context);
 		startSetting = false;
@@ -138,7 +128,6 @@ public class FavoritePreviewPagerAdapter extends PagerAdapter {
 		if (this.cursor == cursor)
 			return;
 		if (cursor != null)
-			Log.d(TAG, String.valueOf("프리뷰 갯수:" +cursor.getCount()));
 		this.cursor = cursor;
 		dummy.swapAdapter(this);
 		notifyDataSetChanged();

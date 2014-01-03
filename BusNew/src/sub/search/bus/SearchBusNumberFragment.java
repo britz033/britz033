@@ -33,8 +33,6 @@ import com.zoeas.qdeagubus.R;
 public class SearchBusNumberFragment extends ListFragment implements LoaderCallbacks<Cursor>, TextWatcher,
 		OnKeyListener, OnBackAction, OnCommunicationReceive{
 
-	private static final String TAG = "SearchBusNumberFragment";
-	
 	private Context context;
 	private BusSearchListCursorAdapter busAdapter;
 	private EditText et;
@@ -46,15 +44,10 @@ public class SearchBusNumberFragment extends ListFragment implements LoaderCallb
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		context = getActivity();
 		View view = inflater.inflate(R.layout.fragment_search_bus_layout, null);
-		// view.setOnTouchListener(this);
 
 		et = (EditText) view.findViewById(R.id.edit_fragment_search_bus);
 		et.addTextChangedListener(this);
-//		et.setInputType(InputType.TYPE_CLASS_NUMBER);
 		et.setOnKeyListener(this);
-//		if (getArguments() != null) {
-//			et.setText(getArguments().getString(SELECTION_KEY));
-//		}
 
 		imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
 
@@ -150,24 +143,5 @@ public class SearchBusNumberFragment extends ListFragment implements LoaderCallb
 		et.setText(data.getString(SELECTION_KEY));
 		Toast.makeText(context, "뒤로가기를 누르시면 즐겨찾기로 되돌아갑니다", Toast.LENGTH_SHORT).show();
 	}
-
-	// @Override
-	// public boolean onTouch(View v, MotionEvent event) {
-	// if(event.getAction() == MotionEvent.ACTION_DOWN){
-	// // 에디터의 영역을 가져감
-	// Rect rect = new Rect();
-	// et.getGlobalVisibleRect(rect);
-	//
-	// Log.d(TAG,"불려짐");
-	//
-	// if(!rect.contains((int)event.getRawX(), (int)event.getRawY())){
-	// et.clearFocus();
-	// imm.hideSoftInputFromWindow(et.getWindowToken(),
-	// InputMethodManager.HIDE_NOT_ALWAYS);
-	// }
-	// }
-	// return false;
-	// }
-	//
 
 }

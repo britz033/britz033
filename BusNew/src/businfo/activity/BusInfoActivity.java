@@ -19,7 +19,6 @@ import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -57,16 +56,8 @@ import com.zoeas.util.CalculateC;
 import com.zoeas.util.LoopQuery;
 import com.zoeas.util.Switch;
 
-/*
- * 일반 버스 리스트에서 검색말고
- * 전광판에서 가져오는 것은 그냥 텍스트를 매치 시키는 것이기때문에 에러날 소지가 큼
- * 쿼리시 에러가 나면 try문으로 캐취해서 경고문 띄움
- */
-
 public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks<Cursor>, OnPageChangeListener,
 		OnClickListener, OnActionInfoWindowClickListener<Integer>{
-
-	private static final String TAG = "BusInfoActivity";
 
 	public static final String KEY_BUS_ID = "BUSID";
 	public static final String KEY_BUS_NAME = "BUSNAME";
@@ -100,7 +91,6 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 	private boolean userControlAllowed;
 	private Switch pathSwitchWidget;
 	private Drawable[] drawables;
-	private int busId;
 	private BackPressStack backPressStack;
 	private FrameLayout stationListViewContainer;
 	private FrameLayout barContainer;
@@ -136,7 +126,6 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 		// 각정보를 넣을 곳을 기본 세팅하고 쿼리를 스타트
 		pathPager = (ViewPager) findViewById(R.id.viewpager_activity_businfo_path);
 
-		String busId = getIntent().getExtras().getString(KEY_BUS_ID);
 		String busName = getIntent().getExtras().getString(KEY_BUS_NAME);
 		currentStationName = getIntent().getExtras().getString(KEY_CURRENT_STATION_NAME);
 		TextView textBusNumber = (TextView) findViewById(R.id.text_activity_businfo_number);
@@ -192,7 +181,6 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 		// 정방향 역방향의 모든 버스정류장 이름을 추출
 		getSupportLoaderManager().initLoader(LOADER_ID_INIT, getIntent().getExtras(), this);
 
-		Log.d(TAG, "onCreate 호출");
 	}
 
 	@Override
@@ -206,7 +194,6 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 
 	}
 
-	// 액티비티니까 null 걱정없이 바로 xml에서 map 가져옴
 	private void mapSetIfNeeded() {
 		if (!actionMapForward.isMap() || !actionMapBackward.isMap()) {
 			actionMapForward.setMap(((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.busmap))
@@ -218,16 +205,13 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 		actionMapBackward.moveMap(DEAGU); // 처음로딩때 대구시
 	}
 
-	// 모든 버스 정류장 이름이 추출된 후 호출됨, 여기서 스위치에 따라 정방향,역방향을 구분, 처음 시작시 한번만 호출
 	private void initBusInfo() {
-		Log.d(TAG, "busInfo 초기화불려짐 이것은 한번만 불려져야함");
 		try {
 			mcursor.moveToFirst();
 
 			String busInterval = mcursor.getString(1);
 			String busForward = mcursor.getString(2);
 			String busBackward = mcursor.getString(3);
-			busId = mcursor.getInt(0);
 
 			Pattern pattern = Pattern.compile("([^;]+);");
 			Matcher matcherForward = pattern.matcher(busForward);
@@ -289,7 +273,6 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 		pathPager.setOnPageChangeListener(this);
 	}
 
-	// 이 쿼리문 자체는 정방향, 역방향의 영향을 받지 않는 순수한 쿼리
 	@Override
 	public Loader<Cursor> onCreateLoader(int id, Bundle data) {
 
@@ -297,11 +280,8 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 		String[] projection = null;
 		String selection = null;
 
-		// 0 번은 스위치에 관계없이 무조건 불려져야하는 버스자체의 정보
-		// 1번은 들어오는 정류장이름으로 좌표 추출, 2번은 즐겨찾기추가 업데이트
 		switch (id) {
 		case LOADER_ID_INIT:
-			Log.d(TAG, "로더 초기화 생성");
 			uri = MyContentProvider.CONTENT_URI_BUS;
 			projection = new String[] { "_id", "bus_interval", "bus_forward", "bus_backward" };
 			selection = "bus_id='" + data.getString(KEY_BUS_ID) + "'";
@@ -329,8 +309,7 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 		}
 
 		switch (loader.getId()) {
-		case LOADER_ID_INIT: // 무조건 한번만 불려짐, 즐겨찾기 추가등으로 업데이트 되었을시 불려지는걸 방지 단,
-								// 즐겨찾기정보만은 업데이트
+		case LOADER_ID_INIT: 
 			if (!userControlAllowed) {
 				mcursor = cursor;
 				initBusInfo();
@@ -343,31 +322,16 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 			}
 			break;
 
-		// 역의 좌표,경로(두방향모두),경유버스 저장
 		case LoopQuery.DEFAULT_LOOP_QUERY_ID:
 			try {
 				cursor.moveToNext();
-				Log.d(TAG, cursor.getString(1));
 				LatLng latLng = new LatLng(cc.getData(cursor.getDouble(2)), cc.getData(cursor.getDouble(3)));
 				actionMapDirection.addLatLngPoint(latLng);
 				pathFavorite.put(cursor.getInt(0), cursor.getInt(5));
-				passBusHash.put(cursor.getInt(0), cursor.getString(4)); // 나중에
-																		// 꺼낼
-																		// pass
-																		// 저장,
-																		// id별로
-																		// 저장
-				stationIdDirection[loopQueryStation.getCount() - 1] = cursor.getInt(0); // 각
-																						// 마커마다
-																						// 순서대로
-																						// id를
-																						// 전달하기
-																						// 위해
-																						// 저장중
+				passBusHash.put(cursor.getInt(0), cursor.getString(4)); 
+				stationIdDirection[loopQueryStation.getCount() - 1] = cursor.getInt(0); 
 
-				// 일단 양쪽 모두 돌리는데 정류장이 발견되면 현재 돌고 있는 방향을 저장
 				if (cursor.getString(1).equals(currentStationName)) {
-					Log.d(TAG, "정류장 존재");
 					actionMapDirection.aniMap(latLng);
 					saveIndex = loopQueryStation.getCount() - 1;
 					busDirection = currentDirection;
@@ -375,7 +339,6 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 				if (!loopQueryStation.isEnd()) {
 					loopQueryStation.restart();
 				} else if (currentDirection != BACKWARD && pathBackward.size() != 0) {
-					Log.d(TAG, "역방향으로 체인지");
 					currentDirection = BACKWARD;
 					settingSwitch(BACKWARD);
 					String[] newPath = pathDirection.toArray(new String[pathDirection.size()]);
@@ -390,8 +353,7 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 			break;
 
 		case LoopQuery.LOOP_QUERY_ID_2:
-			if (cursor.getCount() != 0) { // 대구버스통계가 뭐 같아서.. 아직 만들지도 않은 버스를 미리
-											// 넣어놨을 경우 없다고 뜸 ㅡ,.ㅡ;;;
+			if (cursor.getCount() != 0) { 
 				cursor.moveToNext();
 				loopQueryBusnum.addResultData(cursor.getString(0), cursor.getString(1));
 			}
@@ -461,7 +423,6 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 		});
 	}
 
-	// 모든 로딩이 끝나고 저장된 마커정보를 바탕으로 마커를 찍고 경로를 그림
 	private void finishLoading() {
 		currentDirection = busDirection;
 		settingMapPath();
@@ -498,7 +459,6 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 
 	@Override
 	public void onLoaderReset(Loader<Cursor> arg0) {
-		Log.d(TAG, "LOADER RESET 불려짐");
 	}
 
 	@Override
@@ -516,8 +476,6 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 		final int NOMAL_SELECTED = 1;
 		int positionEnd = pathDirection.size() - 1;
 
-		// 주의점 : 종점에 갔을때 다시한번 밀면 position이 보이지 않는 놈의 번호로 바뀌는 경우가 있음. 이때 인덱스 오버해서
-		// 에러가 남 그것을 방지
 		position = (position >= pathDirection.size() ? position - 1 : position);
 		if (userControlAllowed) {
 			actionMapDirection.removeMarker();
@@ -525,7 +483,6 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 			actionMapDirection.addMarkerAndShow(position, pathDirection.get(position), stationIdDirection[position]);
 		}
 
-		// 첫로딩시 가져오면 에러가 남.. instantiateItem 쪽 개념때문인듯. 이거 어떻게든 해야되는데..
 		if (position != prePosition) {
 			ImageView preImg = (ImageView) ((BusInfoPathItemFragment) pathPager.getAdapter().instantiateItem(pathPager,
 					prePosition + 2)).getView().findViewById(R.id.img_path);
@@ -554,14 +511,12 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 
 	@Override
 	public void onPageScrollStateChanged(int state) {
-		// TODO Auto-generated method stub
 
 	}
 
 	private EditText et;
 	private AlertDialog searchDialog;
 
-	// 검색창을 보여주거나 즐겨찾기를 추가
 	@Override
 	public void onClick(View v) {
 		switch (v.getId()) {
@@ -591,7 +546,6 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 		searchResult();
 	}
 
-	// 검색결과를 리스트뷰로 보여줌.
 	private void searchResult() {
 		String s = et.getText().toString();
 		final ArrayList<Integer> saveSearchPoint = new ArrayList<Integer>();
@@ -629,7 +583,6 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 			stationListView.setOnItemClickListener(new OnItemClickListener() {
 				@Override
 				public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-					// 선택된 좌표로 이동
 					actionMapDirection.aniMap(saveSearchPoint.get(position));
 					searchedMarkerList.get(position).showInfoWindow();
 					
@@ -682,8 +635,6 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 		loopQueryBusnum.start();
 	}
 
-	// 경유버스 목록 닫기, 검색된 버스 목록 닫고 경로 목록 열기, 각각은 겹치지 않게 경유버스가 안닫혔으면 검색 버스가 안열리는
-	// 식으로.. 이거 잘못하면 에러 박살남
 	@Override
 	public void onBackPressed() {
 		switch (backPressStack.pop()) {

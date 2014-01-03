@@ -26,7 +26,6 @@ import android.support.v4.app.ListFragment;
 import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
 import android.text.style.ForegroundColorSpan;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,23 +40,11 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import businfo.activity.BusInfoActivity;
 
-import com.nineoldandroids.animation.Animator;
-import com.nineoldandroids.animation.ArgbEvaluator;
-import com.nineoldandroids.animation.ObjectAnimator;
-import com.nineoldandroids.animation.ValueAnimator;
 import com.zoeas.qdeagubus.MainActivity;
 import com.zoeas.qdeagubus.MyContentProvider;
 import com.zoeas.qdeagubus.R;
 
-/**
- * 즐겨찾기의 정류소별 전광판 정보를 리스트뷰로 뿌림 busList 가 null 로 오는 것때문에 골치.. error 값부터 새로 만들어야할듯
- * 
- * @author lol
- * 
- */
 public class FavoriteFragmentBusList extends ListFragment {
-
-	private static final String TAG = "FavoriteFragmentBusList";
 
 	private Context context;
 	private ArrayList<BusInfoNet> netList;
@@ -103,19 +90,7 @@ public class FavoriteFragmentBusList extends ListFragment {
 		}
 	}
 
-	/**
-	 * 제거 체크가 되어 있는지 확인하고 체크되어 있으면 체크된 것을 제거하고 남은 것들로 보여주기를 시작한다 이때 전광판에서 정보가 오지 않은 것들은 회색으로 뿌리고 그외는 정보표시를 한다. 이때 전광판에서 정보와 버스리스트가 매치되지 않으면 전광판에 나타난 번호를 기준으로 버스리스트를 다 지워버린다 예를들어
-	 * 300번이 있는데 버스리스트는 300(냥) 300(스파르타)라고 있으면 이 둘은 통합되어 있다보고 삭제시킨다 만약 300과 300(냥)이 전광판에 뜬다면 300(냥)과 300은 그냥 뜨고 300(스파르타) 가 삭제된다 혹시 300과 300(냥)과 300(스파르타)가 다 전광판에 나오는데 이번에만 300이 떠서
-	 * 나머지가 삭제된 경우라고 치더라도 어쩔수 없다 다만 그렇게 삭제되더라도 다음에 매치시 나올테니 그걸로 위안 삼는다
-	 * */
 	private void bindInfo() {
-
-		// for (int k = 0; k < busListCopy.size(); k++) {
-		// if (busListCopy.get(k).getBusFavorite() == 0) {
-		// busListCopy.remove(k);
-		// k--;
-		// }
-		// }
 
 		if (passFavorite != null && passFavorite.length() == busListCopy.size()) {
 			int index = 0;
@@ -141,34 +116,25 @@ public class FavoriteFragmentBusList extends ListFragment {
 
 		HashMap<Integer, Integer> removeIndexHash = new HashMap<Integer, Integer>();
 
-		// 완전일치시 net은 정보저장, busList는 제거
-		// 불완전일치시 net은 이동하게, busList는 제거
-		// 일치가 없을시 busList는 그냥 뿌림.
-		// 리스트체커 제거시 net은 제거, busList는 이미 위에서 제거된 상태
 		for (int i = 0; i < netList.size(); i++) {
 			for (int j = 0; j < busListCopy.size(); j++) {
 
 				BusInfoNet netInfo = netList.get(i);
 				if (netInfo.getBusNum().equals(busListCopy.get(j).getBusNum())) {
 					if (netInfo.getRoute().equals(busListCopy.get(j).getBusOption())) {
-						// 완전 일치시
 						netInfo.setBusId(busListCopy.get(j).getBusId());
 						busListCopy.remove(j);
 						j--;
 						break;
 					} else {
-						// 버스 이름만 일치시, net은 이동전용 id를 붙여주고, busList의 인덱스는 저장
-						// 최종적으로 그 버스가 이름만 일치한다는게 판명되면 제거
 						netInfo.setBusId("0");
 
 					}
 
 				}
 			}
-			// 번호도 없음 -> 앞서 favorite 리스트에서 제거된 것이므로 여기서도 필요없음
 			if (netList.get(i).getBusId() == null) {
 				netList.remove(i--);
-				Log.d(TAG, "전광판 정보가 하나 제거됨");
 			}
 		}
 
@@ -298,7 +264,6 @@ public class FavoriteFragmentBusList extends ListFragment {
 
 			convertView.setBackgroundColor(Color.argb(position%2 * 30, 48, 99, 208));
 
-			// 넷에서 가져온게 일치하는 경우는 넷정보를 뿌리고 그렇지 않은 것들은 그냥 이름만 뿌림
 			if (position < netSize) {
 				SpannableStringBuilder ssb = netList.get(position).getSpannableStringBusInfo(density);
 				if (netList.get(position).isSoon()) {
