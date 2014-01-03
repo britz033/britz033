@@ -414,6 +414,14 @@ public class BusInfoActivity extends FragmentActivity implements LoaderCallbacks
 		slidingBusListView = (RelativeLayout) LayoutInflater.from(this).inflate(R.layout.layout_sliding_menu,
 				slidingRootView, false);
 		slidingBusListView.setClickable(true);
+		slidingBusListView.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				backPressStack.pop();
+				slidingMenuClose();
+			}
+		});
 		ListView slidingList = (ListView) slidingBusListView.findViewById(R.id.listview_sliding_menu);
 		SlidingMenuAdapter slidingAdapter = new SlidingMenuAdapter(this, loopQueryBusnum.getResultData());
 		slidingList.setOnItemClickListener(slidingAdapter);

@@ -34,6 +34,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.OnCameraChangeListener;
 import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
@@ -199,7 +200,7 @@ public class GMapFragment extends Fragment implements CallFragmentMethod, Loader
 
 			if (ActionMap.isInsideCircle(circle, boundLatLng)) {
 				final MarkerOptions op = new MarkerOptions();
-				op.title(station_name).snippet(station_number).position(boundLatLng);
+				op.title(station_name).snippet(station_number).position(boundLatLng).icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_bus));
 				handler.postDelayed(new Runnable() {
 					@Override
 					public void run() {

@@ -40,6 +40,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
@@ -457,6 +458,15 @@ public class SearchStationFragment extends ListFragment implements LoaderCallbac
 		
 		slidingBusListView = (RelativeLayout) LayoutInflater.from(context).inflate(R.layout.layout_sliding_menu, view, false);
 		slidingBusListView.setClickable(true);
+		slidingBusListView.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				MainActivity.backAction.pop();
+				closeMenu();
+			}
+		});
+		
 		ListView slidingList = (ListView) slidingBusListView.findViewById(R.id.listview_sliding_menu);
 		SlidingMenuAdapter slidingAdapter = new SlidingMenuAdapter(context, busNumloopQuery.getResultData());
 		slidingList.setOnItemClickListener(slidingAdapter);
@@ -497,6 +507,11 @@ public class SearchStationFragment extends ListFragment implements LoaderCallbac
 
 	@Override
 	public void onBackPressed() {
+		closeMenu();
+	}
+
+	
+	private void closeMenu(){
 		Animator ani = ObjectAnimator.ofFloat(slidingBusListView, "translationX", 0, -300);
 		ani.setDuration(100);
 
@@ -519,9 +534,8 @@ public class SearchStationFragment extends ListFragment implements LoaderCallbac
 			}
 		});
 		ani.start();
-
 	}
-
+	
 	@Override
 	public void onClear() {
 		view.removeView(slidingBusListView); // 만약 탭을 2단계 이상 즉시 이동할 경우

@@ -122,7 +122,7 @@ public class FavoritePreviewPagerAdapter extends PagerAdapter {
 		if (cursor == null)
 			return null;
 		if (startSetting)
-			return "정류장 즐겨찾기를 추가하세요";
+			return "";
 		cursor.moveToPosition(position);
 		return cursor.getString(1);
 	}

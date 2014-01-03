@@ -40,9 +40,9 @@ public class BusSearchListCursorAdapter extends CursorAdapter implements OnTouch
         bindView(v, mContext, mCursor);
         
         if(position%2==0){
-			v.setBackgroundColor(context.getResources().getColor(R.color.color_test));
+			v.setBackgroundColor(context.getResources().getColor(R.color.color_blueWhite));
 		} else {
-			v.setBackgroundColor(context.getResources().getColor(R.color.color_test2));
+			v.setBackgroundColor(context.getResources().getColor(R.color.color_blueDark));
 		}
         
         return v;

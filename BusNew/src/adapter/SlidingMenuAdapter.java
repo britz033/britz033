@@ -65,8 +65,15 @@ public class SlidingMenuAdapter extends BaseAdapter implements OnItemClickListen
 			rl = (RelativeLayout) convertView;
 		}
 		
+		
 		tv = (TextView) rl.findViewById(R.id.text_sliding_menu);
 		tv.setText(data.get(position)[0]);
+		
+		if(position%2==0){
+			rl.setBackgroundColor(context.getResources().getColor(R.color.color_blueWhite));
+		} else {
+			rl.setBackgroundColor(context.getResources().getColor(R.color.color_blueDark));
+		}
 		
 		return rl;
 	}

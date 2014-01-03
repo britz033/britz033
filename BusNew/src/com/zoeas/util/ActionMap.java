@@ -158,7 +158,8 @@ public class ActionMap<MarkerInfo> implements OnInfoWindowClickListener {
 
 	public void setMap(GoogleMap map) {
 		this.map = map;
-		markerDefaultOptions = new MarkerOptions().icon(BitmapDescriptorFactory.defaultMarker(220));
+//		markerDefaultOptions = new MarkerOptions().icon(BitmapDescriptorFactory.defaultMarker(220));
+		markerDefaultOptions = new MarkerOptions().icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_bus));
 	}
 
 	// 색이 다르게 할 수는 있지만 라인이 가닥가닥 따로 그리기에 끊김 현상이 발생
@@ -249,6 +250,7 @@ public class ActionMap<MarkerInfo> implements OnInfoWindowClickListener {
 	 */
 	public Marker addMarker(MarkerOptions options, MarkerInfo additionalInfo) {
 		if (map != null) {
+			options.icon(markerDefaultOptions.getIcon());
 			preMarker = map.addMarker(options);
 			markerAdditionalInfo.put(preMarker, additionalInfo);
 			return preMarker;
@@ -319,6 +321,7 @@ public class ActionMap<MarkerInfo> implements OnInfoWindowClickListener {
 	 */
 	public Marker addMarkerAndShow(MarkerOptions options, MarkerInfo additionalInfo) {
 		if (map != null) {
+			options.icon(markerDefaultOptions.getIcon());
 			preMarker = map.addMarker(options);
 			preMarker.showInfoWindow();
 			markerAdditionalInfo.put(preMarker, additionalInfo);

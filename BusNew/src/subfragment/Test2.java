@@ -103,9 +103,9 @@ public class Test2 extends ListFragment implements OnBackAction, LoaderCallbacks
 			
 			View view = LayoutInflater.from(context).inflate(R.layout.test2_list_item, null);
 			if(position%2==0){
-				view.setBackgroundColor(getResources().getColor(R.color.color_test));
+				view.setBackgroundColor(getResources().getColor(R.color.color_blueWhite));
 			} else {
-				view.setBackgroundColor(getResources().getColor(R.color.color_test2));
+				view.setBackgroundColor(getResources().getColor(R.color.color_blueDark));
 			}
 			
 			TextView tv = (TextView) view.findViewById(R.id.text_listitem_test2);
