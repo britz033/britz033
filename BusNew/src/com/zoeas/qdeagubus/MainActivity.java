@@ -94,10 +94,10 @@ public class MainActivity extends ActionBarActivity implements TabListener, OnCo
 		setContentView(R.layout.activity_main);
 
 		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+		initAds();
 		viewPagerSetting();
 		actionBarSetting();
 		this.setAdsContainer(R.id.ads);
-		initAds();
 		
 	}
 
