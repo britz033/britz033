@@ -2,9 +2,9 @@ package sub.gmap;
 
 import java.util.ArrayList;
 
+import sub.search.station.CustomMapFragment;
 import sub.search.station.SearchStationFragment;
-import subfragment.CustomMapFragment;
-import subfragment.CustomMapFragment.OnMapReadyListener;
+import sub.search.station.CustomMapFragment.OnMapReadyListener;
 import adapter.OnCommunicationActivity;
 import android.app.Activity;
 import android.content.Context;

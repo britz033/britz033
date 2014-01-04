@@ -124,6 +124,10 @@ public class ActionMap<MarkerInfo> implements OnInfoWindowClickListener {
 		this.map = map;
 		markerDefaultOptions = new MarkerOptions().icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_bus2));
 	}
+	
+	public float getZoom(){
+		return map.getCameraPosition().zoom;
+	}
 
 	public void addLatLngPoint(LatLng point) {
 		latLngList.add(point);
@@ -275,13 +279,13 @@ public class ActionMap<MarkerInfo> implements OnInfoWindowClickListener {
 		}
 	}
 
-	public void aniMap(LatLng latLng, int zoom) {
+	public void aniMap(LatLng latLng, float zoom) {
 		if (map != null) {
 			map.animateCamera(CameraUpdateFactory.newLatLngZoom(adjustDefault(latLng, zoom), zoom));
 		}
 	}
 	
-	public void aniMapZoom(int zoom){
+	public void aniMapZoom(float zoom){
 		map.animateCamera(CameraUpdateFactory.zoomTo(zoom));
 	}
 	
@@ -310,18 +314,21 @@ public class ActionMap<MarkerInfo> implements OnInfoWindowClickListener {
 		defaultAdjust = adjust;
 	}
 
-	private LatLng adjustDefault(LatLng latLng, int zoom) {
+	private LatLng adjustDefault(LatLng latLng, float zoom) {
 		if (defaultAdjust) {
-			switch(zoom){
+			switch((int)zoom){
 			case ZOOM_IN :
 				return new LatLng(latLng.latitude + ADJUST_INFO_CENTER_IN, latLng.longitude);
 			case ZOOM_NOMAL :
 				return new LatLng(latLng.latitude + ADJUST_INFO_CENTER_NOMAL, latLng.longitude);
 			case ZOOM_OUT :
 				return new LatLng(latLng.latitude + ADJUST_INFO_CENTER_NOMAL, latLng.longitude);
+			case 15:
+				return new LatLng(latLng.latitude + 0.0015d, latLng.longitude);
 			}
 			
 		}
+		
 		return latLng;
 	}
 

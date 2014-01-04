@@ -2,8 +2,7 @@ package sub.search.station;
 
 import java.util.ArrayList;
 
-import subfragment.CustomMapFragment;
-import subfragment.CustomMapFragment.OnMapReadyListener;
+import sub.search.station.CustomMapFragment.OnMapReadyListener;
 import adapter.OnCommunicationReceive;
 import adapter.SlidingMenuAdapter;
 import android.app.Activity;
@@ -285,7 +284,7 @@ public class SearchStationFragment extends ListFragment implements LoaderCallbac
 			double latitude = cc.setData(args.getDouble(KEY_WIDE_LATITUDE));
 			double longitude = cc.setData(args.getDouble(KEY_WIDE_LONGITUDE));
 
-			double bound = cc.setData(0.005);
+			double bound = cc.setData(0.003);
 			double minLatitude = latitude - bound;
 			double maxLatitude = latitude + bound;
 			double minLongitude = longitude - bound;
@@ -484,7 +483,9 @@ public class SearchStationFragment extends ListFragment implements LoaderCallbac
 				Marker selectInfo = wideMarkerList.get(firstVisibleItem);
 				selectInfo.showInfoWindow();
 
-				actionMap.aniMap(selectInfo.getPosition(), ActionMap.ZOOM_NOMAL);
+				// xxxx
+				actionMap.aniMap(selectInfo.getPosition(), 15);
+//				actionMap.aniMap(selectInfo.getPosition(), actionMap.getZoom());
 			}
 		}
 	}

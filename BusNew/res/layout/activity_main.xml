@@ -1,5 +1,6 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:ads="http://schemas.android.com/apk/lib/com.google.ads"
+    xmlns:mobilead="http://schemas.android.com/apk/res/com.zoeas.qdeagubus"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/layout_root_main"
     android:layout_width="match_parent"
@@ -13,17 +14,29 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1" />
-    <com.google.ads.AdView
-        android:id="@+id/adView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        ads:adSize="BANNER"
-        ads:adUnitId="a152c25e00349af"
-        ads:loadAdOnCreate="true"
-        ads:testDevices="TEST_EMULATOR, 2D62D62F1BBF31AA650A570EC8251DF1" />
+
+<!--     <com.google.ads.AdView -->
+<!--         android:id="@+id/adView" -->
+<!--         android:layout_width="match_parent" -->
+<!--         android:layout_height="wrap_content" -->
+<!--         ads:adSize="SMART_BANNER" -->
+<!--         ads:adUnitId="a152c25e00349af" -->
+<!--         ads:loadAdOnCreate="true" -->
+<!--         ads:refreshInterval="30" /> -->
+
+<!--     <com.nbpcorp.mobilead.sdk.MobileAdView -->
+<!--         android:id="@+id/adview1" -->
+<!--         android:layout_width="fill_parent" -->
+<!--         android:layout_height="wrap_content" -->
+<!--         android:layout_gravity="bottom" -->
+<!--         mobilead:channel_id="mandroid_db438e7a52cc43b69c98be144cf0836b" -->
+<!--         mobilead:test="true" /> -->
     
-<!--에뮬     2D62D62F1BBF31AA650A570EC8251DF1 -->
-<!--에뮬2     3FEFB0C3226CFA214A5C0DCB5EC38023 -->
-<!--내폰     714ED3CAFF3F8CABEABD026D4D6563C4 -->
+    <!-- adlib adview -->
+    <com.mocoplex.adlib.AdlibAdViewContainer
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/ads"
+        isDefaultBanner="true" />
 
 </LinearLayout>

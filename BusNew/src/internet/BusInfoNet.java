@@ -61,9 +61,11 @@ public class BusInfoNet implements Parcelable {
 			spb.append(current).append(" ");
 		} else {
 			num.setSpan(new ForegroundColorSpan(Color.WHITE), 0, num.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-			spb.append(num).append(" ");
-			SpannableString s = new SpannableString("\n놓쳤을 가능성 있음");
+			SpannableString s = new SpannableString("[전 출발] 혹은 [현재 이미 역을 지나침]");
 			s.setSpan(new AbsoluteSizeSpan((int)(textSize/2)), 0, s.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+			spb.append(num).append(s);
+			s = new SpannableString("\n대구버스 홈페이지 정보는 1분정도의 오차가 있을 수 있습니다");
+			s.setSpan(new AbsoluteSizeSpan((int)(textSize/3)), 0, s.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 			spb.append(s);
 		}
 

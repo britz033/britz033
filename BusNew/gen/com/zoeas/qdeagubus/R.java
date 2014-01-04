@@ -285,6 +285,14 @@ theme attribute (in the form
 containing a value of this type.
          */
         public static final int cameraZoom=0x7f010005;
+        /** <p>Must be a string value, using '\\;' to escape characters such as '\\n' or '\\uxxxx' for a unicode character.
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+         */
+        public static final int channel_id=0x7f010083;
         /** <p>Must be a color value, in the form of "<code>#<i>rgb</i></code>", "<code>#<i>argb</i></code>",
 "<code>#<i>rrggbb</i></code>", or "<code>#<i>aarrggbb</i></code>".
 <p>This may also be a reference to a resource (in the form
@@ -827,6 +835,14 @@ containing a value of this type.
 or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>".
          */
         public static final int switchStyle=0x7f010078;
+        /** <p>Must be a boolean value, either "<code>true</code>" or "<code>false</code>".
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+         */
+        public static final int test=0x7f010084;
         /**  Present the text in ALL CAPS. This may use a small-caps form when available. 
          <p>May be a reference to another resource, in the form "<code>@[+][<i>package</i>:]<i>type</i>:<i>name</i></code>"
 or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>".
@@ -1327,7 +1343,7 @@ containing a value of this type.
         public static final int action_mode_close_button=0x7f070025;
         public static final int action_settings=0x7f070086;
         public static final int activity_chooser_view_content=0x7f070026;
-        public static final int adView=0x7f070055;
+        public static final int ads=0x7f070055;
         public static final int always=0x7f07000f;
         public static final int bar_container=0x7f070052;
         public static final int beginning=0x7f070014;
@@ -3826,5 +3842,48 @@ containing a value of this type.
           @attr name com.zoeas.qdeagubus:paddingStart
         */
         public static final int View_paddingStart = 1;
+        /** Attributes that can be used with a com_nbpcorp_mobilead_sdk_MobileADView.
+           <p>Includes the following attributes:</p>
+           <table>
+           <colgroup align="left" />
+           <colgroup align="left" />
+           <tr><th>Attribute</th><th>Description</th></tr>
+           <tr><td><code>{@link #com_nbpcorp_mobilead_sdk_MobileADView_channel_id com.zoeas.qdeagubus:channel_id}</code></td><td></td></tr>
+           <tr><td><code>{@link #com_nbpcorp_mobilead_sdk_MobileADView_test com.zoeas.qdeagubus:test}</code></td><td></td></tr>
+           </table>
+           @see #com_nbpcorp_mobilead_sdk_MobileADView_channel_id
+           @see #com_nbpcorp_mobilead_sdk_MobileADView_test
+         */
+        public static final int[] com_nbpcorp_mobilead_sdk_MobileADView = {
+            0x7f010083, 0x7f010084
+        };
+        /**
+          <p>This symbol is the offset where the {@link com.zoeas.qdeagubus.R.attr#channel_id}
+          attribute's value can be found in the {@link #com_nbpcorp_mobilead_sdk_MobileADView} array.
+
+
+          <p>Must be a string value, using '\\;' to escape characters such as '\\n' or '\\uxxxx' for a unicode character.
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+          @attr name com.zoeas.qdeagubus:channel_id
+        */
+        public static final int com_nbpcorp_mobilead_sdk_MobileADView_channel_id = 0;
+        /**
+          <p>This symbol is the offset where the {@link com.zoeas.qdeagubus.R.attr#test}
+          attribute's value can be found in the {@link #com_nbpcorp_mobilead_sdk_MobileADView} array.
+
+
+          <p>Must be a boolean value, either "<code>true</code>" or "<code>false</code>".
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+          @attr name com.zoeas.qdeagubus:test
+        */
+        public static final int com_nbpcorp_mobilead_sdk_MobileADView_test = 1;
     };
 }
