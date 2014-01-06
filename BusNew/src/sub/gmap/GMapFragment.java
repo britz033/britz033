@@ -3,11 +3,14 @@ package sub.gmap;
 import java.util.ArrayList;
 
 import sub.search.station.CustomMapFragment;
-import sub.search.station.SearchStationFragment;
 import sub.search.station.CustomMapFragment.OnMapReadyListener;
+import sub.search.station.SearchStationFragment;
 import adapter.OnCommunicationActivity;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.location.Location;
@@ -15,6 +18,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.preference.CheckBoxPreference;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -25,7 +29,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewStub;
+import android.widget.CheckBox;
 import android.widget.LinearLayout;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -53,6 +60,9 @@ public class GMapFragment extends Fragment implements CallFragmentMethod, Loader
 
 	public static final String TAG_MYLOCATION_MAP = "myLocation";
 	public static final double DEFAULT_BOUND = 0.005; // 검색범위
+	public static final String PREFS_NAME ="CHECKBOX_pref";
+	public static final String PREFS_CHECK ="CHECKBOX_ONOFF";
+	
 	private Context context;
 	private GoogleMap map;
 	private ActionMap actionMap;
@@ -61,6 +71,7 @@ public class GMapFragment extends Fragment implements CallFragmentMethod, Loader
 	private float density;
 	private LatLng myLatLng;
 	private LinearLayout loadingLayout;
+	private TextView loadingText;
 	private double radius;
 	private Circle circle;
 	private MyLocation myLocation;
@@ -79,10 +90,11 @@ public class GMapFragment extends Fragment implements CallFragmentMethod, Loader
 		actionMap = new ActionMap(context);
 		density = context.getResources().getDisplayMetrics().density;
 		searchBundle = new Bundle();
-
+		
 		View view = inflater.inflate(R.layout.fragment_gmap_layout, null);
 
 		loadingLayout = (LinearLayout) view.findViewById(R.id.layout_map_loading);
+		loadingText = (TextView) view.findViewById(R.id.text_map_loading);
 
 		if (!(isGoogleServiceInstalled = actionMap.checkGoogleService())) {
 			View googleFail = ((ViewStub) view.findViewById(R.id.viewstub_gmap_google_fail)).inflate();
@@ -117,14 +129,48 @@ public class GMapFragment extends Fragment implements CallFragmentMethod, Loader
 	public void OnMapReady(GoogleMap map) {
 		this.map = map;
 		this.map.moveCamera(CameraUpdateFactory.newLatLngZoom(ActionMap.DEAGU_LATLNG, ActionMap.ZOOM_OUT));
-		this.map.setMyLocationEnabled(true);
+//		this.map.setMyLocationEnabled(true);
 		this.map.setOnCameraChangeListener(this);
 		this.map.setOnInfoWindowClickListener(this);
 	}
 
 	@Override
 	public void OnCalled() {
+		final boolean isConfirmed = context.getSharedPreferences(PREFS_NAME, 0).getBoolean(PREFS_CHECK, false);
+		
+		View view = LayoutInflater.from(context).inflate(R.layout.dialog_confirm_title, null);
+		final CheckBox check = (CheckBox) view.findViewById(R.id.check_dialog_confirm_title);
+		
+		if(!isConfirmed){
+		new AlertDialog.Builder(context).setTitle("위치정보사용승인").setView(view).setNegativeButton("아니요", 
+				new DialogInterface.OnClickListener() {
+					
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						loadingText.setText("위치정보확인을 할 수 없습니다");
+					}
+				})
+				.setPositiveButton("예", new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						if(check.isChecked()){
+							SharedPreferences setting = context.getSharedPreferences(PREFS_NAME, 0);
+							SharedPreferences.Editor editor = setting.edit();
+							editor.putBoolean(PREFS_CHECK, true);
+							editor.commit();
+						}
+						loadingText.setText("위치정보를 가져오고 있습니다");
+						startLoadLocation();
+					}
+				}).create().show();
+		} else {
+			startLoadLocation();
+		}
+	}
+	
+	private void startLoadLocation(){
 		if (isGoogleServiceInstalled) {
+			loadingText.setText("위치정보를 가져오고 있습니다");
 			loadingLayout.setVisibility(View.VISIBLE);
 
 			LocationResult locationResult = new LocationResult() {
@@ -186,7 +232,8 @@ public class GMapFragment extends Fragment implements CallFragmentMethod, Loader
 
 			if (ActionMap.isInsideCircle(circle, boundLatLng)) {
 				final MarkerOptions op = new MarkerOptions();
-				op.title(station_name).snippet(station_number).position(boundLatLng).icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_bus));
+				op.title(station_name).snippet(station_number).position(boundLatLng)
+						.icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_bus));
 				handler.postDelayed(new Runnable() {
 					@Override
 					public void run() {
@@ -247,26 +294,24 @@ public class GMapFragment extends Fragment implements CallFragmentMethod, Loader
 		}
 
 	}
-	
-	
 
 	@Override
 	public void onInfoWindowClick(Marker marker) {
-		new AsyncTask<Void, Void, Void>(){
+		new AsyncTask<Void, Void, Void>() {
 
 			@Override
 			protected Void doInBackground(Void... params) {
 				// TODO Auto-generated method stub
 				return null;
 			}
-			
+
 			@Override
 			protected void onPostExecute(Void result) {
 				super.onPostExecute(result);
 				OnCommunicationActivity communication = (OnCommunicationActivity) getActivity();
 				communication.OnTabMove(MainActivity.MyTabs.STATION_LISTVIEW, searchBundle);
 			}
-			
+
 		}.execute();
 	}
 }

@@ -1,7 +1,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     xmlns:ads="http://schemas.android.com/apk/lib/com.google.ads"
     xmlns:mobilead="http://schemas.android.com/apk/res/com.zoeas.qdeagubus"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/layout_root_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
